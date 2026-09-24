@@ -1,0 +1,1 @@
+{ "compilerOptions": { "composite": true, "module": "ESNext", "moduleResolution": "Bundler", "allowImportingTsExtensions": true, "verbatimModuleSyntax": true, "skipLibCheck": true, "noEmit": true, "strict": true, "types": ["node", "vitest/config"] }, "include": ["vite.config.ts"] }

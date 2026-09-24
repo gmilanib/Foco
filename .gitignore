@@ -1,0 +1,36 @@
+node_modules/
+**/node_modules/
+desktop/dist/
+desktop/release/
+desktop/*.tsbuildinfo
+backend/target/
+backend/.mvn/wrapper/maven-wrapper.jar
+
+# Pacotes locais e arquivos gerados (instaladores podem ter centenas de MB).
+/release/
+/dist/
+/build/
+
+# Dados locais, backups e logs.
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+*.log
+*.zip
+*.bak
+
+# Configuração local e credenciais.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.pfx
+*.p12
+
+# Configurações de ferramentas.
+.idea/
+.vscode/
+*.iml
