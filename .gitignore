@@ -10,6 +10,7 @@ backend/.mvn/wrapper/maven-wrapper.jar
 /release/
 /dist/
 /build/
+/.atualizacao_status/
 
 # Dados locais, backups e logs.
 *.db

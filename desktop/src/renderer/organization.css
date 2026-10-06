@@ -1,0 +1,7 @@
+.checklist-list { list-style:none; padding:0; display:grid; gap:12px; }
+.checklist-list li { border-bottom:1px solid var(--line); padding:10px 0; display:grid; gap:8px; }
+.checklist-step { display:flex; align-items:center; gap:10px; overflow-wrap:anywhere; }
+.checklist-step input { width:auto; flex:none; }
+.recurrence-days { border:1px solid var(--line); border-radius:8px; padding:12px; display:flex; flex-wrap:wrap; gap:12px; }
+.recurrence-days label { display:flex; align-items:center; gap:6px; }
+.recurrence-days input { width:auto; }

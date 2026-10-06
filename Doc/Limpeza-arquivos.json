@@ -1,0 +1,856 @@
+﻿[
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\New\\win-unpacked",
+        "relative":  "release\\New\\win-unpacked",
+        "reason":  "Pacote antigo ou cópia de empacotamento regenerável",
+        "files":  76,
+        "bytes":  453193266
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\New\\builder-debug.yml",
+        "relative":  "release\\New\\builder-debug.yml",
+        "reason":  "Pacote antigo ou cópia de empacotamento regenerável",
+        "files":  1,
+        "bytes":  7546
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\New\\Foco-New-Setup-1.1.0.exe",
+        "relative":  "release\\New\\Foco-New-Setup-1.1.0.exe",
+        "reason":  "Pacote antigo ou cópia de empacotamento regenerável",
+        "files":  1,
+        "bytes":  148368248
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\New\\Foco-New-Setup-1.1.0.exe.blockmap",
+        "relative":  "release\\New\\Foco-New-Setup-1.1.0.exe.blockmap",
+        "reason":  "Pacote antigo ou cópia de empacotamento regenerável",
+        "files":  1,
+        "bytes":  154846
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\New\\Foco-New-Setup-1.10.0.exe",
+        "relative":  "release\\New\\Foco-New-Setup-1.10.0.exe",
+        "reason":  "Pacote antigo ou cópia de empacotamento regenerável",
+        "files":  1,
+        "bytes":  148440708
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\New\\Foco-New-Setup-1.10.0.exe.blockmap",
+        "relative":  "release\\New\\Foco-New-Setup-1.10.0.exe.blockmap",
+        "reason":  "Pacote antigo ou cópia de empacotamento regenerável",
+        "files":  1,
+        "bytes":  155093
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\New\\Foco-New-Setup-1.11.0.exe",
+        "relative":  "release\\New\\Foco-New-Setup-1.11.0.exe",
+        "reason":  "Pacote antigo ou cópia de empacotamento regenerável",
+        "files":  1,
+        "bytes":  148448720
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\New\\Foco-New-Setup-1.11.0.exe.blockmap",
+        "relative":  "release\\New\\Foco-New-Setup-1.11.0.exe.blockmap",
+        "reason":  "Pacote antigo ou cópia de empacotamento regenerável",
+        "files":  1,
+        "bytes":  155405
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\New\\Foco-New-Setup-1.12.0.exe",
+        "relative":  "release\\New\\Foco-New-Setup-1.12.0.exe",
+        "reason":  "Pacote antigo ou cópia de empacotamento regenerável",
+        "files":  1,
+        "bytes":  148457929
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\New\\Foco-New-Setup-1.12.0.exe.blockmap",
+        "relative":  "release\\New\\Foco-New-Setup-1.12.0.exe.blockmap",
+        "reason":  "Pacote antigo ou cópia de empacotamento regenerável",
+        "files":  1,
+        "bytes":  155208
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\New\\Foco-New-Setup-1.13.0.exe",
+        "relative":  "release\\New\\Foco-New-Setup-1.13.0.exe",
+        "reason":  "Pacote antigo ou cópia de empacotamento regenerável",
+        "files":  1,
+        "bytes":  148470432
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\New\\Foco-New-Setup-1.13.0.exe.blockmap",
+        "relative":  "release\\New\\Foco-New-Setup-1.13.0.exe.blockmap",
+        "reason":  "Pacote antigo ou cópia de empacotamento regenerável",
+        "files":  1,
+        "bytes":  156147
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\New\\Foco-New-Setup-1.13.1.exe",
+        "relative":  "release\\New\\Foco-New-Setup-1.13.1.exe",
+        "reason":  "Pacote antigo ou cópia de empacotamento regenerável",
+        "files":  1,
+        "bytes":  148465731
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\New\\Foco-New-Setup-1.13.1.exe.blockmap",
+        "relative":  "release\\New\\Foco-New-Setup-1.13.1.exe.blockmap",
+        "reason":  "Pacote antigo ou cópia de empacotamento regenerável",
+        "files":  1,
+        "bytes":  155792
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\New\\Foco-New-Setup-1.2.0.exe",
+        "relative":  "release\\New\\Foco-New-Setup-1.2.0.exe",
+        "reason":  "Pacote antigo ou cópia de empacotamento regenerável",
+        "files":  1,
+        "bytes":  148368681
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\New\\Foco-New-Setup-1.2.0.exe.blockmap",
+        "relative":  "release\\New\\Foco-New-Setup-1.2.0.exe.blockmap",
+        "reason":  "Pacote antigo ou cópia de empacotamento regenerável",
+        "files":  1,
+        "bytes":  154989
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\New\\Foco-New-Setup-1.3.0.exe",
+        "relative":  "release\\New\\Foco-New-Setup-1.3.0.exe",
+        "reason":  "Pacote antigo ou cópia de empacotamento regenerável",
+        "files":  1,
+        "bytes":  148387598
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\New\\Foco-New-Setup-1.3.0.exe.blockmap",
+        "relative":  "release\\New\\Foco-New-Setup-1.3.0.exe.blockmap",
+        "reason":  "Pacote antigo ou cópia de empacotamento regenerável",
+        "files":  1,
+        "bytes":  154787
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\New\\Foco-New-Setup-1.4.0.exe",
+        "relative":  "release\\New\\Foco-New-Setup-1.4.0.exe",
+        "reason":  "Pacote antigo ou cópia de empacotamento regenerável",
+        "files":  1,
+        "bytes":  148388720
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\New\\Foco-New-Setup-1.4.0.exe.blockmap",
+        "relative":  "release\\New\\Foco-New-Setup-1.4.0.exe.blockmap",
+        "reason":  "Pacote antigo ou cópia de empacotamento regenerável",
+        "files":  1,
+        "bytes":  154879
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\New\\Foco-New-Setup-1.4.1.exe",
+        "relative":  "release\\New\\Foco-New-Setup-1.4.1.exe",
+        "reason":  "Pacote antigo ou cópia de empacotamento regenerável",
+        "files":  1,
+        "bytes":  148388848
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\New\\Foco-New-Setup-1.4.1.exe.blockmap",
+        "relative":  "release\\New\\Foco-New-Setup-1.4.1.exe.blockmap",
+        "reason":  "Pacote antigo ou cópia de empacotamento regenerável",
+        "files":  1,
+        "bytes":  154590
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\New\\Foco-New-Setup-1.4.2.exe",
+        "relative":  "release\\New\\Foco-New-Setup-1.4.2.exe",
+        "reason":  "Pacote antigo ou cópia de empacotamento regenerável",
+        "files":  1,
+        "bytes":  148389805
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\New\\Foco-New-Setup-1.4.2.exe.blockmap",
+        "relative":  "release\\New\\Foco-New-Setup-1.4.2.exe.blockmap",
+        "reason":  "Pacote antigo ou cópia de empacotamento regenerável",
+        "files":  1,
+        "bytes":  154538
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\New\\Foco-New-Setup-1.5.0.exe",
+        "relative":  "release\\New\\Foco-New-Setup-1.5.0.exe",
+        "reason":  "Pacote antigo ou cópia de empacotamento regenerável",
+        "files":  1,
+        "bytes":  148406078
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\New\\Foco-New-Setup-1.5.0.exe.blockmap",
+        "relative":  "release\\New\\Foco-New-Setup-1.5.0.exe.blockmap",
+        "reason":  "Pacote antigo ou cópia de empacotamento regenerável",
+        "files":  1,
+        "bytes":  155410
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\New\\Foco-New-Setup-1.6.0.exe",
+        "relative":  "release\\New\\Foco-New-Setup-1.6.0.exe",
+        "reason":  "Pacote antigo ou cópia de empacotamento regenerável",
+        "files":  1,
+        "bytes":  148408283
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\New\\Foco-New-Setup-1.6.0.exe.blockmap",
+        "relative":  "release\\New\\Foco-New-Setup-1.6.0.exe.blockmap",
+        "reason":  "Pacote antigo ou cópia de empacotamento regenerável",
+        "files":  1,
+        "bytes":  154433
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\New\\Foco-New-Setup-1.7.0.exe",
+        "relative":  "release\\New\\Foco-New-Setup-1.7.0.exe",
+        "reason":  "Pacote antigo ou cópia de empacotamento regenerável",
+        "files":  1,
+        "bytes":  148413596
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\New\\Foco-New-Setup-1.7.0.exe.blockmap",
+        "relative":  "release\\New\\Foco-New-Setup-1.7.0.exe.blockmap",
+        "reason":  "Pacote antigo ou cópia de empacotamento regenerável",
+        "files":  1,
+        "bytes":  155452
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\New\\Foco-New-Setup-1.8.0-backup-anterior.exe",
+        "relative":  "release\\New\\Foco-New-Setup-1.8.0-backup-anterior.exe",
+        "reason":  "Pacote antigo ou cópia de empacotamento regenerável",
+        "files":  1,
+        "bytes":  148414872
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\New\\Foco-New-Setup-1.8.0-backup-anterior.exe.blockmap",
+        "relative":  "release\\New\\Foco-New-Setup-1.8.0-backup-anterior.exe.blockmap",
+        "reason":  "Pacote antigo ou cópia de empacotamento regenerável",
+        "files":  1,
+        "bytes":  154754
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\New\\Foco-New-Setup-1.8.0.exe",
+        "relative":  "release\\New\\Foco-New-Setup-1.8.0.exe",
+        "reason":  "Pacote antigo ou cópia de empacotamento regenerável",
+        "files":  1,
+        "bytes":  148415884
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\New\\Foco-New-Setup-1.8.0.exe.blockmap",
+        "relative":  "release\\New\\Foco-New-Setup-1.8.0.exe.blockmap",
+        "reason":  "Pacote antigo ou cópia de empacotamento regenerável",
+        "files":  1,
+        "bytes":  154484
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\New\\Foco-New-Setup-1.9.0.exe",
+        "relative":  "release\\New\\Foco-New-Setup-1.9.0.exe",
+        "reason":  "Pacote antigo ou cópia de empacotamento regenerável",
+        "files":  1,
+        "bytes":  148436567
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\New\\Foco-New-Setup-1.9.0.exe.blockmap",
+        "relative":  "release\\New\\Foco-New-Setup-1.9.0.exe.blockmap",
+        "reason":  "Pacote antigo ou cópia de empacotamento regenerável",
+        "files":  1,
+        "bytes":  156047
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\New\\Foco-New-Setup-1.9.1.exe",
+        "relative":  "release\\New\\Foco-New-Setup-1.9.1.exe",
+        "reason":  "Pacote antigo ou cópia de empacotamento regenerável",
+        "files":  1,
+        "bytes":  148437649
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\New\\Foco-New-Setup-1.9.1.exe.blockmap",
+        "relative":  "release\\New\\Foco-New-Setup-1.9.1.exe.blockmap",
+        "reason":  "Pacote antigo ou cópia de empacotamento regenerável",
+        "files":  1,
+        "bytes":  155243
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\New\\SHA256SUMS-1.11.0.txt",
+        "relative":  "release\\New\\SHA256SUMS-1.11.0.txt",
+        "reason":  "Pacote antigo ou cópia de empacotamento regenerável",
+        "files":  1,
+        "bytes":  195
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\Stable\\win-unpacked",
+        "relative":  "release\\Stable\\win-unpacked",
+        "reason":  "Pacote antigo ou cópia de empacotamento regenerável",
+        "files":  75,
+        "bytes":  453114843
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\Stable\\builder-debug.yml",
+        "relative":  "release\\Stable\\builder-debug.yml",
+        "reason":  "Pacote antigo ou cópia de empacotamento regenerável",
+        "files":  1,
+        "bytes":  7432
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\Stable\\Foco-Stable-Setup-1.0.0.exe",
+        "relative":  "release\\Stable\\Foco-Stable-Setup-1.0.0.exe",
+        "reason":  "Pacote antigo ou cópia de empacotamento regenerável",
+        "files":  1,
+        "bytes":  148427577
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\Stable\\Foco-Stable-Setup-1.0.0.exe.blockmap",
+        "relative":  "release\\Stable\\Foco-Stable-Setup-1.0.0.exe.blockmap",
+        "reason":  "Pacote antigo ou cópia de empacotamento regenerável",
+        "files":  1,
+        "bytes":  155179
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\Stable\\Foco-Stable-Setup-1.1.0.exe",
+        "relative":  "release\\Stable\\Foco-Stable-Setup-1.1.0.exe",
+        "reason":  "Pacote antigo ou cópia de empacotamento regenerável",
+        "files":  1,
+        "bytes":  148430678
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\Stable\\Foco-Stable-Setup-1.1.0.exe.blockmap",
+        "relative":  "release\\Stable\\Foco-Stable-Setup-1.1.0.exe.blockmap",
+        "reason":  "Pacote antigo ou cópia de empacotamento regenerável",
+        "files":  1,
+        "bytes":  154738
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\Stable\\Foco-Stable-Setup-1.5.0.exe",
+        "relative":  "release\\Stable\\Foco-Stable-Setup-1.5.0.exe",
+        "reason":  "Pacote antigo ou cópia de empacotamento regenerável",
+        "files":  1,
+        "bytes":  148468536
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\Stable\\Foco-Stable-Setup-1.5.0.exe.blockmap",
+        "relative":  "release\\Stable\\Foco-Stable-Setup-1.5.0.exe.blockmap",
+        "reason":  "Pacote antigo ou cópia de empacotamento regenerável",
+        "files":  1,
+        "bytes":  155491
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\Stable\\Foco-Stable-Setup-1.7.0.exe",
+        "relative":  "release\\Stable\\Foco-Stable-Setup-1.7.0.exe",
+        "reason":  "Pacote antigo ou cópia de empacotamento regenerável",
+        "files":  1,
+        "bytes":  148475977
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\Stable\\Foco-Stable-Setup-1.7.0.exe.blockmap",
+        "relative":  "release\\Stable\\Foco-Stable-Setup-1.7.0.exe.blockmap",
+        "reason":  "Pacote antigo ou cópia de empacotamento regenerável",
+        "files":  1,
+        "bytes":  155712
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\promotion-1.5.0",
+        "relative":  "release\\promotion-1.5.0",
+        "reason":  "Empacotamento e scripts de promoções antigas",
+        "files":  3693,
+        "bytes":  631259946
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\win-unpacked",
+        "relative":  "release\\win-unpacked",
+        "reason":  "Empacotamento e scripts de promoções antigas",
+        "files":  75,
+        "bytes":  452976153
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\builder-debug.yml",
+        "relative":  "release\\builder-debug.yml",
+        "reason":  "Empacotamento e scripts de promoções antigas",
+        "files":  1,
+        "bytes":  7457
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\Foco Setup 1.0.0.exe",
+        "relative":  "release\\Foco Setup 1.0.0.exe",
+        "reason":  "Empacotamento e scripts de promoções antigas",
+        "files":  1,
+        "bytes":  148427577
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\Foco Setup 1.0.0.exe.blockmap",
+        "relative":  "release\\Foco Setup 1.0.0.exe.blockmap",
+        "reason":  "Empacotamento e scripts de promoções antigas",
+        "files":  1,
+        "bytes":  155179
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\publish-stable-1.5.0.py",
+        "relative":  "release\\publish-stable-1.5.0.py",
+        "reason":  "Empacotamento e scripts de promoções antigas",
+        "files":  1,
+        "bytes":  4311
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\release\\publish-stable-1.7.0.py",
+        "relative":  "release\\publish-stable-1.7.0.py",
+        "reason":  "Empacotamento e scripts de promoções antigas",
+        "files":  1,
+        "bytes":  1668
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\.atualizacao_status\\first-wave-qa",
+        "relative":  ".atualizacao_status\\first-wave-qa",
+        "reason":  "Scripts e validações temporárias de entregas anteriores",
+        "files":  73,
+        "bytes":  8601933
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\.atualizacao_status\\fourth-wave-qa",
+        "relative":  ".atualizacao_status\\fourth-wave-qa",
+        "reason":  "Scripts e validações temporárias de entregas anteriores",
+        "files":  77,
+        "bytes":  7759514
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\.atualizacao_status\\second-wave-qa",
+        "relative":  ".atualizacao_status\\second-wave-qa",
+        "reason":  "Scripts e validações temporárias de entregas anteriores",
+        "files":  77,
+        "bytes":  8804104
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\.atualizacao_status\\stable-1.10.0",
+        "relative":  ".atualizacao_status\\stable-1.10.0",
+        "reason":  "Scripts e validações temporárias de entregas anteriores",
+        "files":  3612,
+        "bytes":  66940232
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\.atualizacao_status\\third-wave-qa",
+        "relative":  ".atualizacao_status\\third-wave-qa",
+        "reason":  "Scripts e validações temporárias de entregas anteriores",
+        "files":  132,
+        "bytes":  16929977
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\.atualizacao_status\\dashboard-hours-edit.py",
+        "relative":  ".atualizacao_status\\dashboard-hours-edit.py",
+        "reason":  "Scripts e validações temporárias de entregas anteriores",
+        "files":  1,
+        "bytes":  1651
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\.atualizacao_status\\dual-end-data.py",
+        "relative":  ".atualizacao_status\\dual-end-data.py",
+        "reason":  "Scripts e validações temporárias de entregas anteriores",
+        "files":  1,
+        "bytes":  1288
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\.atualizacao_status\\finalize-planning-text.py",
+        "relative":  ".atualizacao_status\\finalize-planning-text.py",
+        "reason":  "Scripts e validações temporárias de entregas anteriores",
+        "files":  1,
+        "bytes":  4414
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\.atualizacao_status\\first-wave-css.py",
+        "relative":  ".atualizacao_status\\first-wave-css.py",
+        "reason":  "Scripts e validações temporárias de entregas anteriores",
+        "files":  1,
+        "bytes":  1450
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\.atualizacao_status\\first-wave-data.py",
+        "relative":  ".atualizacao_status\\first-wave-data.py",
+        "reason":  "Scripts e validações temporárias de entregas anteriores",
+        "files":  1,
+        "bytes":  2267
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\.atualizacao_status\\first-wave-docs.py",
+        "relative":  ".atualizacao_status\\first-wave-docs.py",
+        "reason":  "Scripts e validações temporárias de entregas anteriores",
+        "files":  1,
+        "bytes":  7187
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\.atualizacao_status\\first-wave-final-fix.py",
+        "relative":  ".atualizacao_status\\first-wave-final-fix.py",
+        "reason":  "Scripts e validações temporárias de entregas anteriores",
+        "files":  1,
+        "bytes":  1782
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\.atualizacao_status\\first-wave-more.py",
+        "relative":  ".atualizacao_status\\first-wave-more.py",
+        "reason":  "Scripts e validações temporárias de entregas anteriores",
+        "files":  1,
+        "bytes":  3755
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\.atualizacao_status\\first-wave-package.cjs",
+        "relative":  ".atualizacao_status\\first-wave-package.cjs",
+        "reason":  "Scripts e validações temporárias de entregas anteriores",
+        "files":  1,
+        "bytes":  1217
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\.atualizacao_status\\first-wave-package.json",
+        "relative":  ".atualizacao_status\\first-wave-package.json",
+        "reason":  "Scripts e validações temporárias de entregas anteriores",
+        "files":  1,
+        "bytes":  201
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\.atualizacao_status\\first-wave-qa-fix.py",
+        "relative":  ".atualizacao_status\\first-wave-qa-fix.py",
+        "reason":  "Scripts e validações temporárias de entregas anteriores",
+        "files":  1,
+        "bytes":  801
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\.atualizacao_status\\first-wave-record.py",
+        "relative":  ".atualizacao_status\\first-wave-record.py",
+        "reason":  "Scripts e validações temporárias de entregas anteriores",
+        "files":  1,
+        "bytes":  2638
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\.atualizacao_status\\first-wave-review.py",
+        "relative":  ".atualizacao_status\\first-wave-review.py",
+        "reason":  "Scripts e validações temporárias de entregas anteriores",
+        "files":  1,
+        "bytes":  1559
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\.atualizacao_status\\first-wave-switch-test.py",
+        "relative":  ".atualizacao_status\\first-wave-switch-test.py",
+        "reason":  "Scripts e validações temporárias de entregas anteriores",
+        "files":  1,
+        "bytes":  1635
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\.atualizacao_status\\first-wave-tests.py",
+        "relative":  ".atualizacao_status\\first-wave-tests.py",
+        "reason":  "Scripts e validações temporárias de entregas anteriores",
+        "files":  1,
+        "bytes":  2914
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\.atualizacao_status\\first-wave.py",
+        "relative":  ".atualizacao_status\\first-wave.py",
+        "reason":  "Scripts e validações temporárias de entregas anteriores",
+        "files":  1,
+        "bytes":  8038
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\.atualizacao_status\\fourth-wave-build.log",
+        "relative":  ".atualizacao_status\\fourth-wave-build.log",
+        "reason":  "Scripts e validações temporárias de entregas anteriores",
+        "files":  1,
+        "bytes":  10370
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\.atualizacao_status\\fourth-wave-docs.py",
+        "relative":  ".atualizacao_status\\fourth-wave-docs.py",
+        "reason":  "Scripts e validações temporárias de entregas anteriores",
+        "files":  1,
+        "bytes":  3307
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\.atualizacao_status\\fourth-wave-edit.py",
+        "relative":  ".atualizacao_status\\fourth-wave-edit.py",
+        "reason":  "Scripts e validações temporárias de entregas anteriores",
+        "files":  1,
+        "bytes":  2080
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\.atualizacao_status\\fourth-wave-finish.py",
+        "relative":  ".atualizacao_status\\fourth-wave-finish.py",
+        "reason":  "Scripts e validações temporárias de entregas anteriores",
+        "files":  1,
+        "bytes":  1755
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\.atualizacao_status\\fourth-wave-refine.py",
+        "relative":  ".atualizacao_status\\fourth-wave-refine.py",
+        "reason":  "Scripts e validações temporárias de entregas anteriores",
+        "files":  1,
+        "bytes":  2459
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\.atualizacao_status\\fourth-wave-tests.log",
+        "relative":  ".atualizacao_status\\fourth-wave-tests.log",
+        "reason":  "Scripts e validações temporárias de entregas anteriores",
+        "files":  1,
+        "bytes":  125102
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\.atualizacao_status\\install-dual-end.ps1",
+        "relative":  ".atualizacao_status\\install-dual-end.ps1",
+        "reason":  "Scripts e validações temporárias de entregas anteriores",
+        "files":  1,
+        "bytes":  1519
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\.atualizacao_status\\install-first-wave.ps1",
+        "relative":  ".atualizacao_status\\install-first-wave.ps1",
+        "reason":  "Scripts e validações temporárias de entregas anteriores",
+        "files":  1,
+        "bytes":  2243
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\.atualizacao_status\\install-new-fixed.ps1",
+        "relative":  ".atualizacao_status\\install-new-fixed.ps1",
+        "reason":  "Scripts e validações temporárias de entregas anteriores",
+        "files":  1,
+        "bytes":  1644
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\.atualizacao_status\\install-second-wave.ps1",
+        "relative":  ".atualizacao_status\\install-second-wave.ps1",
+        "reason":  "Scripts e validações temporárias de entregas anteriores",
+        "files":  1,
+        "bytes":  2245
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\.atualizacao_status\\installer-build.log",
+        "relative":  ".atualizacao_status\\installer-build.log",
+        "reason":  "Scripts e validações temporárias de entregas anteriores",
+        "files":  1,
+        "bytes":  10370
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\.atualizacao_status\\installer-data.py",
+        "relative":  ".atualizacao_status\\installer-data.py",
+        "reason":  "Scripts e validações temporárias de entregas anteriores",
+        "files":  1,
+        "bytes":  1176
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\.atualizacao_status\\installer-tests.log",
+        "relative":  ".atualizacao_status\\installer-tests.log",
+        "reason":  "Scripts e validações temporárias de entregas anteriores",
+        "files":  1,
+        "bytes":  126254
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\.atualizacao_status\\organization-catalog-ui.py",
+        "relative":  ".atualizacao_status\\organization-catalog-ui.py",
+        "reason":  "Scripts e validações temporárias de entregas anteriores",
+        "files":  1,
+        "bytes":  2592
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\.atualizacao_status\\organization-docs.py",
+        "relative":  ".atualizacao_status\\organization-docs.py",
+        "reason":  "Scripts e validações temporárias de entregas anteriores",
+        "files":  1,
+        "bytes":  7741
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\.atualizacao_status\\organization-edit.py",
+        "relative":  ".atualizacao_status\\organization-edit.py",
+        "reason":  "Scripts e validações temporárias de entregas anteriores",
+        "files":  1,
+        "bytes":  214
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\.atualizacao_status\\organization-integrate.py",
+        "relative":  ".atualizacao_status\\organization-integrate.py",
+        "reason":  "Scripts e validações temporárias de entregas anteriores",
+        "files":  1,
+        "bytes":  5619
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\.atualizacao_status\\organization-keys.py",
+        "relative":  ".atualizacao_status\\organization-keys.py",
+        "reason":  "Scripts e validações temporárias de entregas anteriores",
+        "files":  1,
+        "bytes":  1006
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\.atualizacao_status\\organization-test-clean.py",
+        "relative":  ".atualizacao_status\\organization-test-clean.py",
+        "reason":  "Scripts e validações temporárias de entregas anteriores",
+        "files":  1,
+        "bytes":  245
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\.atualizacao_status\\organization-tests-edit.py",
+        "relative":  ".atualizacao_status\\organization-tests-edit.py",
+        "reason":  "Scripts e validações temporárias de entregas anteriores",
+        "files":  1,
+        "bytes":  633
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\.atualizacao_status\\organization-ui.py",
+        "relative":  ".atualizacao_status\\organization-ui.py",
+        "reason":  "Scripts e validações temporárias de entregas anteriores",
+        "files":  1,
+        "bytes":  6448
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\.atualizacao_status\\third-wave-build.log",
+        "relative":  ".atualizacao_status\\third-wave-build.log",
+        "reason":  "Scripts e validações temporárias de entregas anteriores",
+        "files":  1,
+        "bytes":  1264
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\.atualizacao_status\\third-wave-tests.log",
+        "relative":  ".atualizacao_status\\third-wave-tests.log",
+        "reason":  "Scripts e validações temporárias de entregas anteriores",
+        "files":  1,
+        "bytes":  1226
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\.atualizacao_status\\verify-first-wave.ps1",
+        "relative":  ".atualizacao_status\\verify-first-wave.ps1",
+        "reason":  "Scripts e validações temporárias de entregas anteriores",
+        "files":  1,
+        "bytes":  2102
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\.atualizacao_status\\organization-qa\\profile-1790973216860",
+        "relative":  ".atualizacao_status\\organization-qa\\profile-1790973216860",
+        "reason":  "Perfil Chromium isolado de teste",
+        "files":  58,
+        "bytes":  8320252
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\backend\\target\\classes",
+        "relative":  "backend\\target\\classes",
+        "reason":  "Classes, bancos de teste e intermediários regeneráveis do Maven",
+        "files":  91,
+        "bytes":  348149
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\backend\\target\\generated-sources",
+        "relative":  "backend\\target\\generated-sources",
+        "reason":  "Classes, bancos de teste e intermediários regeneráveis do Maven",
+        "files":  0,
+        "bytes":  0
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\backend\\target\\generated-test-sources",
+        "relative":  "backend\\target\\generated-test-sources",
+        "reason":  "Classes, bancos de teste e intermediários regeneráveis do Maven",
+        "files":  0,
+        "bytes":  0
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\backend\\target\\maven-archiver",
+        "relative":  "backend\\target\\maven-archiver",
+        "reason":  "Classes, bancos de teste e intermediários regeneráveis do Maven",
+        "files":  1,
+        "bytes":  58
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\backend\\target\\maven-status",
+        "relative":  "backend\\target\\maven-status",
+        "reason":  "Classes, bancos de teste e intermediários regeneráveis do Maven",
+        "files":  4,
+        "bytes":  8609
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\backend\\target\\surefire-reports",
+        "relative":  "backend\\target\\surefire-reports",
+        "reason":  "Classes, bancos de teste e intermediários regeneráveis do Maven",
+        "files":  28,
+        "bytes":  448685
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\backend\\target\\test-analysis-data",
+        "relative":  "backend\\target\\test-analysis-data",
+        "reason":  "Classes, bancos de teste e intermediários regeneráveis do Maven",
+        "files":  1,
+        "bytes":  180224
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\backend\\target\\test-classes",
+        "relative":  "backend\\target\\test-classes",
+        "reason":  "Classes, bancos de teste e intermediários regeneráveis do Maven",
+        "files":  14,
+        "bytes":  140157
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\backend\\target\\test-dashboard-hours-data",
+        "relative":  "backend\\target\\test-dashboard-hours-data",
+        "reason":  "Classes, bancos de teste e intermediários regeneráveis do Maven",
+        "files":  1,
+        "bytes":  180224
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\backend\\target\\test-foco-data",
+        "relative":  "backend\\target\\test-foco-data",
+        "reason":  "Classes, bancos de teste e intermediários regeneráveis do Maven",
+        "files":  1,
+        "bytes":  937984
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\backend\\target\\test-organization-data",
+        "relative":  "backend\\target\\test-organization-data",
+        "reason":  "Classes, bancos de teste e intermediários regeneráveis do Maven",
+        "files":  1,
+        "bytes":  180224
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\backend\\target\\test-planning-data",
+        "relative":  "backend\\target\\test-planning-data",
+        "reason":  "Classes, bancos de teste e intermediários regeneráveis do Maven",
+        "files":  1,
+        "bytes":  180224
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\backend\\target\\test-second-wave-data",
+        "relative":  "backend\\target\\test-second-wave-data",
+        "reason":  "Classes, bancos de teste e intermediários regeneráveis do Maven",
+        "files":  1,
+        "bytes":  180224
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\backend\\target\\test-switch-data",
+        "relative":  "backend\\target\\test-switch-data",
+        "reason":  "Classes, bancos de teste e intermediários regeneráveis do Maven",
+        "files":  1,
+        "bytes":  368640
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\backend\\target\\test-third-wave-data",
+        "relative":  "backend\\target\\test-third-wave-data",
+        "reason":  "Classes, bancos de teste e intermediários regeneráveis do Maven",
+        "files":  1,
+        "bytes":  180224
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\backend\\target\\foco-backend.jar.original",
+        "relative":  "backend\\target\\foco-backend.jar.original",
+        "reason":  "Classes, bancos de teste e intermediários regeneráveis do Maven",
+        "files":  1,
+        "bytes":  165109
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\.test-backup.log",
+        "relative":  ".test-backup.log",
+        "reason":  "Log antigo ou cache de teste",
+        "files":  1,
+        "bytes":  3990
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\.test-new-1.6.0.log",
+        "relative":  ".test-new-1.6.0.log",
+        "reason":  "Log antigo ou cache de teste",
+        "files":  1,
+        "bytes":  38702
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\.test-time-review.log",
+        "relative":  ".test-time-review.log",
+        "reason":  "Log antigo ou cache de teste",
+        "files":  1,
+        "bytes":  38792
+    },
+    {
+        "path":  "C:\\Users\\milan\\Documents\\Projetos\\Foco-Java\\desktop\\node_modules",
+        "relative":  "desktop/node_modules",
+        "reason":  "Log antigo ou cache de teste",
+        "files":  1,
+        "bytes":  2588
+    }
+]

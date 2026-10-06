@@ -11,6 +11,9 @@ else {
   let mainWindow, overlayWindow, tray, backend, port=Number(process.env.FOCO_PORT||8765), elapsed=0, running=false, activity='';
   const token=randomBytes(32).toString('hex');
   const dataDirectory=path.join(app.getPath('appData'),'foco-java','data');
+  const logDirectory=path.join(app.getPath('userData'),'logs');
+  const logFile=path.join(logDirectory,'errors.log');
+  function logError(error,context){try{fs.mkdirSync(logDirectory,{recursive:true});fs.appendFileSync(logFile,JSON.stringify({at:new Date().toISOString(),context,error:String(error?.stack||error)})+'\n','utf8');}catch(logFailure){console.error('Could not write local error log',logFailure);}}
   const packaged=app.isPackaged;
   const preload=path.join(__dirname,'preload.cjs');
   const renderer=path.join(__dirname,'renderer');
@@ -26,8 +29,10 @@ else {
     fs.mkdirSync(dataDirectory,{recursive:true});
     const jar=packaged?path.join(process.resourcesPath,'backend','foco-backend.jar'):path.resolve(__dirname,'..','..','backend','target','foco-backend.jar');
     backend=spawn(process.env.FOCO_JAVA||'java',['-jar',jar,`--server.port=${port}`],{env:{...process.env,FOCO_DATA_DIR:dataDirectory,FOCO_PORT:String(port),FOCO_API_TOKEN:token},windowsHide:true,stdio:['ignore','pipe','pipe']});
-    backend.stderr.on('data',chunk=>console.error('[Spring]',chunk.toString()));
-    backend.on('error',error=>dialog.showErrorBox('Foco · Java necessário',`Instale Java 17 ou superior ou configure FOCO_JAVA.\n${error.message}`));
+    const recordBackendOutput=(stream,chunk)=>{const output=chunk.toString();console.error('[Spring]',output);if(/ERROR|Exception|Caused by:/.test(output))logError(output,'spring-'+stream);};
+    backend.stdout.on('data',chunk=>recordBackendOutput('stdout',chunk));
+    backend.stderr.on('data',chunk=>recordBackendOutput('stderr',chunk));
+    backend.on('error',error=>{logError(error,'spring-process');dialog.showErrorBox('Foco · Java necessário',`Instale Java 17 ou superior ou configure FOCO_JAVA.\n${error.message}`);});
     const limit=Date.now()+30000;while(Date.now()<limit){if(backend.exitCode!==null)throw new Error('O backend Spring encerrou durante a inicialização.');if(await ping())return;await new Promise(r=>setTimeout(r,200));}
     throw new Error('O backend Spring não respondeu em 30 segundos.');
   }
@@ -55,14 +60,20 @@ else {
     ]));tray.on('double-click',()=>mainWindow.show());
   }
   ipcMain.handle('foco:api',async(_event,request)=>{
+    let recorded=false;
     if(typeof request?.path!=='string'||!request.path.startsWith('/api/')||request.path.startsWith('//'))throw new Error('Rota local inválida.');
-    const response=await fetch(`http://127.0.0.1:${port}${request.path}`,{method:request.method||'GET',headers:{'X-Foco-Token':token,'Content-Type':'application/json'},body:request.body===undefined?undefined:JSON.stringify(request.body)});
-    const content=await response.text();if(!response.ok){let message=content;try{message=JSON.parse(content).error||content;}catch{}throw new Error(message||`Backend: HTTP ${response.status}`);}
-    if(response.headers.get('content-type')?.includes('text/csv'))return{raw:content};return content?JSON.parse(content):null;
+    try{
+      const response=await fetch(`http://127.0.0.1:${port}${request.path}`,{method:request.method||'GET',headers:{'X-Foco-Token':token,'Content-Type':'application/json'},body:request.body===undefined?undefined:JSON.stringify(request.body)});
+      const content=await response.text();if(!response.ok){logError(`HTTP ${response.status}: ${content}`,'api '+request.method+' '+request.path);recorded=true;let message=content;try{message=JSON.parse(content).error||content;}catch{}throw new Error(message||`Backend: HTTP ${response.status}`);}
+      if(response.headers.get('content-type')?.includes('text/csv'))return{raw:content};return content?JSON.parse(content):null;
+    }catch(error){if(!recorded)logError(error,'api '+request.method+' '+request.path);throw error;}
   });
+  ipcMain.handle('foco:app-info',()=>({version:app.getVersion(),channel:packaged?(app.getPath('exe').toLowerCase().includes('stable')?'Stable':'New'):'Desenvolvimento',platform:process.platform,java:process.env.FOCO_JAVA||'java',dataDirectory,logDirectory}));
+  ipcMain.handle('foco:open-error-logs',async()=>{fs.mkdirSync(logDirectory,{recursive:true});await shell.openPath(logDirectory);return logDirectory;});
   ipcMain.handle('foco:import-folder',async()=>{const picked=await dialog.showOpenDialog({title:'Pasta de dados V35',properties:['openDirectory']});if(picked.canceled)return null;if(!fs.existsSync(path.join(picked.filePaths[0],'sessions.xml')))throw new Error('A pasta não contém sessions.xml.');return picked.filePaths[0];});
   ipcMain.handle('foco:choose-folder',async()=>{const picked=await dialog.showOpenDialog({title:'Pasta dos backups',properties:['openDirectory','createDirectory']});return picked.canceled?null:picked.filePaths[0];});
   ipcMain.handle('foco:save-csv',async(_event,{fileName,content})=>{if(typeof content!=='string'||content.length>25*1024*1024)throw new Error('Arquivo CSV inválido ou maior que 25 MB.');const picked=await dialog.showSaveDialog({title:'Exportar relatório de horas',defaultPath:fileName,filters:[{name:'Arquivo CSV',extensions:['csv']}]});if(picked.canceled||!picked.filePath)return null;fs.writeFileSync(picked.filePath,content,'utf8');return picked.filePath;});
+  ipcMain.handle('foco:save-pdf',async(_event,{fileName})=>{if(typeof fileName!=='string'||fileName.length>120)throw new Error('Nome de arquivo PDF invÃ¡lido.');const picked=await dialog.showSaveDialog({title:'Exportar Dashboard em PDF',defaultPath:fileName,filters:[{name:'Arquivo PDF',extensions:['pdf']}]});if(picked.canceled||!picked.filePath)return null;const pdf=await mainWindow.webContents.printToPDF({printBackground:true,landscape:true,pageSize:'A4',margins:{top:0.45,bottom:0.45,left:0.45,right:0.45}});fs.writeFileSync(picked.filePath,pdf);return picked.filePath;});
   ipcMain.on('foco:overlay:show',createOverlay);ipcMain.on('foco:overlay:close',()=>overlayWindow?.hide());
   ipcMain.on('foco:window:hide',()=>mainWindow?.hide());
   ipcMain.handle('foco:timer:get',()=>({elapsed,running,activity}));

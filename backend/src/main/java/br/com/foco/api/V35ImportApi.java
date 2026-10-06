@@ -33,7 +33,8 @@ class V35ImportController {
 @org.springframework.stereotype.Service
 class V35Importer {
     private final JdbcTemplate db;
-    V35Importer(JdbcTemplate db){this.db=db;}
+    private final CatalogService catalogs;
+    V35Importer(JdbcTemplate db,CatalogService catalogs){this.db=db;this.catalogs=catalogs;}
     @Transactional(rollbackFor=Exception.class)
     ImportResult importDirectory(Path input) throws IOException,ReflectiveOperationException {
         Path folder=input.toRealPath();
@@ -59,6 +60,7 @@ class V35Importer {
             if(!destination.isBlank())saveSetting("backup.destination",destination); if(!day.isBlank())saveSetting("backup.lastSuccessDay",day);config++;
         }
         int colors=importColors(folder.resolve("client-colors.xml"));
+        catalogs.reconcileLegacyValues();
         saveSetting("v35.import.hash",hash); saveSetting("v35.import.date",OffsetDateTime.now().toString());
         return new ImportResult(sessionNodes.size(),taskNodes.size(),config,colors,hash,false);
     }

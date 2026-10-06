@@ -11,14 +11,19 @@ import org.springframework.jdbc.core.JdbcTemplate;
 @EnableScheduling
 public class FocoApplication {
     private final JdbcTemplate jdbc;
-    public FocoApplication(JdbcTemplate jdbc) {
-        this.jdbc = jdbc;
+    private final WorkIntervalRepository workIntervals;
+    public FocoApplication(JdbcTemplate jdbc, WorkIntervalRepository workIntervals) {
+        this.jdbc = jdbc; this.workIntervals = workIntervals;
     }
     public static void main(String[] args) { SpringApplication.run(FocoApplication.class, args); }
     @EventListener(ApplicationReadyEvent.class)
     public void recoverActiveSessions(){
         ensureColumn("sessions","category","TEXT NOT NULL DEFAULT 'Normal'");
+        ensureColumn("sessions","rounded_end_at","TEXT");
         ensureColumn("tasks","due_date","TEXT");
+        ensureColumn("tasks","state","TEXT");
+        workIntervals.initialize();
+        workIntervals.closeActiveAtLastTick();
         jdbc.update("UPDATE sessions SET status='Pausada',end_at=NULL WHERE status='Em andamento'");
     }
     private void ensureColumn(String table,String column,String definition){

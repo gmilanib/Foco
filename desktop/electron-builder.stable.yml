@@ -1,0 +1,21 @@
+appId: br.com.foco.desktop
+productName: Foco Stable
+directories:
+  output: release/Stable
+artifactName: Foco-Stable-Setup-${version}.${ext}
+files:
+  - desktop/dist/**
+  - package.json
+extraResources:
+  - from: backend/target/foco-backend.jar
+    to: backend/foco-backend.jar
+  - from: desktop/build/Foco.ico
+    to: Foco.ico
+win:
+  target: nsis
+  icon: desktop/build/Foco.ico
+nsis:
+  include: desktop/build/installer.nsh
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true

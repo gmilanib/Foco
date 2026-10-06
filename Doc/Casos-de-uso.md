@@ -120,3 +120,39 @@ sequenceDiagram
 - No formulário de apontamento ou retroativo, a pessoa escolhe `Normal` ou `Agenda`; a API persiste e valida o valor. O relatório mostra o marcador, filtra por categoria e inclui a informação no CSV.
 - Ao criar ou editar uma tarefa, a pessoa pode informar o prazo limite. A lista mostra o prazo e filtra tarefas por uma faixa de datas. Sem prazo, a tarefa continua válida e pode ser localizada pelos demais filtros.
 - Os atalhos Alt trocam de tela e iniciam/pausam ou encerram o foco. A sobreposição apresenta atividade e relógio em uma faixa horizontal.
+
+## Capturar, planejar e revisar atividades
+
+Capturar uma frase → organizar como tarefa → escolher data e até três prioridades → iniciar apontamento → revisar tarefas e lacunas → salvar revisão do dia. Tarefas bloqueadas recebem estado Aguardando, dependência e data de revisão. Modelos reutilizam dados de uma tarefa; recorrências só são geradas pelo botão Criar tarefas previstas. Consulte [Planejamento](Planejamento.md).
+
+
+New 1.10.0: registrar próxima ação ao encerrar/trocar uma tarefa; escolher prazo padrão; recuperar ou descartar rascunhos após navegação. Ver [fluxos e critérios](Primeira-onda.md).
+
+## Segunda onda
+
+1. Conferir horas: escolher base em Tarefas ou Relatórios; atualizar Relatórios e exportar CSV com bases de duração/término identificadas.
+2. Corrigir associação: selecionar sessão finalizada, abrir Vincular tarefa, escolher destino ou remover vínculo e salvar; conferir totais e histórico.
+3. Fechar lacunas: abrir Jornada → A definir → Revisar em sequência; navegar, escolher classificação e salvar cada intervalo. Reaproveitar classificação é opcional e não copia horários.
+4. Retomar a visualização: reabrir telas com agrupamento, base, detalhes do Dashboard e ordenação anteriores, mantendo datas atuais.
+
+Regras e critérios em [Segunda onda](Segunda-onda.md).
+
+## Terceira onda
+
+**Estimar e conferir capacidade:** em Hoje, selecionar tarefa, informar minutos e salvar; configurar capacidade diária; conferir soma e pendências sem estimativa para a data. Excesso informa sobrecarga e permite continuar. Vazio remove a estimativa; falha preserva o formulário.
+
+**Revisar semana:** selecionar data em Hoje e abrir Revisão semanal; conferir grupos, abrir planejamento ou caixa de entrada e salvar cada decisão conscientemente. Abrir o painel não modifica dados.
+
+**Consultar diagnóstico:** abrir Configurações e conferir canal/versão e resultado de backup; Atualizar diagnóstico relê os dados locais. Falha recente mantém o último sucesso visível. Detalhes em [Terceira onda](Terceira-onda.md).
+
+## Comparar estimativas e conferir distribuição
+
+No Dashboard, selecionar intervalo/base e Comparar horas para avaliar tarefas, projetos e semanas. Tarefas sem estimativa e apontamentos sem vínculo ficam identificados; a consulta não altera dados. Alterar filtros exige nova consulta. Mostrar todos os grupos abre a distribuição integral; o resumo inclui Outros e o PDF acompanha a escolha. [Fluxo AN-01/AN-04](Quarta-onda.md).
+
+## Organização — New 1.14.0
+
+- Gerenciar passos: abrir checklist, adicionar/editar/marcar/remover e consultar progresso; falha mantém texto, arquivamento permite somente consulta.
+- Arquivar tarefa/projeto: confirmar, verificar ausência de apontamento ativo, remover prioridades e ocultar das listas de trabalho; alternativa de restauração mantém dados e não reativa antigas prioridades.
+- Editar/pausar modelo: manter id e tarefas geradas, configurar frequência/data e pausar ou retomar; geração manual ignora pausados e origens arquivadas, com uma ocorrência vencida por ação.
+
+Fluxos, alternativas e critérios completos em [Quinta onda](Quinta-onda.md).

@@ -1,28 +1,31 @@
+import { DraftRecovery } from '../components/DraftRecovery';
 import { useMemo,type Dispatch,type SetStateAction } from 'react';
 import { Field,Card } from '../components/Field';
+import { CatalogSelect } from '../components/CatalogSelect';
 import { ClientMarker,ClientColorPreview } from '../components/ClientMarker';
 import { TimerPanel } from '../components/TimerPanel';
 import { money } from '../format';
 import { buildFillSuggestions,valuesFor,type SuggestionField } from '../fillSuggestions';
-import type { Color,Session,Task } from '../types';
+import type { Catalogs,Color,Session,Task } from '../types';
 
 export type Draft={client:string;project:string;activity:string;details:string;consultant:string;cardReference:string;hourlyRate:string;category:'Normal'|'Agenda';mode:'Timer'|'Cronômetro';minutes:number};
-type Props={draft:Draft;setDraft:Dispatch<SetStateAction<Draft>>;session:Session|null;elapsed:number;running:boolean;showValues:boolean;onToggle:()=>void;onFinish:()=>void;onOverlay:()=>void;onRetroactive:()=>void;history:Session[];tasks:Task[];colors?:Color[];quickPresets:number[];favoriteKeys:string[];quickLimit:number;defaultRate:string;onToggleFavorite:(key:string)=>void};
+type Props={draft:Draft;setDraft:Dispatch<SetStateAction<Draft>>;session:Session|null;elapsed:number;running:boolean;showValues:boolean;onToggle:()=>void;onFinish:()=>void;onOverlay:()=>void;onRetroactive:()=>void;history:Session[];tasks:Task[];catalogs:Catalogs;colors?:Color[];quickPresets:number[];favoriteKeys:string[];quickLimit:number;defaultRate:string;onToggleFavorite:(key:string)=>void};
 const set=(setDraft:Props['setDraft'],key:keyof Draft,value:string|number)=>setDraft(current=>({...current,[key]:value}));
 
-export function FocusPage({draft,setDraft,session,elapsed,running,showValues,onToggle,onFinish,onOverlay,onRetroactive,history,tasks,colors=[],quickPresets,favoriteKeys,quickLimit,defaultRate,onToggleFavorite}:Props){
+export function FocusPage({draft,setDraft,session,elapsed,running,showValues,onToggle,onFinish,onOverlay,onRetroactive,history,tasks,catalogs,colors=[],quickPresets,favoriteKeys,quickLimit,defaultRate,onToggleFavorite}:Props){
   const suggestions=useMemo(()=>buildFillSuggestions(history,tasks),[history,tasks]);
   const applySuggestion=(field:SuggestionField,value:string)=>setDraft(current=>({...current,[field]:value}));
   const list=(field:SuggestionField)=><datalist id={`suggestions-${field}`}>{valuesFor(suggestions,field,draft[field]).map(value=><option key={value} value={value}/>)}</datalist>;
   const recent=useMemo(()=>{const seen=new Set<string>();const rows=[...history].sort((a,b)=>b.startAt.localeCompare(a.startAt)).filter(s=>{if(!s.project.trim())return false;const client=s.client.trim()||'Sem cliente',project=s.project.trim(),key=`${client.length}:${client.toLocaleUpperCase('pt-BR')}${project.toLocaleUpperCase('pt-BR')}`;if(seen.has(key))return false;seen.add(key);return true;});const favorites=rows.filter(s=>favoriteKeys.includes(`${(s.client.trim()||'Sem cliente').length}:${(s.client.trim()||'Sem cliente').toLocaleUpperCase('pt-BR')}${s.project.trim().toLocaleUpperCase('pt-BR')}`));const normal=rows.filter(s=>!favoriteKeys.includes(`${(s.client.trim()||'Sem cliente').length}:${(s.client.trim()||'Sem cliente').toLocaleUpperCase('pt-BR')}${s.project.trim().toLocaleUpperCase('pt-BR')}`));return [...favorites,...(quickLimit===0?normal:normal.slice(0,quickLimit))];},[history,favoriteKeys,quickLimit]);
   return <div className="focus-layout"><section className="focus-form">
     <div className="page-title"><div><h1>Lançamento</h1><p>Descreva sua atividade e acompanhe o foco.</p></div><button className="button" onClick={onRetroactive}>Lançamento retroativo</button></div>
+    <DraftRecovery id="focus" value={draft} onRecover={setDraft}/>
     <Card title="Atividade e projeto">
       <p className="muted">As opções acompanham o que você digita e completam somente o campo escolhido.</p>
       <div className="form-grid form-grid--two">
-        <Field label="Cliente"><input list="suggestions-client" value={draft.client} onChange={e=>applySuggestion('client',e.target.value)} maxLength={200}/>{list('client')}<ClientColorPreview client={draft.client} colors={colors}/></Field>
-        <Field label="Projeto"><input list="suggestions-project" value={draft.project} onChange={e=>applySuggestion('project',e.target.value)} maxLength={200}/>{list('project')}</Field>
-        <Field label="Atividade (descrição macro)"><input id="activity" list="suggestions-activity" value={draft.activity} onChange={e=>applySuggestion('activity',e.target.value)} maxLength={200} autoFocus placeholder="Ex.: revisar requisitos"/>{list('activity')}</Field>
+        <CatalogSelect label="Cliente" optional value={draft.client} options={catalogs.items.clients} onChange={value=>set(setDraft,'client',value)} preview={<ClientColorPreview client={draft.client} colors={colors}/>}/>
+        <CatalogSelect label="Projeto" optional value={draft.project} options={catalogs.items.projects} onChange={value=>set(setDraft,'project',value)}/>
+        <CatalogSelect label="Atividade (descrição macro)" value={draft.activity} options={catalogs.items.activities} required onChange={value=>set(setDraft,'activity',value)}/>
         <Field label="Categoria do apontamento"><select value={draft.category} disabled={!!session} onChange={e=>set(setDraft,'category',e.target.value)}><option value="Normal">Normal</option><option value="Agenda">Agenda</option></select></Field>
         <Field label="Detalhamento"><textarea value={draft.details} onChange={e=>set(setDraft,'details',e.target.value)} maxLength={1000} rows={2}/></Field>
         <Field label="Consultor solicitante"><input list="suggestions-consultant" value={draft.consultant} onChange={e=>applySuggestion('consultant',e.target.value)} maxLength={200}/>{list('consultant')}</Field>

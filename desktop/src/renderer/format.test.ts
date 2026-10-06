@@ -1,10 +1,16 @@
 import { describe,expect,it } from 'vitest';
-import { amount,clock,duration,hourInput,localDayStartIso,sessionCsv } from './format';
+import { amount,clock,duration,hourInput,localDayStartIso,sessionCsv,workHoursCsv } from './format';
 import type { Session } from './types';
 
 const sample:Session={id:'1',taskId:null,client:'=SUM(1,1)',project:'Projeto "A"',activity:'Escrita',details:'',consultant:'',cardReference:'',startAt:'2026-09-23T10:00:00-03:00',endAt:null,plannedSeconds:0,focusSeconds:1800,hourlyRate:120,status:'Concluída',category:'Normal'};
 
 describe('formatos do Foco',()=>{
+ it('exporta o t?rmino escolhido e usa o dispon?vel em registros antigos',()=>{
+  const row={...sample,endAt:'2026-09-23T10:07:00Z',roundedEndAt:'2026-09-23T10:10:00Z'};
+  expect(sessionCsv([row],false)).toContain(row.endAt);
+  expect(sessionCsv([row],false,'rounded')).toContain(row.roundedEndAt);
+  expect(sessionCsv([{...row,roundedEndAt:null}],false,'rounded')).toContain(row.endAt);
+ });
  it('converte limites de data para inicios de dias locais consecutivos',()=>{
   const day='2026-09-23';
   expect(new Date(localDayStartIso(day))).toEqual(new Date(2026,8,23));
@@ -30,8 +36,12 @@ describe('formatos do Foco',()=>{
   expect(withValues).toContain("\"'=SUM(1,1)\"");
   expect(withValues).toContain('"Projeto ""A"""');
   expect(withValues).toContain('Valor_hora_BRL');
-  const privateCsv=sessionCsv([sample],false);
-  expect(privateCsv).not.toContain('Valor_hora_BRL');
-  expect(privateCsv).not.toContain('120');
+ const privateCsv=sessionCsv([sample],false);
+ expect(privateCsv).not.toContain('Valor_hora_BRL');
+ expect(privateCsv).not.toContain('120');
+ });
+ it('exporta resumo diário e lacunas A definir no CSV',()=>{
+  const csv=workHoursCsv({days:[{day:'2026-09-22',workedSeconds:32400,undefinedSeconds:3600,regularSeconds:28800,extraSeconds:3600,estimated:true}],undefinedPeriods:[{day:'2026-09-22',startAt:'2026-09-22T10:00:00-03:00',endAt:'2026-09-22T11:00:00-03:00',seconds:3600}]});
+  expect(csv).toContain('Extra_time_segundos');expect(csv).toContain('"Estimado"');expect(csv).toContain('"A definir"');expect(csv).toContain('"3600"');
  });
 });

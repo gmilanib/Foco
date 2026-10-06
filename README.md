@@ -13,12 +13,14 @@
   <img alt="Licença" src="https://img.shields.io/badge/licen%C3%A7a-a%20definir-lightgrey">
 </p>
 
-> **Status:** em desenvolvimento. O Foco Java é uma fork desktop independente do Foco V35. A distribuição pública ainda depende das etapas listadas no [roadmap](Roadmap.md).
+> **Versão Stable: 1.14.0.** Baixe o instalador na [release do GitHub](https://github.com/gmilanib/Foco/releases/tag/v1.14.0-stable). O Foco Java é uma aplicação desktop independente do Foco V35. Consulte o [roadmap](Roadmap.md) para as próximas melhorias.
 
 ## O que você pode fazer
 
 - **Registrar seu foco:** use cronômetro ou timer, pause e retome sessões e continue acompanhando o tempo pela bandeja do sistema.
 - **Organizar tarefas:** acompanhe tarefas pendentes, em andamento e concluídas, com prazos e vários apontamentos relacionados.
+- **Planejar e revisar:** capture demandas em Hoje, defina prioridades e próxima ação, compare estimativas com a capacidade diária e faça a revisão semanal.
+- **Acompanhar avanços:** use checklists, arquive e restaure tarefas/projetos e configure modelos recorrentes com geração manual.
 - **Consultar relatórios e dashboards:** filtre períodos e visualize o tempo por cliente, projeto, atividade ou consultor.
 - **Corrigir ou recuperar registros:** edite lançamentos históricos, registre trabalho retroativo e importe dados do Foco V35 em modo somente leitura.
 - **Personalizar seu espaço:** escolha tema, cor de destaque, cores de clientes e opções de privacidade para valores.
@@ -60,9 +62,10 @@ O comando de desenvolvimento compila o backend e inicia a interface e o Electron
 ```powershell
 npm test
 npm run build
+npm run build:stable
 ```
 
-Os testes incluem a suíte de integração Java e os testes da interface. O build produz um instalador NSIS para Windows em `desktop/release`. O computador que executar o aplicativo instalado precisa ter Java 17 ou mais recente.
+Os testes incluem a suíte de integração Java e os testes da interface. `npm run build` produz o instalador New em `release/New`; `npm run build:stable` produz o instalador Stable em `release/Stable`. O computador que executar o aplicativo instalado precisa ter Java 17 ou mais recente. Encerre o apontamento e faça backup antes de atualizar; os canais compartilham o banco local.
 
 ## Dados e privacidade
 

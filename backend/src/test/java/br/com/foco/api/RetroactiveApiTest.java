@@ -18,7 +18,7 @@ class RetroactiveApiTest {
     private final HttpClient client=HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(3)).build();
     private static final String BODY="{\"client\":\"ACME\",\"project\":\"P1\",\"activity\":\"Revisão\",\"details\":\"Trabalho offline\",\"consultant\":\"Ana\",\"cardReference\":\"CARD-1\",\"startAt\":\"2026-09-22T09:00:00-03:00\",\"endAt\":\"2026-09-22T11:00:00-03:00\",\"focusMinutes\":75,\"hourlyRate\":120,\"status\":\"Concluída\"}";
 
-    @BeforeEach void clean(){db.update("DELETE FROM sessions");db.update("DELETE FROM tasks");}
+    @BeforeEach void clean(){db.update("DELETE FROM sessions");db.update("DELETE FROM tasks");for(String name:new String[]{"ACME"})db.update("INSERT OR IGNORE INTO catalog_clients(name_key,name) VALUES(?,?)",name.toLowerCase(),name);for(String name:new String[]{"P1"})db.update("INSERT OR IGNORE INTO catalog_projects(name_key,name) VALUES(?,?)",name.toLowerCase(),name);for(String name:new String[]{"Revisão"})db.update("INSERT OR IGNORE INTO catalog_activities(name_key,name) VALUES(?,?)",name.toLowerCase(),name);}
 
     @Test void createsFinishedEntryWithEffectiveFocusAndAllowsOverlap() throws Exception {
         assertEquals(401,send("POST","/api/sessions/retroactive",BODY,false).statusCode());

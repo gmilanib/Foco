@@ -1,6 +1,6 @@
 {
   "name": "foco-java",
-  "version": "1.1.0",
+  "version": "1.14.0",
   "private": true,
   "description": "Fork desktop Electron do Foco, com backend Spring e SQLite local",
   "main": "desktop/dist/main.cjs",
@@ -10,6 +10,7 @@
     "dev:electron": "wait-on http://127.0.0.1:5173 && electron desktop/src/main.cjs",
     "build:backend": "cd backend && .\\mvnw.cmd -DskipTests package",
     "build:desktop": "tsc -b desktop/tsconfig.app.json && vite build --config desktop/vite.config.ts && node desktop/scripts/copy-electron-files.cjs && electron-builder --config desktop/electron-builder.new.yml",
+    "build:stable": "npm run build:backend && tsc -b desktop/tsconfig.app.json && vite build --config desktop/vite.config.ts && node desktop/scripts/copy-electron-files.cjs && electron-builder --config desktop/electron-builder.stable.yml",
     "build": "npm run build:backend && npm run build:desktop",
     "test:backend": "cd backend && .\\mvnw.cmd test",
     "test:desktop": "vitest run --config desktop/vite.config.ts",

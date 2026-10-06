@@ -17,12 +17,41 @@ class SessionApiTest {
     private static final String AUTH="test-secret";
     private final HttpClient client=HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(3)).build();
 
-    @BeforeEach void clean(){db.update("DELETE FROM sessions");db.update("DELETE FROM tasks");db.update("DELETE FROM settings");}
+    @BeforeEach void clean(){db.update("DELETE FROM session_work_intervals");db.update("DELETE FROM sessions");db.update("DELETE FROM tasks");db.update("DELETE FROM settings");seedCatalogs();}
+    private void seedCatalogs(){for(String name:new String[]{"ACME","Outro","Beta"})db.update("INSERT OR IGNORE INTO catalog_clients(name_key,name) VALUES(?,?)",name.toLowerCase(),name);for(String name:new String[]{"P1","P2","Portal","Aplicativo","Mobile"})db.update("INSERT OR IGNORE INTO catalog_projects(name_key,name) VALUES(?,?)",name.toLowerCase(),name);for(String name:new String[]{"Revisão","Foco","Atividade","Entrega","Teste","Reunião de projeto","A","B"})db.update("INSERT OR IGNORE INTO catalog_activities(name_key,name) VALUES(?,?)",name.toLowerCase(),name);}
+
+    @Test void finishPreservesRealEndAndRoundingAdjustment() throws Exception {
+        db.update("INSERT INTO sessions(id,activity,start_at,status) VALUES('dual','A','2026-09-23T10:00:00Z','Pausada')");
+        var result=send("POST","/api/sessions/dual/finish","{\"status\":\"Encerrada\",\"focusSeconds\":420.5}",true);
+        assertEquals(200,result.statusCode(),result.body());
+        var row=new tools.jackson.databind.ObjectMapper().readTree(result.body());
+        var real=java.time.OffsetDateTime.parse(row.get("endAt").asText());
+        var rounded=java.time.OffsetDateTime.parse(row.get("roundedEndAt").asText());
+        assertEquals(179500,Duration.between(real,rounded).toMillis());
+        assertEquals(600,row.get("focusSeconds").asDouble());
+        assertEquals(400,send("POST","/api/sessions/dual/finish","{\"status\":\"Encerrada\",\"focusSeconds\":420}",true).statusCode());
+        assertEquals(real.toString(),db.queryForObject("SELECT end_at FROM sessions WHERE id='dual'",String.class));
+    }
 
     @Test void apiRequiresLocalTokenButHealthIsPublic() throws Exception {
         assertEquals(401,send("GET","/api/sessions",null,false).statusCode());
         HttpResponse<String> health=send("GET","/api/health",null,false);
         assertEquals(200,health.statusCode());assertTrue(health.body().contains("\"status\":\"ok\""));
+    }
+
+    @Test void conflictIntervalsRequireTokenAndPreservePrecisePauses() throws Exception {
+        db.update("INSERT INTO sessions(id,activity,start_at,end_at,focus_seconds,status) VALUES ('review','A','2026-09-22T09:00:00-03:00','2026-09-22T12:00:00-03:00',7200,'Concluída')");
+        db.update("INSERT INTO session_work_intervals(session_id,start_at,end_at,last_tick_at,precision) VALUES " +
+                "('review','2026-09-22T09:00:00-03:00','2026-09-22T10:00:00-03:00','2026-09-22T10:00:00-03:00','Precisa')," +
+                "('review','2026-09-22T11:00:00-03:00','2026-09-22T12:00:00-03:00','2026-09-22T12:00:00-03:00','Precisa')");
+        assertEquals(401,send("GET","/api/work-hours/intervals",null,false).statusCode());
+        var result=send("GET","/api/work-hours/intervals",null,true);
+        assertEquals(200,result.statusCode());
+        var rows=new tools.jackson.databind.ObjectMapper().readTree(result.body());
+        assertEquals(2,rows.size());
+        assertEquals("Precisa",rows.get(0).get("precision").asText());
+        assertEquals("2026-09-22T10:00:00-03:00",rows.get(0).get("endAt").asText());
+        assertEquals("2026-09-22T11:00:00-03:00",rows.get(1).get("startAt").asText());
     }
 
     @Test void activeSessionCannotBeDuplicatedAndPauseFinishPreserveRoundedFocus() throws Exception {
@@ -33,6 +62,37 @@ class SessionApiTest {
         HttpResponse<String> finished=send("POST","/api/sessions/"+id+"/finish","{\"status\":\"Concluída\",\"focusSeconds\":301}",true);
         assertEquals(200,finished.statusCode());assertTrue(finished.body().contains("\"focusSeconds\":600.0"));
         assertEquals(200,send("GET","/api/sessions?client=ACME&minHours=0.1",null,true).statusCode());
+    }
+
+    @Test void timerStoresPreciseIntervalsAcrossPauseAndResume() throws Exception {
+        String start="{\"activity\":\"Foco\",\"startAt\":\""+java.time.OffsetDateTime.now()+"\",\"plannedSeconds\":0,\"status\":\"Em andamento\"}";
+        HttpResponse<String> created=send("POST","/api/sessions",start,true);assertEquals(200,created.statusCode());String id=id(created.body());
+        assertEquals(200,send("POST","/api/sessions/"+id+"/pause","{\"focusSeconds\":60}",true).statusCode());
+        assertEquals(1,db.queryForObject("SELECT count(*) FROM session_work_intervals WHERE session_id=? AND end_at IS NOT NULL AND precision='Precisa'",Integer.class,id));
+        assertEquals(200,send("POST","/api/sessions/"+id+"/resume",null,true).statusCode());
+        assertEquals(200,send("POST","/api/sessions/"+id+"/finish","{\"status\":\"Concluída\",\"focusSeconds\":120}",true).statusCode());
+        assertEquals(2,db.queryForObject("SELECT count(*) FROM session_work_intervals WHERE session_id=? AND precision='Precisa'",Integer.class,id));
+        assertEquals(0,db.queryForObject("SELECT count(*) FROM session_work_intervals WHERE session_id=? AND end_at IS NULL",Integer.class,id));
+    }
+
+    @Test void workHoursReportFillsWeekdayGapsAndSeparatesDailyOvertime() throws Exception {
+        db.update("INSERT INTO sessions(id,activity,start_at,end_at,focus_seconds,status) VALUES " +
+                "('morning','A','2026-09-22T09:00:00-03:00','2026-09-22T10:00:00-03:00',3600,'Concluída'),"+
+                "('evening','B','2026-09-22T14:00:00-03:00','2026-09-22T20:00:00-03:00',21600,'Concluída')");
+        HttpResponse<String> result=send("GET","/api/work-hours?from=2026-09-22&to=2026-09-22",null,true);
+        assertEquals(200,result.statusCode(),result.body());assertTrue(result.body().contains("\"undefinedSeconds\":10800.0"),result.body());
+        assertTrue(result.body().contains("\"regularSeconds\":28800.0"),result.body());assertTrue(result.body().contains("\"extraSeconds\":7200.0"),result.body());
+    }
+
+    @Test void workHoursIgnoresLunchWeekendGapsAndRejectsReversedDates() throws Exception {
+        db.update("INSERT INTO sessions(id,activity,start_at,end_at,focus_seconds,status) VALUES " +
+                "('lunch-a','A','2026-09-22T11:00:00-03:00','2026-09-22T12:00:00-03:00',3600,'Concluída'),"+
+                "('lunch-b','B','2026-09-22T13:00:00-03:00','2026-09-22T14:00:00-03:00',3600,'Concluída'),"+
+                "('weekend-a','A','2026-09-26T09:00:00-03:00','2026-09-26T10:00:00-03:00',3600,'Concluída'),"+
+                "('weekend-b','B','2026-09-26T14:00:00-03:00','2026-09-26T15:00:00-03:00',3600,'Concluída')");
+        HttpResponse<String> result=send("GET","/api/work-hours?from=2026-09-22&to=2026-09-26",null,true);
+        assertEquals(200,result.statusCode(),result.body());assertTrue(result.body().contains("\"undefinedPeriods\":[]"),result.body());
+        assertEquals(400,send("GET","/api/work-hours?from=2026-09-26&to=2026-09-22",null,true).statusCode());
     }
 
     @Test void csvNeutralizesSpreadsheetFormulas() throws Exception {
@@ -65,6 +125,31 @@ class SessionApiTest {
         assertEquals(200,send("POST","/api/sessions/"+sessionId+"/finish","{\"status\":\"Encerrada\",\"focusSeconds\":90}",true).statusCode());
         HttpResponse<String> completed=send("POST","/api/tasks/"+taskId+"/complete","{\"completed\":true}",true);
         assertEquals(200,completed.statusCode());assertTrue(completed.body().contains("Concluída"));assertTrue(completed.body().contains("\"entries\":1"));
+    }
+
+    @Test void tasksAllowManualStateChangesAndRecordTaskAndSessionHistory() throws Exception {
+        String created=send("POST","/api/tasks","{\"client\":\"ACME\",\"project\":\"P1\",\"activity\":\"Entrega\"}",true).body();
+        String taskId=id(created);
+        assertEquals(200,send("POST","/api/tasks/"+taskId+"/status","{\"state\":\"Em andamento\"}",true).statusCode());
+        assertTrue(send("GET","/api/tasks",null,true).body().contains("\"state\":\"Em andamento\""));
+        assertEquals(400,send("POST","/api/tasks/"+taskId+"/status","{\"state\":\"Bloqueada\"}",true).statusCode());
+
+        String session=send("POST","/api/sessions/retroactive","{\"client\":\"ACME\",\"project\":\"P1\",\"activity\":\"Entrega\",\"taskId\":\""+taskId+"\",\"startAt\":\"2026-09-23T09:00:00-03:00\",\"endAt\":\"2026-09-23T10:00:00-03:00\",\"focusMinutes\":60,\"status\":\"Concluída\"}",true).body();
+        String sessionId=id(session);
+        var taskHistory=send("GET","/api/history?entityType=task&entityId="+taskId,null,true);
+        assertEquals(200,taskHistory.statusCode());assertTrue(taskHistory.body().contains("Em andamento"));
+        var sessionHistory=send("GET","/api/history?entityType=session&entityId="+sessionId,null,true);
+        assertEquals(200,sessionHistory.statusCode());assertTrue(sessionHistory.body().contains("Retroactive" )||sessionHistory.body().contains("Concluída"));
+        assertEquals(400,send("GET","/api/history?entityType=admin&entityId=x",null,true).statusCode());
+    }
+
+    @Test void manualStatusCannotCompleteTaskWithAnActiveSession() throws Exception {
+        String created=send("POST","/api/tasks","{\"activity\":\"Entrega\"}",true).body();String taskId=id(created);
+        String body="{\"taskId\":\""+taskId+"\",\"activity\":\"Entrega\",\"startAt\":\"2026-09-23T10:00:00-03:00\",\"plannedSeconds\":0,\"status\":\"Em andamento\"}";
+        String active=send("POST","/api/sessions",body,true).body();String sessionId=id(active);
+        assertEquals(400,send("POST","/api/tasks/"+taskId+"/status","{\"state\":\"Concluída\"}",true).statusCode());
+        assertEquals(200,send("POST","/api/sessions/"+sessionId+"/finish","{\"status\":\"Encerrada\",\"focusSeconds\":60}",true).statusCode());
+        assertEquals(200,send("POST","/api/tasks/"+taskId+"/status","{\"state\":\"Concluída\"}",true).statusCode());
     }
 
     @Test void deletesOneFinishedEntryAndUpdatesTaskAndDashboardTotals() throws Exception {
@@ -106,6 +191,15 @@ class SessionApiTest {
         db.update("INSERT INTO sessions(id,client,project,activity,consultant,start_at,focus_seconds,hourly_rate,status) VALUES('d1','ACME','P1','A','Ana','2026-09-23T10:00:00Z',3600,'120','Concluída'),('d2','ACME','P2','B','Ana','2026-09-23T11:00:00Z',1800,NULL,'Encerrada')");
         HttpResponse<String> result=send("GET","/api/dashboard?group=client",null,true);
         assertEquals(200,result.statusCode());assertTrue(result.body().contains("\"sessions\":2"));assertTrue(result.body().contains("\"seconds\":5400.0"));assertTrue(result.body().contains("\"projects\":[{"));assertTrue(result.body().contains("P2"));
+    }
+
+    @Test void dashboardReturnsZeroTotalsWhenDateFilterHasNoSessions() throws Exception {
+        HttpResponse<String> result=send("GET","/api/dashboard?group=client&from=2026-09-25T03:00:00Z&to=2026-09-26T03:00:00Z",null,true);
+        assertEquals(200,result.statusCode(),result.body());
+        assertTrue(result.body().contains("\"sessions\":0"),result.body());
+        assertTrue(result.body().contains("\"seconds\":0.0"),result.body());
+        assertTrue(result.body().contains("\"unpriced\":0"),result.body());
+        assertTrue(result.body().contains("\"groups\":[]"),result.body());
     }
 
     @Test void dashboardIncludesLocalDayBoundariesAndRespectsTimestampOffsets() throws Exception {

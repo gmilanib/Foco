@@ -1,0 +1,19 @@
+.planning-tabs,.planning-capture { display:flex; gap:12px; flex-wrap:wrap; align-items:end; }
+.planning-capture .field { flex:1; min-width:220px; }
+.planning-list { list-style:none; padding:0; margin:16px 0; }
+.planning-list li { display:flex; justify-content:space-between; align-items:center; gap:16px; padding:12px 0; border-bottom:1px solid var(--line); }
+.planning-list li>span { min-width:0; overflow-wrap:anywhere; white-space:pre-wrap; }
+.planning-list small { display:block; opacity:.7; margin-top:4px; }
+.planning-task { border:1px solid var(--line); border-radius:12px; padding:18px; margin:12px 0; overflow-wrap:anywhere; }
+.planning-task--priority { border-left:4px solid var(--accent); }
+.planning-task h3 { margin:0; }
+.planning-task p { margin:8px 0; }
+.planning-task>.actions { margin-top:14px; flex-wrap:wrap; }
+.planning-details { white-space:pre-wrap; }
+.planning-rank { background:var(--accent); color:var(--accent-text); width:28px; height:28px; border-radius:50%; display:inline-grid; place-items:center; font-weight:700; }
+.planning-check { display:flex; align-items:center; gap:8px; margin:16px 0; }
+.planning-check input { width:auto; }
+@media(max-width:800px) { .planning-list li { align-items:stretch; flex-direction:column; } .planning-tabs .button { flex:1 1 140px; } }
+
+.local-diagnostics, .local-diagnostics dd { overflow-wrap: anywhere; }
+.local-diagnostics dd { margin: 0 0 12px; }

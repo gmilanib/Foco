@@ -1,4 +1,5 @@
 import type { Session } from './types';
+import { sessionSpans } from './conflicts';
 
 export function intervalMinutes(start:string,end:string):number|null{
  const startTime=new Date(start).getTime(),endTime=new Date(end).getTime();
@@ -18,6 +19,7 @@ export function overlappingSessions(history:Session[],start:string,end:string,no
  const startTime=new Date(start).getTime(),endTime=new Date(end).getTime();
  if(!Number.isFinite(startTime)||!Number.isFinite(endTime)||endTime<=startTime)return [];
  return history.filter(session=>{
+  if(session.workIntervals?.length)return sessionSpans(session).some(span=>span.start<endTime&&span.end>startTime);
   const existingStart=new Date(session.startAt).getTime();
   const existingEnd=session.endAt?new Date(session.endAt).getTime():now.getTime();
   return Number.isFinite(existingStart)&&Number.isFinite(existingEnd)&&existingStart<endTime&&existingEnd>startTime;

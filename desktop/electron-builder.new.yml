@@ -15,6 +15,7 @@ win:
   target: nsis
   icon: desktop/build/Foco.ico
 nsis:
+  include: desktop/build/installer.nsh
   oneClick: true
   perMachine: false
   runAfterFinish: false
