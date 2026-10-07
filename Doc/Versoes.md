@@ -14,7 +14,7 @@ New: `release/New/Foco-New-Setup-1.18.0.exe`, 148541391 bytes; SHA-256 `522f8b53
 
 Stable: `release/Stable/Foco-Stable-Setup-1.18.0.exe`, 148603779 bytes; SHA-256 `be20b17b2534219ffc31236444a20f7ee0342855e0dd585fef66242970ac50da`.
 
-Publicação Stable 1.18.0 autorizada e preparada; será executada após o envio do código validado à main.
+Stable publicada em [v1.18.0-stable](https://github.com/gmilanib/Foco/releases/tag/v1.18.0-stable), commit `6c93503f647f6d2fe475241663ddadef04dc8c2c`; quatro anexos verificados por tamanho e SHA-256.
 
 ## New 1.17.0 — interface e blocos de 2 minutos — 06/10/2026
 

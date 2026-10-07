@@ -9,10 +9,10 @@ Solicitada em 07/10/2026. Base New 1.17.0 e promoção/publicação Stable confi
 - [x] Renovar controles de estado e permitir seleção múltipla por caixas de seleção, sem Shift.
 - [x] Validar 124 testes Java e 176 Vitest, builds New/Stable, 28 capturas e backend empacotado isolado.
 - [x] Instalar New e Stable 1.18.0; hashes, janela, token e preservação das 20 tabelas/274 apontamentos conferidos.
-- [ ] Publicar Stable 1.18.0 no GitHub, com código validado e quatro anexos verificados.
+- [x] Publicar Stable 1.18.0 no GitHub, com código validado e quatro anexos verificados.
 - [x] Limpar intermediários e pacotes substituídos; preservar instaladores atuais, backups e evidências.
 
-Publicação Stable 1.18.0 autorizada e preparada; será executada após o envio do código validado à main.
+Stable publicada em [v1.18.0-stable](https://github.com/gmilanib/Foco/releases/tag/v1.18.0-stable), commit `6c93503f647f6d2fe475241663ddadef04dc8c2c`; quatro anexos verificados por tamanho e SHA-256.
 
 ## New 1.17.0 — interface expressiva e blocos de 2 minutos
 
