@@ -13,7 +13,7 @@ afterEach(cleanup);
 describe('quadro de tarefas',()=>{
  it('permite filtrar e selecionar o estado Aguardando',()=>{
   render(<TasksPage {...props} items={[{...task,state:'Aguardando'}]}/>);
-  fireEvent.change(screen.getByLabelText(/Estado \(selecione/),{target:{value:'Aguardando'}});
+  fireEvent.click(screen.getByRole('checkbox',{name:'Aguardando'}));
   expect(screen.getByText('Texto anterior')).toBeInTheDocument();
   expect(screen.getByLabelText('Estado de Revisão')).toHaveValue('Aguardando');
  });
@@ -68,18 +68,20 @@ describe('quadro de tarefas',()=>{
   fireEvent.change(screen.getByLabelText('Consultor'),{target:{value:'inexistente'}});
   expect(screen.getByText(/Nenhuma tarefa encontrada/)).toBeInTheDocument();
   fireEvent.change(screen.getByLabelText('Consultor'),{target:{value:''}});
-  fireEvent.change(screen.getByLabelText(/Estado \(selecione/),{target:{value:'Em andamento'}});
+  fireEvent.click(screen.getByRole('checkbox',{name:'Em andamento'}));
   expect(screen.getByText(/Nenhuma tarefa encontrada/)).toBeInTheDocument();
  });
  it('filtra por vários estados, abre card/link e permite alterar estado manualmente',()=>{
   const active={...task,id:'active',state:'Em andamento',cardReference:'https://example.test/work'};
   render(<TasksPage {...props} items={[task,secondTask,active]}/>);
-  const statuses=screen.getByLabelText(/Estado \(selecione vários\)/) as HTMLSelectElement;
-  statuses.options[1].selected=true;statuses.options[2].selected=true;fireEvent.change(statuses);
+  fireEvent.click(screen.getByRole('checkbox',{name:'Em andamento'}));
+  fireEvent.click(screen.getByRole('checkbox',{name:'Concluída'}));
   expect(screen.getByText('Teste')).toBeInTheDocument();expect(screen.getByText('Revisão')).toBeInTheDocument();
   expect(screen.getByRole('link',{name:'Abrir link'})).toHaveAttribute('href','https://example.test/work');
   fireEvent.change(screen.getByLabelText('Estado de Revisão'),{target:{value:'Concluída'}});
   expect(props.onStatusChange).toHaveBeenCalledWith(active,'Concluída');
+  fireEvent.click(screen.getByRole('button',{name:'Limpar estados'}));
+  expect(screen.getAllByText('Revisão')).toHaveLength(2);
  });
  it('abre o histórico local da tarefa',async()=>{
   (window.foco.request as ReturnType<typeof vi.fn>).mockResolvedValueOnce([{id:'history-1',entityType:'task',entityId:task.id,changedAt:'2026-09-28T12:00:00-03:00',newValue:JSON.stringify(task)}]);

@@ -10,11 +10,13 @@ import java.io.IOException;
 @Component
 class LocalAuthFilter extends OncePerRequestFilter {
     private final String token;
-    LocalAuthFilter(@Value("${FOCO_API_TOKEN:}") String token){this.token=token;}
+    private final DatabaseMaintenance maintenance;
+    LocalAuthFilter(@Value("${FOCO_API_TOKEN:}") String token,DatabaseMaintenance maintenance){this.token=token;this.maintenance=maintenance;}
     @Override protected boolean shouldNotFilter(HttpServletRequest request){return request.getRequestURI().equals("/api/health");}
     @Override protected void doFilterInternal(HttpServletRequest request,HttpServletResponse response,FilterChain chain) throws ServletException,IOException {
         String supplied=request.getHeader("X-Foco-Token");
         if(token.isBlank()||!java.security.MessageDigest.isEqual(token.getBytes(java.nio.charset.StandardCharsets.UTF_8),(supplied==null?"":supplied).getBytes(java.nio.charset.StandardCharsets.UTF_8))){response.sendError(401);return;}
-        chain.doFilter(request,response);
+        var lock=request.getMethod().equals("POST")&&request.getRequestURI().equals("/api/backup/restore")?maintenance.write():maintenance.read();
+        lock.lock();try{chain.doFilter(request,response);}finally{lock.unlock();}
     }
 }

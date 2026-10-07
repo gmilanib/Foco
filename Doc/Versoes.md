@@ -1,5 +1,59 @@
 # Versões Stable e New
 
+## New e Stable 1.18.0 — 07/10/2026
+
+Área única Tarefas e hoje, limite diário configurável (padrão 5), filtro de estados sem Shift e cores persistentes para projetos novos. Stable também incorpora as entregas New 1.15–1.17. [Regras e fluxos](Tarefas-e-hoje.md).
+
+`npm test`: 124 Java e 176 Vitest aprovados; `npm run build` e `npm run build:stable` concluídos. 28 capturas em Electron, 1440 × 960 e 800 × 620, claro/escuro, teclado, filtros múltiplos e novos seletores conferidos. Backend empacotado testado em banco isolado: padrão 5, alteração/redução do limite, migração opcional preservando tarefas, HTTP 200 de saúde e 401 sem token.
+
+Frontend ASAR idêntico entre canais. Todas as 266 entradas dos JARs têm conteúdo idêntico; os hashes dos arquivos JAR diferem por metadados do empacotamento. Manifestos `latest.yml`, SHA-512/tamanho e `SHA256SUMS.txt` conferidos.
+
+New e Stable 1.18.0 instaladas nas pastas existentes, com saída 0 e executáveis 1.18.0.0. ASAR/JAR de cada instalação iguais ao pacote por SHA-256. Ambas abertas e verificadas em sequência, com janela respondendo e backend HTTP 200/401. Stable deixada aberta ao final. Antes das instalações, backup SQLite verificado; as 20 tabelas e todos os 274 apontamentos preservados. Apenas o campo opcional `catalog_projects.color_seed` foi adicionado; projetos antigos continuam nulos. Preferências funcionais e histórico mantidos.
+
+New: `release/New/Foco-New-Setup-1.18.0.exe`, 148541391 bytes; SHA-256 `522f8b531c6bab7fa9bfd237f42f335efbe13eea6dd490ce7814e434f02d5d7b`.
+
+Stable: `release/Stable/Foco-Stable-Setup-1.18.0.exe`, 148603779 bytes; SHA-256 `be20b17b2534219ffc31236444a20f7ee0342855e0dd585fef66242970ac50da`.
+
+Publicação Stable 1.18.0 autorizada e preparada; será executada após o envio do código validado à main.
+
+## New 1.17.0 — interface e blocos de 2 minutos — 06/10/2026
+
+Interface expressiva com superfícies, gradientes, botões com relevo, transições e indicador de foco animado. Encerramentos e trocas de tarefas usam blocos de 120 segundos; histórico recuperável convertido uma vez com backup anterior, transação e auditoria. Legados sem precisão identificados e preservados. Regras e limites em [Interface e arredondamento](Interface-e-arredondamento.md).
+
+`npm test`: 119 Java e 173 Vitest aprovados; `npm run build` concluído. Conferidos ASAR, main/preload/controlador iguais ao fonte, recursos visuais/regra na interface, JAR empacotado igual ao compilado, tamanho/SHA-512 de `latest.yml` e manifesto SHA-256.
+
+34 capturas em Electron, 1440 × 960 e 800 × 620, claro/escuro: sem erros JavaScript, rolagem horizontal ou rolagem duplicada do diálogo. Tema escuro do sistema, movimento reduzido, impressão, foco no título, Tab contido e Escape devolvendo foco validados. Backend empacotado em base isolada confirmou token (401 sem autenticação), conversão 600 → 480 segundos mantendo 420,5 segundos reais, legado de 300 e retroativo de 181 preservados, cópia anterior com 600 segundos, novo encerramento 121 → 240 e reabertura idempotente com integridade `ok`.
+
+Instalador local `release/New/Foco-New-Setup-1.17.0.exe`: 148.538.829 bytes, SHA-256 `b3eafb35cfb0c8461f075be8811533571b82b344e7e6e0685409aa70defba172`. JAR SHA-256 `3a18f4c5a82799f6fe8c781f432cdbc9d3b0779514676ecbc12bbbffa38c4712`. Evidências em `.atualizacao_status/experience-*`.
+
+New 1.17.0 instalada e aberta por solicitação do usuário: saída 0, versão 1.17.0.0 e hashes conferidos. Backup prévio verificado; 266 sessões preservadas, 41 históricos convertidos mantendo o foco real e 216 legados finalizados sem precisão conservados. Sessão atual pausada com 1.342 segundos; integridade `ok`, janela respondendo e backend saudável com token obrigatório. Detalhes em [Instalação](Instalacao.md).
+
+Não houve publicação externa. A limpeza inicial removeu 324 intermediários, 465.582.058 bytes (444 MiB). Após instalar, também foram removidos instalador/blockmap New 1.16.0 substituídos: 148.685.831 bytes (142 MiB). New 1.17.0, Stable, JAR/frontend e nove backups locais preservados. Detalhes em [Limpeza](Limpeza.md).
+
+## New 1.16.0 — sétima onda — 06/10/2026
+
+AP-03, AP-04 e CF-01 implementadas: linha do tempo diária, jornada semanal com vigência/exceções e restauração local de backup. A tabela de 24 melhorias está concluída. Fluxos, limites e testes em [Sétima onda](Setima-onda.md).
+
+`npm test`: 101 Java e 169 Vitest aprovados. `npm run build` concluído; versão interna 1.16.0, main/preload/controlador iguais ao fonte, interface com os recursos e JAR empacotado igual ao compilado. Manifestos SHA-512/tamanho e SHA-256 conferidos. Dez capturas em Electron 800 × 620, claro/escuro, sem rolagem horizontal ou erros JavaScript; Tab contido, Escape cancela a prévia e edição da linha do tempo acessível por botão.
+
+JAR final iniciado com Java real e base vazia isolada: saúde 200, tarefas sem token 401, configuração de jornada/folga e extra-time corretos, backup/prévia/restauração 200, hash alterado rejeitado com 400. A restauração recuperou duas sessões e checklist, manteve as regras, passou na integridade e sua cópia anterior continha os dados modificados antes da operação. Processo encerrado ao finalizar; banco de uso não foi restaurado.
+
+Instalador `release/New/Foco-New-Setup-1.16.0.exe`, 148.530.520 bytes, SHA-256 `55984c3b6996db388841837abd9a17db999c4b88b3e913f3988f3f744f6163a4`. JAR SHA-256 `a51a651e3f15990eec3285db0326348af85724d9071649391e17cb0d3ea1c299`.
+
+New 1.16.0 instalada e reaberta após solicitação do usuário, com saída 0 e hashes ASAR/JAR conferidos. Backup íntegro criado antes; 262 sessões e as 18 tabelas anteriores preservadas, com duas novas tabelas vazias. Janela respondendo, backend saudável e inicialização sem exceções registradas. Detalhes em [Instalação](Instalacao.md). Sem publicação desta onda. Pacotes Stable 1.14.0/1.6.0 e backups preservados. Limpeza de empacotamento/testes: 171 arquivos, 611.333.101 bytes (583 MiB), detalhada em [Limpeza](Limpeza.md). Evidências finais locais em `.atualizacao_status/seventh-wave-*`.
+
+## New 1.15.0 — sexta onda — 06/10/2026
+
+AN-02, OR-05, AD-01, AD-03 e OR-01 implementadas juntas: comparação de horas, visões salvas, captura global, lembretes locais e planejamento semanal. Fluxos, critérios, persistência e limites em [Sexta onda](Sexta-onda.md).
+
+`npm test`: 91 Java e 160 Vitest aprovados. `npm run build` e TypeScript concluídos; pacote interno 1.15.0, controlador local igual ao fonte e JAR empacotado idêntico ao compilado. Manifesto conferido por tamanho/SHA-512, e `SHA256SUMS.txt` atualizado para a New atual. Backend empacotado iniciado em base vazia isolada: saúde e tarefas autenticadas HTTP 200, tarefas sem token HTTP 401 e comparação vazia correta; processo encerrado ao finalizar.
+
+Conferência visual em Electron com dados de demonstração, 800 × 620 e temas claro/escuro: 14 capturas, sem rolagem horizontal da página ou dos diálogos, foco na captura, Tab contido e Escape preservando o formulário e seu rascunho. Capturas e resultados em `.atualizacao_status/sixth-wave-qa/`; atalho/notificação nativos testados com controladores simulados. Exceção relatada pelo usuário durante a validação não teve mensagem fornecida e não foi reproduzida nos testes finais; não é possível afirmar sua causa.
+
+Instalador local: `release/New/Foco-New-Setup-1.15.0.exe`, 148.493.648 bytes, SHA-256 `6649d8f0cd424ee0be8635b96d893c5ff7b6166e0da3ff42a7b05426a7f0a1c5`. JAR SHA-256 `a7bf0f20b3500255d6aaaa53eeca48312f9d17265b386adf7a36db0c2132e3d2`.
+
+Após solicitação do usuário, New 1.15.0 reinstalada e aberta em 06/10/2026: instalador com saída 0, versão 1.15.0.0, ASAR/JAR conferidos e todas as 18 tabelas preservadas, incluindo 261 sessões. Backup íntegro criado antes da instalação; janela respondendo e backend saudável. Detalhes em [Instalação](Instalacao.md). Sem publicação no GitHub nesta entrega. Stable 1.14.0, pacotes correspondentes às instalações atuais, banco de uso e backups preservados. A limpeza removeu as cópias regeneráveis do empacotamento, perfil/base de QA e scripts pontuais de integração; código, testes e evidências finais permanecem disponíveis.
+
 ## Stable 1.14.0 — promoção e atualização do GitHub — 06/10/2026
 
 Todas as atualizações da New até 1.14.0 foram promovidas para `release/Stable/Foco-Stable-Setup-1.14.0.exe`, incluindo as cinco ondas de melhorias, backup, cadastros, revisão de horários e planejamento. A Stable mantém nome, identidade Windows e instalação assistida, incorporando a correção de liberação de Electron/Java da pasta de destino. Fluxo em [Instalação](Instalacao.md).

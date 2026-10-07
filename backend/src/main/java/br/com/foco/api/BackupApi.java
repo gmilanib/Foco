@@ -27,10 +27,16 @@ class BackupController {
 @Service
 class LocalBackup {
     private final JdbcTemplate db; private final Path data;
-    LocalBackup(JdbcTemplate db,@Value("${FOCO_DATA_DIR:${user.home}/AppData/Local/FocoJava}")String directory){this.db=db;this.data=Paths.get(directory).toAbsolutePath().normalize();}
+    private final DatabaseMaintenance maintenance;
+    LocalBackup(JdbcTemplate db,String directory){this(db,directory,new DatabaseMaintenance());}
+    @org.springframework.beans.factory.annotation.Autowired
+    LocalBackup(JdbcTemplate db,@Value("${FOCO_DATA_DIR:${user.home}/AppData/Local/FocoJava}")String directory,DatabaseMaintenance maintenance){this.db=db;this.data=Paths.get(directory).toAbsolutePath().normalize();this.maintenance=maintenance;}
     @EventListener(ApplicationReadyEvent.class) void onOpen(){runDaily();}
-    @Scheduled(fixedDelay=60000) void runDaily(){String folder=setting("backup.destination");if(!folder.isBlank())try{create(folder,false);}catch(RuntimeException ignored){/* Panel surfaces errors on the next explicit attempt. */}}
-    synchronized BackupResult create(String folder,boolean manual){
+    @Scheduled(fixedDelay=60000) void runDaily(){var lock=maintenance.read();lock.lock();try{String folder=setting("backup.destination");if(!folder.isBlank())try{create(folder,false);}catch(RuntimeException ignored){/* Panel surfaces errors on the next explicit attempt. */}}finally{lock.unlock();}}
+    BackupResult create(String folder,boolean manual){
+        var lock=maintenance.read();lock.lock();try{synchronized(this){return createLocked(folder,manual);}}finally{lock.unlock();}
+    }
+    private BackupResult createLocked(String folder,boolean manual){
         try{
             BackupResult result=perform(folder,manual);
             if(!result.path().isBlank())recordAttempt("Sucesso",result.status());

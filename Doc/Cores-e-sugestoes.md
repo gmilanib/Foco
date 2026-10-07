@@ -55,3 +55,7 @@ flowchart LR
 2. Texto sem correspondência permanece aceito e não sugere opções. O valor já digitado por completo não aparece como sugestão redundante.
 3. Valor por hora sugerido preserva a vírgula decimal. Detalhamento pode ser apagado sem alterar Consultor.
 4. Uma cor de cliente aparece nos seus registros; uma cor de destaque clara ou escura mantém o texto legível nos botões.
+
+## Atualização 1.18.0
+
+Na 1.18.0, novos projetos recebem uma semente aleatória persistida. Com cliente colorido, a semente determina uma variação da cor do cliente; sem ele, uma cor automática. Projetos antigos mantêm o cálculo anterior. Marcadores e gráficos compartilham a semente. [Detalhes](Tarefas-e-hoje.md).

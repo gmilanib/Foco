@@ -23,7 +23,7 @@ enum CatalogType {
 }
 
 record CatalogDuplicate(String type, String first, String second, double similarity) {}
-record CatalogSnapshot(Map<String,List<String>> items, List<CatalogDuplicate> possibleDuplicates,List<String> archivedProjects) {}
+record CatalogSnapshot(Map<String,List<String>> items, List<CatalogDuplicate> possibleDuplicates,List<String> archivedProjects,Map<String,Integer> projectColorSeeds) {}
 
 @Service
 class CatalogService {
@@ -32,7 +32,11 @@ class CatalogService {
 
     @EventListener(ApplicationReadyEvent.class)
     @Transactional
-    void initialize() { reconcileLegacyValues(); }
+    void initialize() {
+        boolean hasSeed=db.queryForList("PRAGMA table_info(catalog_projects)").stream().anyMatch(row->"color_seed".equals(row.get("name")));
+        if(!hasSeed)db.execute("ALTER TABLE catalog_projects ADD COLUMN color_seed INTEGER");
+        reconcileLegacyValues();
+    }
 
     @Transactional
     void reconcileLegacyValues() {
@@ -60,7 +64,8 @@ class CatalogService {
     CatalogSnapshot snapshot() {
         Map<String,List<String>> items=new LinkedHashMap<>();
         for(CatalogType type:CatalogType.values())items.put(type.route,list(type));
-        return new CatalogSnapshot(items,suggestions(items),db.queryForList("SELECT p.name FROM catalog_projects p JOIN project_archive a ON a.name_key=p.name_key ORDER BY p.name",String.class));
+        Map<String,Integer> seeds=db.query("SELECT name,color_seed FROM catalog_projects WHERE color_seed IS NOT NULL",r->{Map<String,Integer> m=new LinkedHashMap<>();while(r.next())m.put(r.getString(1),r.getInt(2));return m;});
+        return new CatalogSnapshot(items,suggestions(items),db.queryForList("SELECT p.name FROM catalog_projects p JOIN project_archive a ON a.name_key=p.name_key ORDER BY p.name",String.class),seeds);
     }
 
     @Transactional(readOnly=true)
@@ -73,6 +78,7 @@ class CatalogService {
         String name=validate(raw,type.label), key=key(name);
         if(find(type,key)!=null)throw new IllegalArgumentException(type.label+" jÃ¡ cadastrado.");
         db.update("INSERT INTO "+type.table+"(name_key,name) VALUES(?,?)",key,name);
+        if(type==CatalogType.PROJECT)db.update("UPDATE catalog_projects SET color_seed=? WHERE name_key=?",java.util.concurrent.ThreadLocalRandom.current().nextInt(1,Integer.MAX_VALUE),key);
         return name;
     }
 

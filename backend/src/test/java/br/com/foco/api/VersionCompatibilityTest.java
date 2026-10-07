@@ -32,10 +32,12 @@ class VersionCompatibilityTest {
             db.execute("CREATE TABLE tasks(id TEXT PRIMARY KEY)");
             db.execute("CREATE TABLE sessions(id TEXT PRIMARY KEY,status TEXT,end_at TEXT,start_at TEXT,focus_seconds REAL DEFAULT 0)");
             db.update("INSERT INTO sessions(id,status,end_at,start_at,focus_seconds) VALUES('legacy','Em andamento',NULL,'2026-09-24T09:00:00-03:00',0)");
-            new FocoApplication(db,new WorkIntervalRepository(db)).recoverActiveSessions();
+            var migration=new RoundingMigration(source,new LocalBackup(db,file.getParent().toString()),new DatabaseMaintenance(),file.getParent().toString());
+            new FocoApplication(db,new WorkIntervalRepository(db),migration).recoverActiveSessions();
             assertTrue(hasColumn(db,"tasks","due_date"));
             assertTrue(hasColumn(db,"tasks","state"));
             assertTrue(hasColumn(db,"sessions","category"));
+            assertTrue(hasColumn(db,"sessions","rounding_version"));
             assertEquals("Normal",db.queryForObject("SELECT category FROM sessions WHERE id='legacy'",String.class));
             assertEquals("Pausada",db.queryForObject("SELECT status FROM sessions WHERE id='legacy'",String.class));
         } finally { Files.deleteIfExists(file); }

@@ -1,4 +1,55 @@
 # Roadmap da fork Foco Java
+## New e Stable 1.18.0 — Tarefas e hoje
+
+Solicitada em 07/10/2026. Base New 1.17.0 e promoção/publicação Stable confirmadas; padrão de cinco prioridades escolhido pelo usuário. [Escopo e regras](Doc/Tarefas-e-hoje.md).
+
+- [x] Reunir Tarefas e Hoje em uma área única, com lista, criação, planejamento e atalhos preservados.
+- [x] Configurar de 1 a 100 atividades prioritárias por dia; padrão 5; preservar prioridades ao reduzir.
+- [x] Sortear e persistir cores para projetos novos, mantendo variações da cor do cliente e aparência dos legados.
+- [x] Renovar controles de estado e permitir seleção múltipla por caixas de seleção, sem Shift.
+- [x] Validar 124 testes Java e 176 Vitest, builds New/Stable, 28 capturas e backend empacotado isolado.
+- [x] Instalar New e Stable 1.18.0; hashes, janela, token e preservação das 20 tabelas/274 apontamentos conferidos.
+- [ ] Publicar Stable 1.18.0 no GitHub, com código validado e quatro anexos verificados.
+- [x] Limpar intermediários e pacotes substituídos; preservar instaladores atuais, backups e evidências.
+
+Publicação Stable 1.18.0 autorizada e preparada; será executada após o envio do código validado à main.
+
+## New 1.17.0 — interface expressiva e blocos de 2 minutos
+
+Solicitados em 06/10/2026. Preferências confirmadas: visual expressivo; converter o histórico recuperável, preservando e identificando legados sem precisão. Fluxos, dados e limites em [Interface e arredondamento](Doc/Interface-e-arredondamento.md).
+
+- [x] Botões com relevo/gradientes e feedback, navegação e abas renovadas, transições de telas/cards/diálogos, indicador animado de foco.
+- [x] Foco por teclado ao navegar e suporte a movimento reduzido, impressão e temas claro/escuro.
+- [x] Encerrar/trocar em blocos de 120 segundos; conversão transacional do histórico com backup anterior, auditoria e proteção contra repetição.
+- [x] Preservar e identificar legados sem precisão; manter retroativos, sessões abertas e intervalos reais.
+- [x] `npm test`: 119 Java e 173 Vitest aprovados; `npm run build` concluído.
+- [x] Conferir 34 capturas em Electron (1440 × 960 e 800 × 620), claro/escuro/sistema, teclado, movimento reduzido e impressão; pacote e backend real isolado validados.
+- [x] Limpar 324 arquivos intermediários (444 MiB), preservando New 1.17.0 gerada, New 1.16.0 correspondente à instalação, Stable e oito backups locais.
+
+New 1.17.0 instalada e aberta por solicitação do usuário: saída 0, versão/hashes conferidos, 266 sessões preservadas e 41 históricos recuperáveis convertidos. 216 legados finalizados sem precisão mantidos; sessão pausada preservada com 1.342 segundos. Backup anterior e cópia automática da migração íntegros, 20 tabelas conferidas e janela respondendo. Instalador New 1.16.0 substituído removido; New 1.17.0, Stable e nove backups locais preservados. Detalhes em [Instalação](Doc/Instalacao.md).
+
+## New 1.16.0 — sétima onda concluída
+
+AP-03, AP-04 e CF-01 autorizadas em 06/10/2026 para concluir as 24 melhorias candidatas. Critérios, preservação histórica e restauração em [Sétima onda](Doc/Setima-onda.md).
+
+- [x] AP-03: linha do tempo diária com sessões, pausas precisas, legados identificados, edição e classificação por botões acessíveis.
+- [x] AP-04: jornada semanal versionada, exceções por data, meta e lacunas coerentes, preservando dias anteriores.
+- [x] CF-01: prévia validada em banco isolado, confirmação/hash, cópia anterior e restauração transacional com rollback.
+- [x] `npm test`: 101 Java e 169 Vitest; `npm run build`, pacote e backend empacotado conferidos.
+- [x] Dez capturas em Electron, 800 × 620, claro/escuro e teclado; restauração real do JAR em base isolada, com integridade e cópia anterior verificadas.
+- [x] Limpar 583 MiB de intermediários e pacote New 1.14.0 substituído; preservar New 1.15.0 instalada, New 1.16.0 gerada, Stable e backups.
+
+**Tabela de melhorias funcionais concluída: 24/24.** New 1.16.0 instalada e reaberta por solicitação do usuário: saída 0, versão/hashes conferidos, 262 sessões e todas as tabelas anteriores preservadas. Pendências históricas de distribuição/validação abaixo são separadas dessa tabela.
+
+## New 1.15.0 — sexta onda concluída
+
+AN-02, OR-05, AD-01, AD-03 e OR-01 autorizadas em 06/10/2026. Escopo, critérios, dados e validação em [Sexta onda](Doc/Sexta-onda.md).
+
+- [x] Comparação de horas reais/arredondadas, visões salvas, captura por atalho global/bandeja, lembretes locais e planejamento semanal.
+- [x] Validar `npm test` (91 Java e 160 Vitest), `npm run build` e 14 capturas em janela compacta, claro/escuro e teclado.
+- [x] Conferir ASAR, controlador local, JAR e manifesto; iniciar backend empacotado em banco isolado e validar token/loopback.
+- [x] Gerar `release/New/Foco-New-Setup-1.15.0.exe` e limpar 440 MiB de intermediários, preservando instaladores em uso e backups. Entrega local, sem publicação.
+- [x] Instalar e abrir por solicitação do usuário: saída 0, versão/hashes conferidos, backup íntegro e 18 tabelas preservadas, incluindo 261 sessões; janela respondendo e backend saudável.
 
 ## Stable 1.14.0 — promoção de todas as atualizações — 06/10/2026
 
@@ -10,35 +61,35 @@
 
 Entrega do instalador, sem reinstalar a aplicação. Artefatos e hashes em [Versões](Doc/Versoes.md).
 
-## Melhorias candidatas — para triagem (01/10/2026)
+## Melhorias planejadas — 24/24 concluídas (origem: 01/10/2026)
 
-As propostas abaixo complementam a New 1.9.1. AD-02, OR-07, AD-05 e UX-01 foram selecionadas pelo usuário para a New 1.10.0. AN-03, AP-01, AP-02 e UX-02 compõem a segunda onda autorizada em 02/10/2026 e implementada na New 1.11.0. CF-02, OR-02 e AD-04 compõem a terceira onda autorizada em 02/10/2026, implementada na New 1.12.0. AN-01 e AN-04 compõem a quarta onda autorizada em 02/10/2026, implementada na New 1.13.0. OR-03, OR-04 e OR-06 compõem a quinta onda autorizada e implementada na New 1.14.0. As demais permanecem **A avaliar**, sem versão ou implementação aprovada. Impacto e esforço são estimativas iniciais para comparação, não prazos. Ao escolher uma proposta, detalhar seu escopo e critérios de aceite antes de incluí-la em uma entrega.
+As propostas abaixo complementam a New 1.9.1. AD-02, OR-07, AD-05 e UX-01 foram selecionadas pelo usuário para a New 1.10.0. AN-03, AP-01, AP-02 e UX-02 compõem a segunda onda autorizada em 02/10/2026 e implementada na New 1.11.0. CF-02, OR-02 e AD-04 compõem a terceira onda autorizada em 02/10/2026, implementada na New 1.12.0. AN-01 e AN-04 compõem a quarta onda autorizada em 02/10/2026, implementada na New 1.13.0. OR-03, OR-04 e OR-06 compõem a quinta onda autorizada e implementada na New 1.14.0. AN-02, OR-05, AD-01, AD-03 e OR-01 compõem a sexta onda autorizada e implementada na New 1.15.0. AP-03, AP-04 e CF-01 compõem a sétima onda implementada na New 1.16.0, concluindo os 24 itens. Impacto e esforço são estimativas iniciais para comparação, não prazos. Ao escolher uma proposta, detalhar seu escopo e critérios de aceite antes de incluí-la em uma entrega.
 
 Para filtrar, use os IDs e as colunas **Área**, **Impacto** e **Esforço**. Na coluna **Decisão**, substituir `A avaliar` por `Selecionada`, `Adiada` ou `Descartada`, preservando o ID. Esforço: **P** = alteração localizada; **M** = envolve interface, regras e persistência; **G** = envolve vários fluxos ou compatibilidade de dados.
 
 | ID | Área | Melhoria proposta e escopo inicial | Benefício esperado | Impacto | Esforço | Decisão |
 |---|---|---|---|---|---|---|
-| AD-01 | Aderência | Capturar por atalho global do Windows e menu da bandeja, mesmo com o Foco oculto; permitir configurar ou desativar o atalho. | Registrar demandas sem precisar procurar a janela do app. | Alto | M | A avaliar |
+| AD-01 | Aderência | Capturar por atalho global do Windows e menu da bandeja, mesmo com o Foco oculto; permitir configurar ou desativar o atalho. | Registrar demandas sem precisar procurar a janela do app. | Alto | M | Implementada · New 1.15.0 |
 | AD-02 | Aderência | Ao encerrar ou trocar uma tarefa, oferecer um campo opcional de próxima ação, preenchido com a anotação existente. | Retomar o trabalho sem reconstruir o contexto; complementar o planejamento já disponível em Hoje. | Alto | M | Implementada · New 1.10.0 |
-| AD-03 | Aderência | Lembretes locais opcionais para planejar e revisar o dia, com horários, adiar e silenciar; avisar que dependem do app aberto ou na bandeja. | Ajudar a manter a rotina sem excesso de notificações. | Alto | M | A avaliar |
+| AD-03 | Aderência | Lembretes locais opcionais para planejar e revisar o dia, com horários, adiar e silenciar; avisar que dependem do app aberto ou na bandeja. | Ajudar a manter a rotina sem excesso de notificações. | Alto | M | Implementada · New 1.15.0 |
 | AD-04 | Aderência | Painel de revisão semanal com capturas antigas, tarefas sem próxima ação, planejamentos não executados e dependências vencidas. | Evitar o acúmulo de tarefas esquecidas. | Alto | M | Implementada — New 1.12.0 |
 | AD-05 | Aderência | Guardar rascunhos locais dos formulários e notas de revisão ao navegar; permitir recuperar ou descartar o rascunho. | Evitar redigitação e perda de contexto durante interrupções. | Alto | M | Implementada · New 1.10.0 |
-| OR-01 | Organização | Planejar por semana, movendo tarefas entre dias sem alterar o prazo de entrega; oferecer ações equivalentes por teclado. | Distribuir o trabalho com uma visão mais ampla que Hoje. | Alto | G | A avaliar |
+| OR-01 | Organização | Planejar por semana, movendo tarefas entre dias sem alterar o prazo de entrega; oferecer ações equivalentes por teclado. | Distribuir o trabalho com uma visão mais ampla que Hoje. | Alto | G | Implementada · New 1.15.0 |
 | OR-02 | Organização | Estimar duração por tarefa e configurar a capacidade diária; comparar horas planejadas com horas disponíveis, sem bloquear o planejamento. | Montar dias mais realistas e reconhecer sobrecarga. | Alto | M | Implementada — New 1.12.0 |
 | OR-03 | Organização | Checklist de passos dentro da tarefa, preservando os apontamentos na tarefa principal. | Transformar trabalhos grandes em avanços observáveis. | Médio | M | Implementada · New 1.14.0 |
 | OR-04 | Organização | Arquivar tarefas e projetos fora de uso, com filtro de arquivados e restauração, preservando histórico e relatórios. | Reduzir o ruído das listas sem excluir registros. | Alto | M | Implementada · New 1.14.0 |
-| OR-05 | Organização | Salvar visões com filtros e ordenação, como “Intelbras em andamento” ou “Prazos da semana”. | Reabrir consultas frequentes sem configurar os mesmos filtros. | Médio | M | A avaliar |
+| OR-05 | Organização | Salvar visões com filtros e ordenação, como “Intelbras em andamento” ou “Prazos da semana”. | Reabrir consultas frequentes sem configurar os mesmos filtros. | Médio | M | Implementada · New 1.15.0 |
 | OR-06 | Organização | Editar e pausar modelos recorrentes; acrescentar dias úteis, dias específicos e frequência mensal, mantendo a geração manual escolhida pelo usuário. | Ajustar rotinas sem remover e recriar modelos. | Médio | M | Implementada · New 1.14.0 |
 | OR-07 | Organização | Oferecer prazo vazio como padrão configurável para novas tarefas, inclusive no formulário tradicional de Tarefas. | Evitar que uma intenção de execução vire automaticamente um compromisso vencido. | Alto | P | Implementada · New 1.10.0 |
 | AP-01 | Apontamentos | Vincular um apontamento existente a uma tarefa ou corrigir esse vínculo pela interface, com histórico da alteração. | Recuperar trabalho registrado fora da tarefa e consolidar seus totais. | Alto | M | Implementada · New 1.11.0 |
 | AP-02 | Apontamentos | Revisar lacunas em sequência, com anterior/próxima e reaproveitamento opcional de classificação; conferir cada intervalo antes de salvar. | Reduzir o esforço do fechamento diário sem preencher tempos por suposição. | Alto | M | Implementada · New 1.11.0 |
-| AP-03 | Apontamentos | Oferecer uma linha do tempo diária com sessões, pausas e lacunas; abrir a edição a partir de cada intervalo. | Enxergar trocas de contexto e inconsistências de horário. | Médio | G | A avaliar |
-| AP-04 | Apontamentos | Configurar dias e horários de jornada, intervalos e exceções por data, preservando as regras aplicadas a períodos anteriores. | Fazer a apuração refletir a rotina real, inclusive feriados e jornadas diferentes. | Alto | G | A avaliar |
+| AP-03 | Apontamentos | Oferecer uma linha do tempo diária com sessões, pausas e lacunas; abrir a edição a partir de cada intervalo. | Enxergar trocas de contexto e inconsistências de horário. | Médio | G | Implementada · New 1.16.0 |
+| AP-04 | Apontamentos | Configurar dias e horários de jornada, intervalos e exceções por data, preservando as regras aplicadas a períodos anteriores. | Fazer a apuração refletir a rotina real, inclusive feriados e jornadas diferentes. | Alto | G | Implementada · New 1.16.0 |
 | AN-01 | Análise | Comparar horas planejadas, estimadas e realizadas por tarefa, projeto e semana; usar a capacidade e estimativas de OR-02. | Identificar padrões de subestimação e melhorar o planejamento seguinte. | Alto | M | Implementada · New 1.13.0 |
-| AN-02 | Análise | Mostrar lado a lado horas reais, arredondadas e diferença acumulada, incluindo a quantidade de registros sem precisão histórica recuperável. | Entender o efeito do arredondamento e os limites dos dados antigos. | Alto | M | A avaliar |
+| AN-02 | Análise | Mostrar lado a lado horas reais, arredondadas e diferença acumulada, incluindo a quantidade de registros sem precisão histórica recuperável. | Entender o efeito do arredondamento e os limites dos dados antigos. | Alto | M | Implementada · New 1.15.0 |
 | AN-03 | Análise | Disponibilizar a base real/arredondada também nos totais de Tarefas e nos relatórios/CSV; distinguir duração de horário de término. | Consultar a mesma base de tempo em todas as telas, além do Dashboard já implementado. | Alto | M | Implementada · New 1.11.0 |
 | AN-04 | Análise | Permitir expandir além dos dez grupos do Dashboard ou mostrar um grupo “Outros” que represente o restante. | Facilitar a conferência entre distribuição, percentuais e total geral. | Médio | M | Implementada · New 1.13.0 |
-| CF-01 | Confiabilidade | Restaurar um backup pela interface com prévia, validação de integridade e cópia de segurança anterior à restauração; testar primeiro em base isolada. | Tornar a recuperação de dados acessível e verificável. | Alto | G | A avaliar |
+| CF-01 | Confiabilidade | Restaurar um backup pela interface com prévia, validação de integridade e cópia de segurança anterior à restauração; testar primeiro em base isolada. | Tornar a recuperação de dados acessível e verificável. | Alto | G | Implementada · New 1.16.0 |
 | CF-02 | Confiabilidade | Exibir canal, versão instalada, data e resultado do último backup, além de um resumo local de diagnóstico. | Identificar rapidamente a versão em uso e problemas de manutenção. | Médio | P | Implementada — New 1.12.0 |
 | UX-01 | Usabilidade | Revisar Hoje, planejamento e Dashboard em janelas compactas, temas claro/escuro e navegação por teclado; corrigir foco e identificação de botões. | Usar os fluxos novos com menos atrito e conferir visualmente a entrega. | Alto | M | Implementada · New 1.10.0 |
 | UX-02 | Usabilidade | Guardar preferências de visualização, como base de horas, agrupamento, ordenação e detalhes expandidos, sem manter datas antigas inadvertidamente. | Reduzir a configuração repetida ao abrir o app. | Médio | P | Implementada · New 1.11.0 |
@@ -123,12 +174,14 @@ Projeto de paridade funcional do Foco V35 com aplicação Electron/React/TypeScr
 - [x] Backup ZIP diário configurável, verificado, sem limite de retenção.
 - [x] Documentação de uso, entidades, casos de uso e arquitetura; testes automatizados iniciais.
 
-## Antes da primeira distribuição
+## Checklist inicial de distribuição — registro histórico
 
-- [ ] Executar `npm test` e `npm run build` em Windows com Java e Node instalados.
+Este checklist é separado das 24 melhorias funcionais concluídas. Os itens ainda abertos registram validações/distribuição adicionais, sem ampliar o escopo da sétima onda.
+
+- [x] Executar `npm test` e `npm run build` em Windows com Java e Node instalados (validado nas entregas).
 - [ ] Revisar visualmente os cinco espaços, os diálogos, os estados de tema e a sobreposição em resolução compacta.
 - [ ] Comparar fixtures anonimizadas dos XMLs V35, especialmente tarefas, cores e configurações legadas.
-- [ ] Criar procedimento de recuperação manual de backup e testar restauração em uma cópia de dados.
+- [x] Criar procedimento de recuperação e testar restauração em uma cópia de dados; fluxo pela interface e testes isolados na New 1.16.0, em `Doc/Backup.md`.
 - [ ] Decidir distribuição de Java Runtime para máquinas sem Java instalado.
 
 ## New 1.1.0 — validada e promovida para Stable

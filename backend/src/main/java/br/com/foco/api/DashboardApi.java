@@ -7,7 +7,8 @@ import java.time.*;
 import java.util.*;
 
 record GroupTotal(String parent,String name,String client,long sessions,double seconds,BigDecimal value,long unpriced) {}
-record DashboardSummary(long sessions,double seconds,BigDecimal value,long unpriced,List<GroupTotal> groups,List<GroupTotal> projects) {}
+record HoursComparison(double realSeconds,double roundedSeconds,double differenceSeconds,long unknownPrecision,long ongoingSessions) {}
+record DashboardSummary(long sessions,double seconds,BigDecimal value,long unpriced,List<GroupTotal> groups,List<GroupTotal> projects,HoursComparison comparison) {}
 @RestController
 @RequestMapping("/api/dashboard")
 class DashboardController {
@@ -33,7 +34,9 @@ class DashboardController {
         String grouped="SELECT "+column+" name,CASE WHEN count(distinct lower(trim(client)))=1 THEN min(client) END client,count(*) n,sum(selected_seconds) seconds,sum(CASE WHEN hourly_rate IS NOT NULL THEN CAST(hourly_rate AS REAL)*selected_seconds/3600 ELSE 0 END) value,sum(CASE WHEN hourly_rate IS NULL THEN 1 ELSE 0 END) unpriced FROM "+source+where+" GROUP BY lower(trim("+column+")) ORDER BY seconds DESC,name";
         List<GroupTotal> groups=db.query(grouped,(r,n)->total(null,r.getString("name"),r.getString("client"),r.getLong("n"),r.getDouble("seconds"),r.getBigDecimal("value"),r.getLong("unpriced")),args);
         List<GroupTotal> projects=group.equals("client")||group.equals("consultant")?db.query("SELECT "+column+" parent,project name,CASE WHEN count(distinct lower(trim(client)))=1 THEN min(client) END client,count(*) n,sum(selected_seconds) seconds,sum(CASE WHEN hourly_rate IS NOT NULL THEN CAST(hourly_rate AS REAL)*selected_seconds/3600 ELSE 0 END) value,sum(CASE WHEN hourly_rate IS NULL THEN 1 ELSE 0 END) unpriced FROM "+source+where+" GROUP BY lower(trim("+column+")),lower(trim(project)) ORDER BY parent,seconds DESC,name",(r,n)->total(r.getString("parent"),r.getString("name"),r.getString("client"),r.getLong("n"),r.getDouble("seconds"),r.getBigDecimal("value"),r.getLong("unpriced")),args):List.of();
-        return new DashboardSummary(((Number)totals.get("n")).longValue(),((Number)totals.get("seconds")).doubleValue(),decimal(totals.get("value")),((Number)totals.get("unpriced")).longValue(),groups,projects);
+        HoursComparison comparison=db.queryForObject("SELECT coalesce(sum("+HoursBasis.sql("real")+"),0) real_seconds,coalesce(sum(focus_seconds),0) rounded_seconds,coalesce(sum(CASE WHEN status NOT IN ('Em andamento','Pausada') AND (end_at IS NULL OR rounded_end_at IS NULL) THEN 1 ELSE 0 END),0) unknown_precision,coalesce(sum(CASE WHEN status IN ('Em andamento','Pausada') THEN 1 ELSE 0 END),0) ongoing FROM "+source+where,
+                (r,n)->new HoursComparison(r.getDouble("real_seconds"),r.getDouble("rounded_seconds"),Math.max(0,r.getDouble("rounded_seconds")-r.getDouble("real_seconds")),r.getLong("unknown_precision"),r.getLong("ongoing")),args);
+        return new DashboardSummary(((Number)totals.get("n")).longValue(),((Number)totals.get("seconds")).doubleValue(),decimal(totals.get("value")),((Number)totals.get("unpriced")).longValue(),groups,projects,comparison);
     }
     private static BigDecimal decimal(Object value){return value==null?BigDecimal.ZERO:value instanceof BigDecimal decimal?decimal:new BigDecimal(value.toString());}
     private static double hours(String raw){try{double value=Double.parseDouble(raw);if(!Double.isFinite(value)||value<0)throw new NumberFormatException();return value*3600;}catch(NumberFormatException e){throw new IllegalArgumentException("Filtro de horas inválido.");}}

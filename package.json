@@ -1,6 +1,6 @@
 {
   "name": "foco-java",
-  "version": "1.14.0",
+  "version": "1.18.0",
   "private": true,
   "description": "Fork desktop Electron do Foco, com backend Spring e SQLite local",
   "main": "desktop/dist/main.cjs",

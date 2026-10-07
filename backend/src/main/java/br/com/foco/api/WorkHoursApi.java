@@ -11,8 +11,9 @@ import java.util.List;
 class WorkHoursController {
     private final JdbcTemplate db;
     private final WorkIntervalRepository intervals;
+    private final ScheduleRepository schedule;
     private final WorkHoursService service=new WorkHoursService();
-    WorkHoursController(JdbcTemplate db,WorkIntervalRepository intervals){this.db=db;this.intervals=intervals;}
+    WorkHoursController(JdbcTemplate db,WorkIntervalRepository intervals,ScheduleRepository schedule){this.db=db;this.intervals=intervals;this.schedule=schedule;}
 
     @GetMapping("/intervals") List<WorkInterval> intervals(){return intervals.findAll();}
 
@@ -22,6 +23,6 @@ class WorkHoursController {
         List<WorkSession> sessions=db.query("SELECT id,start_at,end_at,focus_seconds FROM sessions ORDER BY start_at",
                 (r,n)->new WorkSession(r.getString(1),OffsetDateTime.parse(r.getString(2)),
                         r.getString(3)==null?null:OffsetDateTime.parse(r.getString(3)),r.getDouble(4)));
-        return service.build(sessions,intervals.findAll(),from,to);
+        return service.build(sessions,intervals.findAll(),from,to,schedule.resolver());
     }
 }

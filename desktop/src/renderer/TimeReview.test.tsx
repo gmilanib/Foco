@@ -55,7 +55,7 @@ describe('visibilidade independente de A definir',()=>{
   const view=render(<ReportPage {...reportProps} onExport={exported}/>);
   fireEvent.click(screen.getByLabelText('Incluir tempo A definir'));
   await screen.findByLabelText('Selecionar A definir');
-  expect(screen.getByText(/3h 00min/)).toBeInTheDocument();
+  expect(screen.getByText(/3h 00min/,{selector:'.page-title p'})).toBeInTheDocument();
   fireEvent.click(screen.getByRole('button',{name:'Exportar CSV'}));
   expect(exported.mock.calls[0][0]).toHaveLength(3);
   fireEvent.click(screen.getByLabelText('Selecionar A definir'));
@@ -67,7 +67,7 @@ describe('visibilidade independente de A definir',()=>{
   await screen.findByLabelText('Selecionar A definir');
   fireEvent.click(screen.getByLabelText('Incluir tempo A definir'));
   expect(screen.queryByLabelText('Selecionar A definir')).toBeNull();
-  expect(screen.getByText(/2h 00min/)).toBeInTheDocument();
+  expect(screen.getByText(/2h 00min/,{selector:'.page-title p'})).toBeInTheDocument();
  });
  it('inclui horas nos gráficos e PDF sem afetar valores ou preferência dos relatórios',async()=>{
   localStorage.setItem('foco.reports.includeUndefined','true');

@@ -88,9 +88,9 @@ class SessionController {
         if(!Set.of("Em andamento","Pausada").contains(before.status()))throw new IllegalArgumentException("O apontamento já foi finalizado.");
         nextActions.save(before.taskId(),finish.nextAction());
         OffsetDateTime now=OffsetDateTime.now();
-        double roundedFocus=Math.ceil(finish.focusSeconds()/300.0)*300;
+        double roundedFocus=FocusRounding.round(finish.focusSeconds());
         OffsetDateTime roundedEnd=now.plusNanos(Math.round((roundedFocus-finish.focusSeconds())*1_000_000_000));
-        db.update("UPDATE sessions SET status=?,end_at=?,rounded_end_at=?,focus_seconds=? WHERE id=?",finish.status(),now.toString(),roundedEnd.toString(),roundedFocus,id);workIntervals.close(id,now);SessionRow updated=get(id);history.record("session",id,before,updated);return updated;
+        db.update("UPDATE sessions SET status=?,end_at=?,rounded_end_at=?,focus_seconds=?,rounding_version=2 WHERE id=?",finish.status(),now.toString(),roundedEnd.toString(),roundedFocus,id);workIntervals.close(id,now);SessionRow updated=get(id);history.record("session",id,before,updated);return updated;
     }
     @GetMapping(value="/export.csv", produces="text/csv;charset=UTF-8") String csv(@RequestParam(defaultValue="") String query,@RequestParam(defaultValue="false") boolean showValues,@RequestParam(defaultValue="real") String endMode,@RequestParam(defaultValue="rounded") String hoursMode) {
         if(!Set.of("real","rounded").contains(endMode))throw new IllegalArgumentException("Tipo de término inválido.");
@@ -99,7 +99,7 @@ class SessionController {
     }
     private static String line(SessionRow s,boolean values,String endMode,String hoursMode) {
         double seconds=HoursBasis.seconds(s,hoursMode);
-        List<String> cells=new ArrayList<>(List.of(cell(s.client()),cell(s.project()),cell(s.consultant()),cell(s.cardReference()),cell(s.activity()),cell(s.details()),cell(s.startAt().toString()),cell(s.endAt()==null?"":("rounded".equals(endMode)?s.roundedEndAt():s.endAt()).toString()),Integer.toString(s.plannedSeconds()),Double.toString(seconds),cell(s.status()),cell(s.category()),cell(hoursMode),cell(endMode)));
+        List<String> cells=new ArrayList<>(List.of(cell(s.client()),cell(s.project()),cell(s.consultant()),cell(s.cardReference()),cell(s.activity()),cell(s.details()),cell(s.startAt().toString()),cell(s.endAt()==null?"":("rounded".equals(endMode)&&s.roundedEndAt()!=null?s.roundedEndAt():s.endAt()).toString()),Integer.toString(s.plannedSeconds()),Double.toString(seconds),cell(s.status()),cell(s.category()),cell(hoursMode),cell(endMode)));
         if(values){ cells.add(s.hourlyRate()==null?"":s.hourlyRate().toPlainString()); cells.add(s.hourlyRate()==null?"":s.hourlyRate().multiply(BigDecimal.valueOf(seconds)).divide(BigDecimal.valueOf(3600),2,RoundingMode.HALF_UP).toPlainString()); }
         return String.join(";",cells);
     }
@@ -127,7 +127,7 @@ class SessionController {
     }
     private static SessionRow row(java.sql.ResultSet r) throws java.sql.SQLException {
         String rate=r.getString("hourly_rate"); String end=r.getString("end_at"); String rounded=r.getString("rounded_end_at");
-        return new SessionRow(r.getString("id"),r.getString("task_id"),r.getString("client"),r.getString("project"),r.getString("activity"),r.getString("details"),r.getString("consultant"),r.getString("card_reference"),OffsetDateTime.parse(r.getString("start_at")),end==null?null:OffsetDateTime.parse(end),rounded==null?(end==null?null:OffsetDateTime.parse(end)):OffsetDateTime.parse(rounded),r.getInt("planned_seconds"),r.getDouble("focus_seconds"),rate==null?null:new BigDecimal(rate),r.getString("status"),r.getString("category"));
+        return new SessionRow(r.getString("id"),r.getString("task_id"),r.getString("client"),r.getString("project"),r.getString("activity"),r.getString("details"),r.getString("consultant"),r.getString("card_reference"),OffsetDateTime.parse(r.getString("start_at")),end==null?null:OffsetDateTime.parse(end),rounded==null?null:OffsetDateTime.parse(rounded),r.getInt("planned_seconds"),r.getDouble("focus_seconds"),rate==null?null:new BigDecimal(rate),r.getString("status"),r.getString("category"));
     }
 }
 record TickInput(double focusSeconds) {}

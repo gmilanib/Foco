@@ -17,6 +17,7 @@ record CaptureInput(@NotBlank @Size(max=1000) String title) {}
 record ReviewRow(LocalDate day,String notes,String reviewedAt) {}
 record ReviewInput(@Size(max=2000) String notes) {}
 record MoveInput(@Min(-1) @Max(1) int direction) {}
+record RescheduleInput(LocalDate plannedDate,boolean keepPriority) {}
 
 @RestController
 @RequestMapping("/api/planning")
@@ -42,7 +43,9 @@ class PlanningController {
         int rank=0;
         if(in.priority()){
             int count=db.queryForObject("SELECT count(*) FROM task_plans p JOIN tasks t ON t.id=p.task_id WHERE p.planned_date=? AND p.priority>0 AND p.task_id<>? AND t.completed=0 AND coalesce(t.state,'')<>'Aguardando' AND NOT EXISTS(SELECT 1 FROM task_archive a WHERE a.task_id=t.id) AND NOT EXISTS(SELECT 1 FROM project_archive a WHERE a.name_key=(SELECT name_key FROM catalog_projects WHERE name=t.project))",Integer.class,in.plannedDate().toString(),id);
-            if(count>=3)throw new IllegalArgumentException("Escolha até três prioridades para esta data.");
+            int limit=priorityLimit();
+            boolean existing=before!=null&&Objects.equals(before.plannedDate(),in.plannedDate())&&before.priority()>0;
+            if(count>=limit&&!existing)throw new IllegalArgumentException("Escolha até "+limit+" prioridades para esta data.");
             rank=before!=null&&Objects.equals(before.plannedDate(),in.plannedDate())&&before.priority()>0?before.priority():
                     db.queryForObject("SELECT coalesce(max(priority),0)+1 FROM task_plans WHERE planned_date=?",Integer.class,in.plannedDate().toString());
         }
@@ -51,6 +54,15 @@ class PlanningController {
                 id,str(in.plannedDate()),rank,clean(in.nextAction()),clean(in.waitingFor()),str(in.reviewDate()));
         PlanRow after=new PlanRow(id,in.plannedDate(),rank,clean(in.nextAction()),clean(in.waitingFor()),in.reviewDate());
         history.record("task",id,before,after);return after;
+    }
+    @PutMapping("/plans/{id}/date") @Transactional
+    PlanRow reschedule(@PathVariable String id,@RequestBody RescheduleInput input){
+        TaskRow task=tasks.get(id);
+        if(task.completed())throw new IllegalArgumentException("Reabra a tarefa antes de replanejar.");
+        PlanRow current=plans().stream().filter(p->p.taskId().equals(id)).findFirst().orElse(null);
+        boolean priority=input.keepPriority()&&current!=null&&current.priority()>0;
+        return plan(id,new PlanInput(input.plannedDate(),priority,current==null?"":current.nextAction(),
+                current==null?"":current.waitingFor(),current==null?null:current.reviewDate(),task.state()));
     }
     @PostMapping("/plans/{id}/move") @Transactional
     void move(@PathVariable String id,@Valid @RequestBody MoveInput input){
@@ -85,6 +97,10 @@ class PlanningController {
         String now=OffsetDateTime.now().toString();
         db.update("INSERT INTO daily_reviews(day,notes,reviewed_at) VALUES(?,?,?) ON CONFLICT(day) DO UPDATE SET notes=excluded.notes,reviewed_at=excluded.reviewed_at",str(day),clean(input.notes()),now);
         return review(day);
+    }
+    private int priorityLimit(){
+        String value=db.query("SELECT value FROM settings WHERE key='planning.priorityLimit'",r->r.next()?r.getString(1):"5");
+        try{int limit=Integer.parseInt(value);return limit>=1&&limit<=100?limit:5;}catch(RuntimeException e){return 5;}
     }
     private static LocalDate date(String value){return value==null?null:LocalDate.parse(value);}
     private static String str(LocalDate value){return value==null?null:value.toString();}

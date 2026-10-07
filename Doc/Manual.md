@@ -1,8 +1,30 @@
 # Manual de uso
 
-## Atualização Stable 1.14.0
+## Interface e arredondamento — New 1.17.0
 
-Baixe o instalador em [Foco Stable 1.14.0](https://github.com/gmilanib/Foco/releases/tag/v1.14.0-stable). Encerre o apontamento e faça backup antes de atualizar. O instalador Stable permite escolher a pasta e libera os processos da instalação de destino antes de substituir seus arquivos. Stable e New compartilham o banco local; feche uma versão antes de abrir a outra. Os recursos descritos abaixo para as versões New até 1.14.0 também estão disponíveis na Stable 1.14.0.
+Botões com relevo, cores e feedback; navegação, cards, abas e diálogos renovados. As telas e o cronômetro ativo têm animações que respeitam a opção de movimento reduzido do Windows. A navegação leva o foco ao título da tela.
+
+O foco passa a ser arredondado **para cima em blocos de 2 minutos** ao encerrar ou trocar de tarefa. A nova versão converte automaticamente o histórico com ajuste recuperável e cria uma cópia anterior. Consulte Configurações → Arredondamento do foco. Legados sem precisão recebem identificação nos relatórios; retroativos e registros sem ajuste mantêm o tempo informado. Veja [Interface e arredondamento](Interface-e-arredondamento.md) para exemplos e limites.
+
+## New 1.16.0 — fechamento das melhorias do Roadmap
+
+- **Linha do tempo:** em Jornada → Linha do tempo, selecione o dia ou use Dia anterior/seguinte. Cada sessão fica em sua própria linha; os botões Trabalho/Pausa/Período estimado abrem a edição existente. A definir abre o lançamento retroativo. Sessões em andamento/pausadas não são editáveis. Legados mostram o período estimado, sem reconstruir pausas desconhecidas; barras representam horários, não duração efetiva de foco.
+- **Jornada configurável:** em Configurações, preencha intervalos de segunda a domingo e a data de vigência. Use `09:00-12:00, 13:00-18:00`; vazio significa folga. A soma define a meta diária e lacunas só são apuradas nesses horários. Cadastre exceções para feriados ou dias diferentes. Configurações de datas passadas podem servir de base para novas regras, mas não podem ser alteradas. Hoje pode ser recalculado; dias anteriores mantêm a apuração. Jornada não altera a capacidade de planejamento.
+- **Restauração:** em Configurações → Restaurar backup, escolha o ZIP e confira registros/aviso. Encerre apontamentos ativos ou pausados, marque a confirmação e restaure. O Foco cria uma cópia anterior e mostra seu caminho ao concluir. Clique Concluir e atualizar Foco. Arquivo modificado, backup inválido, incompatibilidade, falta de espaço ou erro de importação interrompem a operação. Detalhes em [Backup](Backup.md).
+
+## New 1.15.0 — cinco melhorias
+
+- **Comparação de horas:** Dashboard e Relatórios mostram horas reais, arredondadas e diferença dos mesmos registros aplicados. O total histórico sem precisão recuperável é informado; não se inventa arredondamento antigo. Lacunas são iguais nas duas bases e sessões abertas têm tempos provisórios. O PDF do Dashboard inclui a comparação; o CSV continua respeitando a base escolhida.
+- **Visões salvas:** em Tarefas, Relatórios ou Dashboard, configure filtros/ordenação, dê um nome e escolha o período ao aplicar. Hoje e Semana atual são recalculados; Datas fixas preserva as datas digitadas. É possível aplicar, atualizar filtros, renomear ou excluir uma visão. São até 25 por tela, neste perfil local; não são incluídas no backup SQLite. Visões não salvam seleção de registros, rascunhos nem preferência de inclusão de lacunas.
+- **Captura global:** em Configurações → Captura global e lembretes, ative e configure o atalho, por exemplo Ctrl+Alt+Q. Conflitos são avisados. O menu da bandeja também oferece Capturar uma demanda. A janela reaparece com foco no campo de captura, preservando formulários abertos. Alt+Q continua sendo o atalho interno.
+- **Lembretes:** ative planejamento e/ou revisão e defina seus horários locais. Funcionam com o app aberto ou na bandeja, todos os dias. Pelo painel, abra a tela correspondente, adie 15 minutos, dispense ou silencie até o fim do dia. Não se acumulam lembretes de dias perdidos; horários com atraso superior a 15 minutos não são recuperados. A configuração padrão é desativada. As restrições de notificação do Windows podem impedir o aviso nativo; o painel local permanece disponível.
+- **Semana:** em Tarefas e hoje → Planejamento semanal, consulte segunda a domingo e a estimativa/capacidade por dia. Arraste para um dia e confirme, ou use Mover para outra data pelo teclado. A data de execução é independente do prazo. Preservar prioridade é uma escolha explícita e respeita o limite configurado (padrão cinco); desmarque para mover como tarefa sem prioridade. Deixe a data vazia para retirar do calendário. Concluídas/arquivadas precisam ser reabertas/restauradas primeiro.
+
+Detalhes, contratos e validação em [Sexta onda](Sexta-onda.md).
+
+## Atualização Stable 1.18.0
+
+Baixe o instalador em [Foco Stable 1.18.0](https://github.com/gmilanib/Foco/releases/tag/v1.18.0-stable). Encerre o apontamento e faça backup antes de atualizar. O instalador Stable permite escolher a pasta e libera os processos da instalação de destino antes de substituir seus arquivos. Stable e New compartilham o banco local; feche uma versão antes de abrir a outra. Os recursos descritos abaixo para as versões New até 1.18.0 também estão disponíveis na Stable 1.18.0.
 
 ## Cadastros (New 1.5.0)
 
@@ -50,7 +72,7 @@ Se o período cruzar outro apontamento, o formulário mostra um aviso e exige su
 
 No formulário de nova tarefa ou edição, cliente, projeto, atividade, consultor, card/link e valor/hora oferecem o mesmo autocomplete independente. Digite parte do valor e escolha uma opção para preencher somente o campo atual. O detalhamento permanece livre, sem lista de sugestões.
 
-Em **Tarefas**, crie registros sem iniciar o cronômetro. O campo **Prazo limite** registra a data prevista para entrega. A tabela mostra também o **Detalhamento** salvo na tarefa. Busque em todos os campos, filtre por estado e ordene por prazo limite, atividade, cliente/projeto ou estado e escolha ordem crescente ou decrescente. Prazos vazios ficam sempre no fim; o padrão é prazo crescente. Em **Filtros adicionais**, filtre por cliente, projeto, atividade, consultor e intervalo de prazo. Consulte os apontamentos associados e o tempo total. Iniciar tarefa cria mais um apontamento ligado à tarefa e copia seus parâmetros. Pode haver vários apontamentos associados. Conclua manualmente quando o trabalho tiver sido entregue; tarefas com sessões ainda ativas não podem ser concluídas. Uma tarefa com histórico não pode ser excluída.
+Em **Tarefas e hoje → Todas as tarefas**, crie registros sem iniciar o cronômetro. O campo **Prazo limite** registra a data prevista para entrega. A tabela mostra também o **Detalhamento** salvo na tarefa. Busque em todos os campos, filtre por estado e ordene por prazo limite, atividade, cliente/projeto ou estado e escolha ordem crescente ou decrescente. Prazos vazios ficam sempre no fim; o padrão é prazo crescente. Em **Filtros adicionais**, filtre por cliente, projeto, atividade, consultor e intervalo de prazo. Consulte os apontamentos associados e o tempo total. Iniciar tarefa cria mais um apontamento ligado à tarefa e copia seus parâmetros. Pode haver vários apontamentos associados. Conclua manualmente quando o trabalho tiver sido entregue; tarefas com sessões ainda ativas não podem ser concluídas. Uma tarefa com histórico não pode ser excluída.
 
 Atalhos **Alt+F**, **Alt+D**, **Alt+R**, **Alt+J**, **Alt+T** e **Alt+C** abrem Apontar horas, Dashboard, Relatórios, Jornada, Tarefas e Configurações. **Alt+I** inicia ou pausa/retoma o foco; **Alt+E** abre as opções para encerrar uma sessão.
 
@@ -115,13 +137,13 @@ As cores de projeto na lista de tarefas sao tons derivados da cor cadastrada par
 
 ## Término real e arredondado
 
-Ao finalizar ou trocar uma atividade, `end_at` guarda o instante real e `rounded_end_at` guarda esse instante mais o ajuste do foco para o próximo bloco de cinco minutos. Exemplo: 7 minutos de foco viram 10; o término arredondado fica 3 minutos depois do real. Pausas não são adicionadas ao ajuste. Jornada, conflitos e início da próxima tarefa continuam usando o término real. Foco e custo mantêm a regra atual.
+Ao finalizar ou trocar uma atividade, `end_at` guarda o instante real e `rounded_end_at` guarda esse instante mais o ajuste do foco para o próximo bloco de dois minutos. Exemplo: 7 minutos de foco viram 8; o término arredondado fica 1 minuto depois do real. Pausas não são adicionadas ao ajuste. Jornada, conflitos e início da próxima tarefa continuam usando o término real. Foco e custo mantêm a regra atual.
 
 Relatórios oferece **Término exibido: Real / Arredondado**, com Real como padrão. A escolha também acompanha a coluna Término do CSV. Registros antigos e XML importados usam o término disponível quando não há segundo valor; não se inventa um ajuste histórico. Retroativos salvam ambos iguais, pois não arredondam o foco. Alterar horários históricos redefine ambos para o término informado; editar descrições preserva os dois.
 
 ## Organização pessoal (New 1.9.0)
 
-O app abre em **Hoje**: capture demandas com **Alt+Q**, organize-as em tarefas, planeje a data de execução e escolha até três prioridades. Use **Alt+H** para voltar a Hoje. Próxima ação, Aguardando e revisão diária ajudam a retomar pendências. Em Modelos, a geração recorrente ocorre somente ao clicar em **Criar tarefas previstas**. Consulte [Planejamento pessoal](Planejamento.md) para o fluxo completo.
+O app abre em **Tarefas e hoje → Meu dia**: capture demandas com **Alt+Q**, organize-as em tarefas, planeje a data de execução e escolha até o limite configurado de prioridades (padrão cinco). Use **Alt+H** para voltar a Meu dia. Próxima ação, Aguardando e revisão diária ajudam a retomar pendências. Em Modelos, a geração recorrente ocorre somente ao clicar em **Criar tarefas previstas**. Consulte [Planejamento pessoal](Planejamento.md) para o fluxo completo.
 
 
 New 1.10.0: próxima ação ao encerrar/trocar, prazo padrão e recuperação de rascunhos estão descritos em [Primeira onda](Primeira-onda.md).
@@ -140,4 +162,8 @@ No Dashboard, use Planejado, estimado e realizado e pressione Comparar horas. Os
 
 ## Organização de tarefas — New 1.14.0
 
-Use Checklist em Tarefas ou Hoje para registrar passos sem separar apontamentos. Em Tarefas e Cadastros → Projetos, filtre arquivados e confirme arquivar/restaurar; dados e relatórios são preservados. Em Hoje → Modelos, edite ou pause modelos e configure dias úteis, dias específicos ou frequência mensal. A geração continua manual, sem acumular ocorrências atrasadas. Veja os fluxos e limites em [Quinta onda](Quinta-onda.md).
+Use Checklist em Tarefas ou Hoje para registrar passos sem separar apontamentos. Em Tarefas e Cadastros → Projetos, filtre arquivados e confirme arquivar/restaurar; dados e relatórios são preservados. Em Tarefas e hoje → Modelos, edite ou pause modelos e configure dias úteis, dias específicos ou frequência mensal. A geração continua manual, sem acumular ocorrências atrasadas. Veja os fluxos e limites em [Quinta onda](Quinta-onda.md).
+
+## Atualização 1.18.0
+
+Desde a 1.18.0, use **Tarefas e hoje** para a lista e o planejamento. Alt+T abre Todas as tarefas e Alt+H abre Meu dia. Em Configurações → Prioridades do dia, escolha entre 1 e 100 (padrão 5). Selecione vários estados com as caixas de seleção, sem Shift. Detalhes em [Tarefas e hoje](Tarefas-e-hoje.md).

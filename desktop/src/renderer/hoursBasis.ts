@@ -1,5 +1,8 @@
 import type { Session } from './types';
 export type HoursMode='real'|'rounded';
+export function hasUnknownPrecision(session:Session):boolean {
+ return !session.virtual&&!['Em andamento','Pausada'].includes(session.status)&&(!session.endAt||!session.roundedEndAt);
+}
 export function focusSeconds(session:Session,mode:HoursMode):number {
  if(mode==='rounded'||session.virtual||!session.endAt||!session.roundedEndAt)return session.focusSeconds;
  const increment=(Date.parse(session.roundedEndAt)-Date.parse(session.endAt))/1000;

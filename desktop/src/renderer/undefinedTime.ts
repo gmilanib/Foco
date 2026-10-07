@@ -15,5 +15,5 @@ export function undefinedSessions(periods:UndefinedPeriod[],filters:Record<strin
 export function dashboardWithUndefined(data:Dashboard|null,rows:Session[]):Dashboard|null{
  if(!data||!rows.length)return data;
  const seconds=rows.reduce((n,s)=>n+s.focusSeconds,0);
- return {...data,seconds:data.seconds+seconds,groups:[...data.groups,{name:'A definir (jornada)',parent:null,client:null,seconds,sessions:0,value:0,unpriced:0}]};
+ return {...data,seconds:data.seconds+seconds,comparison:data.comparison?{...data.comparison,realSeconds:data.comparison.realSeconds+seconds,roundedSeconds:data.comparison.roundedSeconds+seconds}:undefined,groups:[...data.groups,{name:'A definir (jornada)',parent:null,client:null,seconds,sessions:0,value:0,unpriced:0}]};
 }

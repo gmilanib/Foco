@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS sessions (
   id TEXT PRIMARY KEY, task_id TEXT, client TEXT NOT NULL DEFAULT '', project TEXT NOT NULL DEFAULT '',
   activity TEXT NOT NULL, details TEXT NOT NULL DEFAULT '', consultant TEXT NOT NULL DEFAULT '', card_reference TEXT NOT NULL DEFAULT '',
   start_at TEXT NOT NULL, end_at TEXT, rounded_end_at TEXT, planned_seconds INTEGER NOT NULL DEFAULT 0, focus_seconds REAL NOT NULL DEFAULT 0,
-  hourly_rate TEXT, status TEXT NOT NULL DEFAULT 'Em andamento', category TEXT NOT NULL DEFAULT 'Normal', imported_at TEXT,
+  hourly_rate TEXT, status TEXT NOT NULL DEFAULT 'Em andamento', category TEXT NOT NULL DEFAULT 'Normal', imported_at TEXT, rounding_version INTEGER NOT NULL DEFAULT 0,
   FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE SET NULL
 );
 CREATE INDEX IF NOT EXISTS idx_sessions_start ON sessions(start_at DESC);
@@ -16,7 +16,7 @@ CREATE INDEX IF NOT EXISTS idx_sessions_task ON sessions(task_id);
 CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS client_colors (client_key TEXT PRIMARY KEY, client_name TEXT NOT NULL, hex TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS catalog_clients (name_key TEXT PRIMARY KEY, name TEXT NOT NULL);
-CREATE TABLE IF NOT EXISTS catalog_projects (name_key TEXT PRIMARY KEY, name TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS catalog_projects (name_key TEXT PRIMARY KEY, name TEXT NOT NULL, color_seed INTEGER);
 CREATE TABLE IF NOT EXISTS catalog_activities (name_key TEXT PRIMARY KEY, name TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS change_history (
   id TEXT PRIMARY KEY, entity_type TEXT NOT NULL, entity_id TEXT NOT NULL,
@@ -57,4 +57,10 @@ CREATE INDEX IF NOT EXISTS idx_checklist_task ON task_checklist(task_id,position
 CREATE TABLE IF NOT EXISTS template_options (
   template_id TEXT PRIMARY KEY REFERENCES task_templates(id) ON DELETE CASCADE,
   paused INTEGER NOT NULL DEFAULT 0, weekdays TEXT NOT NULL DEFAULT '', month_day INTEGER
+);
+CREATE TABLE IF NOT EXISTS work_schedule_rules (
+  effective_from TEXT PRIMARY KEY, week_json TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS work_schedule_exceptions (
+  day TEXT PRIMARY KEY, windows_json TEXT NOT NULL
 );

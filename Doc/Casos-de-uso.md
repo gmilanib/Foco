@@ -1,5 +1,20 @@
 # Casos de uso
 
+## New 1.17.0 — navegar e converter tempos anteriores
+
+- **Navegar:** escolher uma tela na barra lateral ou por atalho; receber feedback visual e foco no título; continuar pelo teclado. Movimento reduzido do Windows desativa as animações.
+- **Encerrar/trocar:** registrar o término real e arredondar somente o foco para cima em blocos de 2 minutos.
+- **Atualizar o histórico:** na abertura, criar cópia anterior, recuperar o foco dos registros com ajuste conhecido e converter uma vez em transação. Se o backup ou a escrita falhar, manter os tempos anteriores. Consultar o resultado em Configurações.
+- **Conferir legados:** visualizar o marcador de precisão indisponível na linha do relatório e manter o valor salvo. Restaurar backups antigos aplica a mesma regra de conversão na transação da restauração.
+
+Diagrama e critérios em [Interface e arredondamento](Interface-e-arredondamento.md).
+
+## Sétima onda — Jornada e recuperação
+
+- **Consultar linha do tempo:** escolher um dia em Jornada, distinguir sessões, pausas precisas e períodos estimados; abrir edição de sessão finalizada ou classificar A definir. Alterações seguem os fluxos/validações existentes e atualizam a Jornada. Sessões abertas permanecem protegidas.
+- **Definir jornada:** preencher os sete dias e vigência de hoje ou futura; API valida horários, ordem e sobreposição antes de escrever. Exceção por data substitui a semana, inclusive folga. Regras passadas são imutáveis. Falhas mantêm os campos preenchidos, sem mensagem de sucesso.
+- **Restaurar cópia local:** selecionar ZIP, validar em banco isolado, conferir registros e confirmar substituição. API exige o hash conferido e ausência de sessão atual aberta; faz cópia de segurança e transação. Sucesso exibe o caminho anterior e permite recarregar. Arquivo alterado ou falha mantém os dados atuais e exige nova confirmação; nenhuma restauração ocorre apenas ao escolher um arquivo.
+
 ## CU01 — Apontar atividade
 
 **Ator:** consultor. **Pré-condições:** aplicativo aberto; nenhuma sessão ativa.
@@ -123,7 +138,7 @@ sequenceDiagram
 
 ## Capturar, planejar e revisar atividades
 
-Capturar uma frase → organizar como tarefa → escolher data e até três prioridades → iniciar apontamento → revisar tarefas e lacunas → salvar revisão do dia. Tarefas bloqueadas recebem estado Aguardando, dependência e data de revisão. Modelos reutilizam dados de uma tarefa; recorrências só são geradas pelo botão Criar tarefas previstas. Consulte [Planejamento](Planejamento.md).
+Capturar uma frase → organizar como tarefa → escolher data e até o limite configurado de prioridades (padrão cinco) → iniciar apontamento → revisar tarefas e lacunas → salvar revisão do dia. Tarefas bloqueadas recebem estado Aguardando, dependência e data de revisão. Modelos reutilizam dados de uma tarefa; recorrências só são geradas pelo botão Criar tarefas previstas. Consulte [Planejamento](Planejamento.md).
 
 
 New 1.10.0: registrar próxima ação ao encerrar/trocar uma tarefa; escolher prazo padrão; recuperar ou descartar rascunhos após navegação. Ver [fluxos e critérios](Primeira-onda.md).
@@ -156,3 +171,14 @@ No Dashboard, selecionar intervalo/base e Comparar horas para avaliar tarefas, p
 - Editar/pausar modelo: manter id e tarefas geradas, configurar frequência/data e pausar ou retomar; geração manual ignora pausados e origens arquivadas, com uma ocorrência vencida por ação.
 
 Fluxos, alternativas e critérios completos em [Quinta onda](Quinta-onda.md).
+## Sexta onda — New 1.15.0
+
+- **Capturar com o Foco oculto:** ativar o atalho em Configurações ou escolher Capturar uma demanda na bandeja; a janela é restaurada e um diálogo recebe foco. Informar texto e salvar na caixa de entrada. Formulários anteriores permanecem abertos. Em falha de gravação, preservar o texto; se a captura foi salva mas a atualização da tela falhou, informar o resultado sem permitir repetir o mesmo texto.
+- **Receber lembrete:** habilitar planejamento/revisão e horário. Com o aplicativo aberto, receber aviso nativo e no painel. Abrir a tela, adiar 15 minutos, dispensar ou silenciar hoje. Reinício não repete um aviso já entregue; virada do dia remove avisos antigos e reabilita os próximos. Sem suporte nativo, usar o painel.
+- **Mover planejamento semanal:** em Tarefas e hoje → Planejamento semanal, escolher tarefa e data por arraste ou botão. Confirmar, com opção de preservar prioridade. Validar disponibilidade/limite e gravar mudança e histórico juntos. Se o destino estiver cheio, manter a data anterior e informar o motivo. Prazo e demais campos não são alterados.
+- **Salvar e reutilizar uma visão:** configurar filtros/ordenação, escolher nome/período e salvar. Ao aplicar, recalcular Hoje/Semana atual ou manter datas fixas explicitamente escolhidas. Atualizar filtros, renomear e excluir exigem ações distintas. Falha de armazenamento mantém os controles e não apresenta sucesso.
+- **Conferir arredondamento:** consultar Dashboard/Relatórios e comparar reais/arredondadas dos mesmos registros filtrados. Mostrar diferença acumulada, quantidade de históricos sem precisão e avisos de sessões provisórias. Incluir a comparação no PDF do Dashboard.
+
+## Atualização 1.18.0
+
+Na 1.18.0, o usuário abre Tarefas e hoje → Todas as tarefas → Planejar para ajustar data/prioridade/próxima ação. Em Configurações, salva o limite diário; valores inválidos não são gravados. Reduzir preserva prioridades existentes e impede novos acréscimos enquanto não houver vaga. [Detalhes](Tarefas-e-hoje.md).

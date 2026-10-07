@@ -25,8 +25,8 @@ export const sessionCsv=(rows:Session[],showValues:boolean,endMode:'real'|'round
   return '\uFEFF'+[headers.map(csvCell).join(';'),...lines].join('\r\n');
 };
 export const workHoursCsv=(report:WorkHoursReport)=>{
-  const headers=['Data','Tipo','Inicio','Termino','Total_trabalhado_segundos','A_definir_segundos','Horas_normais_segundos','Extra_time_segundos','Precisao'];
-  const days=report.days.map(row=>[row.day,'Resumo diário','','',row.workedSeconds,row.undefinedSeconds,row.regularSeconds,row.extraSeconds,row.estimated?'Estimado':'Preciso']);
-  const gaps=report.undefinedPeriods.map(row=>[row.day,'A definir',row.startAt,row.endAt,row.seconds,'','','','Preciso']);
+  const headers=['Data','Tipo','Inicio','Termino','Total_trabalhado_segundos','A_definir_segundos','Horas_normais_segundos','Extra_time_segundos','Precisao','Meta_jornada_segundos','Regra_jornada'];
+  const days=report.days.map(row=>[row.day,'Resumo diário','','',row.workedSeconds,row.undefinedSeconds,row.regularSeconds,row.extraSeconds,row.estimated?'Estimado':'Preciso',row.targetSeconds??28800,row.scheduleSource??'Padrão histórico']);
+  const gaps=report.undefinedPeriods.map(row=>[row.day,'A definir',row.startAt,row.endAt,row.seconds,'','','','Preciso','','']);
   return '\uFEFF'+[headers.map(csvCell).join(';'),...days,...gaps].map(row=>Array.isArray(row)?row.map(csvCell).join(';'):row).join('\r\n');
 };

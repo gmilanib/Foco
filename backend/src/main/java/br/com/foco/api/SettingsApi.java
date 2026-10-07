@@ -3,6 +3,7 @@ package br.com.foco.api;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 import java.util.*;
+import org.springframework.transaction.annotation.Transactional;
 
 @RestController
 @RequestMapping("/api/settings")
@@ -11,7 +12,12 @@ class SettingsController {
     private final CatalogService catalogs;
     SettingsController(JdbcTemplate db,CatalogService catalogs){this.db=db;this.catalogs=catalogs;}
     @GetMapping Map<String,String> all(){return db.query("SELECT key,value FROM settings",r->{Map<String,String> m=new TreeMap<>();while(r.next())m.put(r.getString(1),r.getString(2));return m;});}
-    @PutMapping Map<String,String> save(@RequestBody Map<String,String> values){
+    @PutMapping @Transactional Map<String,String> save(@RequestBody Map<String,String> values){
+        WorkflowPreferences.validate(values);
+        if(values.containsKey("planning.priorityLimit")){
+            try{int limit=Integer.parseInt(values.get("planning.priorityLimit"));if(limit<1||limit>100)throw new NumberFormatException();}
+            catch(RuntimeException e){throw new IllegalArgumentException("Informe um limite inteiro entre 1 e 100 prioridades.");}
+        }
         if(values.containsKey("planning.capacityMinutes")){
             try{int minutes=Integer.parseInt(values.get("planning.capacityMinutes"));if(minutes<0||minutes>1440)throw new NumberFormatException();}
             catch(RuntimeException e){throw new IllegalArgumentException("Informe capacidade inteira entre 0 e 1440 minutos.");}

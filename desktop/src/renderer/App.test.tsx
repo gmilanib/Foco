@@ -24,9 +24,22 @@ beforeEach(()=>{
 });
 
 describe('início do modo cronômetro',()=>{
+ it('identifica a navegação e leva o foco ao título sem repetir a entrada da tela ao mudar o tema',async()=>{
+  const {container}=render(<App/>);
+  await screen.findByRole('heading',{name:'Tarefas e hoje'});
+  expect(screen.getByRole('navigation',{name:'Navegação principal'})).toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button',{name:'Apontar horas'}));
+  expect(await screen.findByRole('heading',{name:'Lançamento'})).toHaveFocus();
+  const content=container.querySelector('.page-content');
+  fireEvent.change(screen.getByLabelText('Detalhamento'),{target:{value:'Meu rascunho'}});
+  fireEvent.click(screen.getByRole('button',{name:'Ativar tema escuro'}));
+  expect(container.querySelector('.page-content')).toBe(content);
+  expect(screen.getByLabelText('Detalhamento')).toHaveValue('Meu rascunho');
+  expect(screen.getByText(/Ao encerrar, o foco é arredondado/)).toHaveTextContent('2 minutos');
+ });
  it('abre em Hoje e acessa captura rápida pelo atalho',async()=>{
   render(<App/>);
-  expect(await screen.findByRole('heading',{name:'Hoje'})).toBeInTheDocument();
+  expect(await screen.findByRole('heading',{name:'Tarefas e hoje'})).toBeInTheDocument();
   fireEvent.keyDown(window,{key:'q',altKey:true});
   expect(await screen.findByLabelText('Captura rápida')).toBeInTheDocument();
  });
@@ -34,7 +47,7 @@ describe('início do modo cronômetro',()=>{
   render(<App/>);fireEvent.click(screen.getByRole('button',{name:'Apontar horas'}));
   await screen.findByRole('heading',{name:'Lançamento'});
   fireEvent.keyDown(window,{key:'t',altKey:true});
-  expect(await screen.findByRole('heading',{name:'Tarefas'})).toBeInTheDocument();
+  expect(await screen.findByRole('heading',{name:'Tarefas e hoje'})).toBeInTheDocument();
   fireEvent.keyDown(window,{key:'f',altKey:true});
   expect(await screen.findByRole('heading',{name:'Lançamento'})).toBeInTheDocument();
   fireEvent.click(screen.getByRole('button',{name:'Relatórios'}));
@@ -92,7 +105,7 @@ describe('cores compartilhadas entre configurações e tarefas',()=>{
   fireEvent.change(screen.getByLabelText('Cor'),{target:{value:'#123456'}});
   fireEvent.click(screen.getByRole('button',{name:'Salvar cor'}));
   await waitFor(()=>expect(api).toHaveBeenCalledWith('/api/settings/colors','PUT',{client:'ACME',hex:'#123456'}));
-  fireEvent.click(screen.getByRole('button',{name:'Tarefas'}));
+  fireEvent.keyDown(window,{key:'t',altKey:true});
   await waitFor(()=>expect(container.querySelector('.client-marker')?.getAttribute('style')).toContain('#123456'));
  });
 });

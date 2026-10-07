@@ -13,13 +13,13 @@
   <img alt="Licença" src="https://img.shields.io/badge/licen%C3%A7a-a%20definir-lightgrey">
 </p>
 
-> **Versão Stable: 1.14.0.** Baixe o instalador na [release do GitHub](https://github.com/gmilanib/Foco/releases/tag/v1.14.0-stable). O Foco Java é uma aplicação desktop independente do Foco V35. Consulte o [roadmap](Roadmap.md) para as próximas melhorias.
+> **Versão Stable: 1.18.0.** Baixe o instalador na [release do GitHub](https://github.com/gmilanib/Foco/releases/tag/v1.18.0-stable). O Foco Java é uma aplicação desktop independente do Foco V35. Consulte o [roadmap](Roadmap.md) para as próximas melhorias.
 
 ## O que você pode fazer
 
 - **Registrar seu foco:** use cronômetro ou timer, pause e retome sessões e continue acompanhando o tempo pela bandeja do sistema.
 - **Organizar tarefas:** acompanhe tarefas pendentes, em andamento e concluídas, com prazos e vários apontamentos relacionados.
-- **Planejar e revisar:** capture demandas em Hoje, defina prioridades e próxima ação, compare estimativas com a capacidade diária e faça a revisão semanal.
+- **Planejar e revisar:** capture demandas em Tarefas e hoje, configure o limite de prioridades (padrão cinco), defina a próxima ação, compare estimativas com a capacidade diária e faça a revisão semanal.
 - **Acompanhar avanços:** use checklists, arquive e restaure tarefas/projetos e configure modelos recorrentes com geração manual.
 - **Consultar relatórios e dashboards:** filtre períodos e visualize o tempo por cliente, projeto, atividade ou consultor.
 - **Corrigir ou recuperar registros:** edite lançamentos históricos, registre trabalho retroativo e importe dados do Foco V35 em modo somente leitura.

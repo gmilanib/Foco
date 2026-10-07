@@ -1,7 +1,12 @@
+import { useContext } from 'react';
+import { ProjectColorSeeds } from '../components/ClientMarker';
 import { visibleGroups } from '../dashboardGroups';
+import { HoursComparison } from '../components/HoursComparison';
+import { SavedViews } from '../components/SavedViews';
+import { viewFields,viewText,viewChoice,viewDate,viewNumber } from '../savedViews';
 import { PlanningAnalysisPanel } from '../components/PlanningAnalysisPanel';
 import { readView,writeView,useViewState,oneOf,stringList } from '../viewPreferences';
-import { useEffect,useMemo,useState,type CSSProperties } from 'react';
+import { useEffect,useMemo,useRef,useState,type CSSProperties } from 'react';
 import { Card,Field,Empty } from '../components/Field';
 import { ClientMarker,ProjectMarker,clientColor,projectColor } from '../components/ClientMarker';
 import { dashboardWithUndefined,undefinedSessions } from '../undefinedTime';
@@ -11,15 +16,18 @@ import { duration,isoDay,money } from '../format';
 import type { Color,Dashboard,GroupTotal } from '../types';
 
 type Criteria={hoursMode:'real'|'rounded';group:string;from:string;to:string;client:string;project:string;activity:string;consultant:string;minHours:string;maxHours:string};
+type DashboardView=Criteria&{sort:'seconds'|'name'|'sessions'|'value';direction:'asc'|'desc';groupView:'summary'|'all'};
+const validDashboardView=viewFields<DashboardView>({hoursMode:viewChoice('real','rounded'),group:viewChoice('client','project','activity','consultant'),from:viewDate,to:viewDate,client:viewText,project:viewText,activity:viewText,consultant:viewText,minHours:viewNumber,maxHours:viewNumber,sort:viewChoice('seconds','name','sessions','value'),direction:viewChoice('asc','desc'),groupView:viewChoice('summary','all')});
 const initial=():Criteria=>{const today=isoDay(new Date());return{hoursMode:readView('dashboard.hours','rounded',oneOf('real','rounded')),group:readView('dashboard.group','client',oneOf('client','project','activity','consultant')),from:today,to:today,client:'',project:'',activity:'',consultant:'',minHours:'',maxHours:''};};
 function clientHex(name:string|null|undefined,colors:Color[],index:number){return (name?clientColor(name,colors):undefined)||`var(--chart-${index%8})`;}
 function Chart({groups,projects,kind,expanded,toggle,colors,sort,direction}:{groups:GroupTotal[];projects:GroupTotal[];kind:'hours'|'value';expanded:string[];toggle:(name:string)=>void;colors:Color[];sort:string;direction:'asc'|'desc'}){
+ const projectSeeds=useContext(ProjectColorSeeds);
  if(!groups.length)return <Empty>Nenhum dado para os filtros escolhidos.</Empty>;
  const max=Math.max(1,...groups.map(g=>kind==='hours'?g.seconds:g.value));
  return <div className="chart-list">{groups.map(group=>{
   const key=group.name,children=orderedTotals((group.aggregate?[]:projects).filter(p=>p.parent?.toLowerCase()===key.toLowerCase()),sort,direction),value=kind==='hours'?group.seconds:group.value,open=expanded.includes(key);
   return <div className="chart-group" key={JSON.stringify([!!group.aggregate,key])}><div className="chart-row"><button aria-expanded={open} className="chart-label" disabled={!children.length} onClick={()=>toggle(key)}>{children.length?(open?'▾':'▸'):''} <ClientMarker client={group.client||''} colors={colors}>{group.name}</ClientMarker></button><strong>{kind==='hours'?duration(value):money(value)}</strong></div><div className="bar-track"><span style={{width:`${value/max*100}%`,backgroundColor:clientHex(group.client,colors,groups.indexOf(group))}}/></div>
-   {open&&children.length>0&&<div className="chart-children">{children.map(project=>{const subtotal=kind==='hours'?project.seconds:project.value;return <div className="chart-group" key={`${key}/${project.name}`}><div className="chart-row"><ProjectMarker client={project.client||''} project={project.name} colors={colors}/><strong>{kind==='hours'?duration(project.seconds):money(project.value)}</strong></div><div className="bar-track bar-track--secondary"><span style={{width:`${subtotal/max*100}%`,backgroundColor:projectColor(project.client||'',project.name,colors)}}/></div>{kind==='value'&&project.unpriced>0&&<small>{project.unpriced} sem valor/hora</small>}</div>;})}</div>}
+   {open&&children.length>0&&<div className="chart-children">{children.map(project=>{const subtotal=kind==='hours'?project.seconds:project.value;return <div className="chart-group" key={`${key}/${project.name}`}><div className="chart-row"><ProjectMarker client={project.client||''} project={project.name} colors={colors}/><strong>{kind==='hours'?duration(project.seconds):money(project.value)}</strong></div><div className="bar-track bar-track--secondary"><span style={{width:`${subtotal/max*100}%`,backgroundColor:projectColor(project.client||'',project.name,colors,projectSeeds)}}/></div>{kind==='value'&&project.unpriced>0&&<small>{project.unpriced} sem valor/hora</small>}</div>;})}</div>}
   </div>;
  })}</div>;
 }
@@ -41,7 +49,8 @@ export function DashboardPage({data:sourceData,colors,showValues,onRefresh,onExp
  const [groupView,setGroupView]=useViewState('dashboard.groupView','summary',oneOf('summary','all'));
  const displayedGroups=visibleGroups(orderedGroups,groupView==='all');
  const includePdfValues=showValues&&(pdfValues??true);
- const refresh=async(value:Criteria)=>{if(await onRefresh(value)!==false)setAppliedCriteria({...value});};
+ const refreshVersion=useRef(0);
+ const refresh=async(value:Criteria)=>{const version=++refreshVersion.current;if(await onRefresh(value)!==false&&version===refreshVersion.current)setAppliedCriteria({...value});};
  const pendingFilters=!appliedCriteria||JSON.stringify(criteria)!==JSON.stringify(appliedCriteria);
  useEffect(()=>{void refresh(criteria);},[]);
  const toggle=(key:string)=>setExpanded(v=>v.includes(key)?v.filter(x=>x!==key):[...v,key]);
@@ -50,6 +59,8 @@ export function DashboardPage({data:sourceData,colors,showValues,onRefresh,onExp
    <div className="print-hide"><label className="check-row"><input type="checkbox" checked={groupView==='all'} onChange={e=>setGroupView(e.target.checked?'all':'summary')}/> Mostrar todos os grupos ({orderedGroups.length})</label></div><p>{groupView==='all'?'Todos os grupos':'Até dez grupos na ordem escolhida; restante somado em Outros'}.</p><Card title="Distribuição por agrupamento"><div className="donut-layout"><div className="donut" style={{background:donut(displayedGroups,data.seconds,colors)} as CSSProperties}><span>{duration(data.seconds)}<small>HORAS TOTAIS</small></span></div><div className="legend">{displayedGroups.map((g,i)=><div key={JSON.stringify([!!g.aggregate,g.name])}><i style={{'--swatch':clientHex(g.client,colors,i)} as CSSProperties}/><ClientMarker client={g.client||''} colors={colors}>{g.name}</ClientMarker> · {duration(g.seconds)} · {data.seconds?Math.round(g.seconds/data.seconds*100):0}%</div>)}</div></div></Card>
    <div className="chart-grid"><Card title="Horas por agrupamento"><Chart groups={displayedGroups} projects={data.projects} kind="hours" expanded={expanded} toggle={toggle} colors={colors} sort={sort} direction={direction}/></Card>{showValues&&<Card title="Valor por agrupamento" dataFinancial><Chart groups={displayedGroups} projects={data.projects} kind="value" expanded={expanded} toggle={toggle} colors={colors} sort={sort} direction={direction}/></Card>}</div>
   </>}
+ {data?.comparison&&<HoursComparison value={data.comparison}/>}
+ <SavedViews scope="dashboard" criteria={{...criteria,sort,direction,groupView}} validate={validDashboardView} onApply={({sort,direction,groupView,...next})=>{setSort(sort);setDirection(direction);setGroupView(groupView);setCriteria(next);void refresh(next);}}/>
  <PlanningAnalysisPanel/>
  </div>;
 }

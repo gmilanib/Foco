@@ -27,13 +27,14 @@ class SessionSwitchApiTest {
         HttpResponse<String> response=post("/api/sessions/switch",body("Entrega"));
         assertEquals(200,response.statusCode(),response.body());
         assertEquals("Interrompida",db.queryForObject("SELECT status FROM sessions WHERE id='old'",String.class));
-        assertEquals(600,db.queryForObject("SELECT focus_seconds FROM sessions WHERE id='old'",Integer.class));
+        assertEquals(360,db.queryForObject("SELECT focus_seconds FROM sessions WHERE id='old'",Integer.class));
+        assertEquals(2,db.queryForObject("SELECT rounding_version FROM sessions WHERE id='old'",Integer.class));
         assertEquals(1,db.queryForObject("SELECT count(*) FROM sessions WHERE status='Em andamento' AND task_id='next'",Integer.class));
         assertEquals(db.queryForObject("SELECT end_at FROM sessions WHERE id='old'",String.class),db.queryForObject("SELECT start_at FROM sessions WHERE task_id='next'",String.class));
         assertEquals(0,db.queryForObject("SELECT completed FROM tasks WHERE id='next'",Integer.class));
         assertEquals(400,post("/api/sessions/switch",body("Entrega")).statusCode());
         post("/api/sessions/old/tick","{\"focusSeconds\":302}");
-        assertEquals(600,db.queryForObject("SELECT focus_seconds FROM sessions WHERE id='old'",Integer.class));
+        assertEquals(360,db.queryForObject("SELECT focus_seconds FROM sessions WHERE id='old'",Integer.class));
     }
     @Test void invalidNewActivityRollsBackTheInterruption() throws Exception {
         assertEquals(400,post("/api/sessions/switch",body("Inexistente")).statusCode());

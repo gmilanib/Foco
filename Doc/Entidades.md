@@ -1,5 +1,27 @@
 # Entidades e relações
 
+## New 1.17.0 — proveniência do arredondamento
+
+`sessions.rounding_version INTEGER NOT NULL DEFAULT 0`: 0 para registros anteriores/importados/sem conversão; 2 para encerramentos atuais e históricos convertidos em blocos de 120 segundos. A migração não altera `start_at`, `end_at`, vínculos, descrições, valores/hora ou intervalos reais; recalcula `focus_seconds` e `rounded_end_at` apenas onde há acréscimo anterior recuperável e registra `change_history`.
+
+Preferências técnicas `rounding.migratedSessions` e `rounding.safetyBackup` identificam a última conversão e sua cópia anterior. Não são campos de tempo nem substituem o marcador individual. Legados sem segundo término e registros sem acréscimo comprovado permanecem intactos. Regras e fluxo em [Interface e arredondamento](Interface-e-arredondamento.md).
+
+## Sétima onda — New 1.16.0
+
+- `work_schedule_rules`: chave `effective_from` (data local) e `week_json` com sete listas de intervalos `{start,end}`. A última regra cuja vigência não supera o dia consultado é aplicada.
+- `work_schedule_exceptions`: chave `day` e `windows_json` com intervalos daquele dia; prevalece sobre a regra semanal. Lista vazia significa folga com meta zero.
+- Ambas são aditivas e incluídas no backup SQLite. Alterações/remoções de datas anteriores a hoje são rejeitadas. Não modificam sessões, intervalos, estimativas nem capacidade de planejamento.
+- `WorkDay` acrescenta `targetSeconds` e `scheduleSource` à resposta derivada, também identificados no CSV.
+- Restauração registra `restore.lastAt` e `restore.safetyBackup` em `settings`. As demais tabelas são substituídas transacionalmente. Sessões abertas restauradas passam a Pausada; intervalos abertos terminam no último tick e registros antigos sem intervalos recebem estimativas. Sem novas entidades para barras da linha do tempo.
+
+## Sexta onda — New 1.15.0
+
+Sem novas tabelas ou migrações. `task_plans.planned_date` é alterado transacionalmente pela visão semanal; `priority` só é mantida por escolha explícita e se o destino comportar até o limite configurado de prioridades (padrão cinco). Prazo, próxima ação, dependência, revisão e estado são preservados. `change_history` registra o antes/depois da mudança.
+
+`settings` recebe `capture.enabled`, `capture.shortcut`, `reminders.planning.enabled`, `reminders.planning.time`, `reminders.review.enabled` e `reminders.review.time`. Ausência equivale a desativado; horários padrão são 09:00/18:00 e atalho sugerido Ctrl+Alt+Q. Esses valores integram o backup SQLite.
+
+Fora do SQLite: `foco.saved-views.v1.<tela>` no perfil local guarda `{id,name,period,criteria}`; `workflow-reminders.json` no diretório de dados guarda dia, avisos entregues/pendentes, adiamentos e silêncio. Esses dois estados não integram o ZIP SQLite. A comparação de horas é derivada e não regrava sessões.
+
 A Stable 1.14.0 usa as mesmas entidades e migrações aditivas descritas para as entregas New até 1.14.0. A promoção de canal e o ajuste do instalador não acrescentam campos, tabelas ou migrações.
 
 Na New 1.9.1, o Dashboard deriva horas reais de `focus_seconds`, `end_at` e `rounded_end_at`, removendo somente o acréscimo registrado. Não há novos campos persistidos. Totais e valores financeiros seguem `hoursMode`; detalhes em [Horas do Dashboard](Horas-do-dashboard.md).
@@ -76,7 +98,7 @@ erDiagram
 
 ## Cálculos
 
-`custo = valor_hora × segundos_de_foco / 3600`, arredondado para centavos apenas na apresentação/exportação. Ao encerrar, o tempo é arredondado para cima em blocos de cinco minutos, preservando a regra V35; durante uma pausa, o valor é o tempo acumulado sem arredondamento final.
+`custo = valor_hora × segundos_de_foco / 3600`, arredondado para centavos apenas na apresentação/exportação. Ao encerrar, o tempo é arredondado para cima em blocos de dois minutos desde a New 1.17.0; durante uma pausa, o valor é o tempo acumulado sem arredondamento final.
 
 Para lançamentos retroativos, a pessoa informa horas e minutos efetivos. O backend grava `focus_seconds = (horas × 60 + minutos) × 60`, sem aplicar o arredondamento do cronômetro ao encerrar.
 Edições descritivas mantêm `focus_seconds` e os instantes originais; a alteração de início ou término recalcula o foco pelo novo intervalo.
@@ -119,7 +141,7 @@ erDiagram
 
 ## Término real e arredondado
 
-Ao finalizar ou trocar uma atividade, `end_at` guarda o instante real e `rounded_end_at` guarda esse instante mais o ajuste do foco para o próximo bloco de cinco minutos. Exemplo: 7 minutos de foco viram 10; o término arredondado fica 3 minutos depois do real. Pausas não são adicionadas ao ajuste. Jornada, conflitos e início da próxima tarefa continuam usando o término real. Foco e custo mantêm a regra atual.
+Ao finalizar ou trocar uma atividade, `end_at` guarda o instante real e `rounded_end_at` guarda esse instante mais o ajuste do foco para o próximo bloco de dois minutos. Exemplo: 7 minutos de foco viram 8; o término arredondado fica 1 minuto depois do real. Pausas não são adicionadas ao ajuste. Jornada, conflitos e início da próxima tarefa continuam usando o término real. Foco e custo mantêm a regra atual.
 
 Relatórios oferece **Término exibido: Real / Arredondado**, com Real como padrão. A escolha também acompanha a coluna Término do CSV. Registros antigos e XML importados usam o término disponível quando não há segundo valor; não se inventa um ajuste histórico. Retroativos salvam ambos iguais, pois não arredondam o foco. Alterar horários históricos redefine ambos para o término informado; editar descrições preserva os dois.
 
@@ -162,3 +184,7 @@ erDiagram
     CATALOG_PROJECT ||--o| PROJECT_ARCHIVE : arquivamento
     TASK_TEMPLATE ||--o| TEMPLATE_OPTIONS : calendario
 ```
+
+## Atualização 1.18.0
+
+A 1.18.0 acrescenta `catalog_projects.color_seed INTEGER` opcional, sorteado para projetos novos e preservado no rename; legados ficam nulos. `settings.planning.priorityLimit` guarda um inteiro de 1 a 100, padrão 5. Não há nova entidade de tarefa: lista e planejamento continuam usando os mesmos IDs. [Fluxos e regras](Tarefas-e-hoje.md).

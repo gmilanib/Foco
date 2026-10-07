@@ -1,0 +1,51 @@
+import { cleanup,fireEvent,render,screen,waitFor,within } from '@testing-library/react';
+import { afterEach,beforeEach,expect,it,vi } from 'vitest';
+import { App } from './App';
+import { isoDay } from './format';
+import { ProjectColorSeeds,ProjectMarker,projectColor } from './components/ClientMarker';
+const api=vi.mocked(window.foco.request);
+beforeEach(()=>{vi.clearAllMocks();localStorage.clear();api.mockImplementation(async(path)=>{
+ if(path==='/api/catalogs')return {items:{clients:[],projects:['Novo'],activities:['Entrega']},possibleDuplicates:[],projectColorSeeds:{Novo:217}} as never;
+ if(path==='/api/settings')return {'planning.priorityLimit':'7'} as never;
+ if(path.startsWith('/api/tasks?'))return [{id:'t',activity:'Entrega',client:'',project:'Novo',details:'',consultant:'',cardReference:'',hourlyRate:null,dueDate:null,completed:false,state:'Pendente',entries:0,focusSeconds:0}] as never;
+ if(path==='/api/planning/plans')return [{taskId:'t',plannedDate:isoDay(new Date()),priority:1,nextAction:'',waitingFor:'',reviewDate:null}] as never;
+ if(path==='/api/work-hours/intervals')return [] as never;
+ if(path.startsWith('/api/work-hours'))return {days:[],undefinedPeriods:[]} as never;
+ return [] as never;
+});});
+afterEach(cleanup);
+it('reúne lista e planejamento e abre planejamento direto da tarefa',async()=>{
+ render(<App/>);await screen.findByRole('heading',{name:'Tarefas e hoje'});
+ const nav=screen.getByRole('navigation',{name:'Navegação principal'});
+ expect(within(nav).queryByRole('button',{name:'Hoje'})).toBeNull();
+ expect(within(nav).queryByRole('button',{name:'Tarefas'})).toBeNull();
+ fireEvent.click(screen.getByRole('button',{name:'Todas as tarefas'}));
+ fireEvent.click(await screen.findByRole('button',{name:'Planejar'}));
+ expect(await screen.findByRole('dialog')).toHaveTextContent('Entrega');
+ fireEvent.click(screen.getByRole('button',{name:'Cancelar'}));
+ fireEvent.keyDown(window,{key:'h',altKey:true});
+ expect(await screen.findByRole('heading',{name:'Prioridades (1/7)'})).toBeInTheDocument();
+});
+it('salva limite personalizado e mostra falha de gravação',async()=>{
+ render(<App/>);fireEvent.click(screen.getByRole('button',{name:'Configurações'}));
+ const input=await screen.findByLabelText('Atividades prioritárias por dia');
+ await waitFor(()=>expect(input).toHaveValue(7));
+ fireEvent.change(input,{target:{value:'12'}});
+ fireEvent.click(screen.getByRole('button',{name:'Salvar limite de prioridades'}));
+ await waitFor(()=>expect(api).toHaveBeenCalledWith('/api/settings','PUT',{'planning.priorityLimit':'12'}));
+ expect(await screen.findByText('Limite de prioridades salvo.')).toBeInTheDocument();
+ api.mockImplementation(async(path,method='GET')=>{if(path==='/api/settings'&&method==='PUT')throw new Error('Falha ao salvar');return [] as never;});
+ fireEvent.click(screen.getByRole('button',{name:'Salvar limite de prioridades'}));
+ await waitFor(()=>expect(screen.queryByText('Limite de prioridades salvo.')).toBeNull());
+ expect(screen.getAllByText('Falha ao salvar').length).toBeGreaterThan(0);
+});
+it('mantém semente entre renderizações e usa variação da cor do cliente',()=>{
+ const seeds={Novo:217};const props={client:'ACME',project:'Novo',colors:[{client:'ACME',hex:'#123456'}]};
+ const {container,rerender}=render(<ProjectColorSeeds.Provider value={seeds}><ProjectMarker {...props}/></ProjectColorSeeds.Provider>);
+ const style=container.querySelector('.project-label')?.getAttribute('style');
+ expect(style).toContain('#123456');expect(style).toContain('62%');
+ rerender(<ProjectColorSeeds.Provider value={seeds}><ProjectMarker {...props}/></ProjectColorSeeds.Provider>);
+ expect(container.querySelector('.project-label')?.getAttribute('style')).toBe(style);
+ expect(projectColor('', 'Novo',[],seeds)).toContain('hsl(217 65% 48%)');
+ expect(projectColor('ACME','Novo',props.colors,seeds)).toContain('#123456 62%');
+});

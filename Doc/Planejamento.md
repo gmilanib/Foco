@@ -1,21 +1,23 @@
 # Planejamento pessoal — New 1.9.0
 
+Na New 1.15.0, **Tarefas e hoje → Planejamento semanal** adiciona calendário de segunda a domingo, estimativas/capacidade e movimentação confirmada por arraste ou teclado. `PUT /api/planning/plans/{id}/date` recebe `{plannedDate,keepPriority}`; data nula retira do calendário. Preserva prazo, próxima ação, estado e dependência, com histórico transacional. Captura global e lembretes locais configuráveis complementam os fluxos existentes. Detalhes em [Sexta onda](Sexta-onda.md).
+
 ## Fluxo de uso
 
-O Foco New abre em **Hoje**. **Alt+H** abre esse espaço; **Alt+Q** ou o botão **Captura rápida** leva diretamente à caixa de entrada de qualquer tela.
+O Foco abre em **Tarefas e hoje → Meu dia**. **Alt+H** abre esse espaço; **Alt+Q** ou o botão **Captura rápida** leva diretamente à caixa de entrada de qualquer tela.
 
 1. **Capturar:** escreva uma frase (até 1.000 caracteres). Nenhum catálogo, prazo ou cliente é exigido nesse momento.
 2. **Organizar:** selecione a atividade cadastrada, escolha cliente/projeto opcionais e revise o detalhamento. O prazo de entrega é opcional. O texto capturado preenche o detalhamento; a captura só é removida após salvar a tarefa, na mesma transação. Novas atividades são cadastradas na tela Cadastros.
 3. **Planejar tarefas:** localize a tarefa por cliente, projeto, atividade ou detalhamento. Em **Planejar / próxima ação**, escolha a data de execução, o próximo passo e, se necessário, a dependência e a data para revisá-la.
-4. **Meu dia:** selecione até três prioridades por data e ajuste a ordem pelas setas. Outras tarefas planejadas continuam disponíveis. **Iniciar** usa o fluxo existente de apontamentos e troca transacional de tarefa. Planejamentos anteriores não são movidos automaticamente.
+4. **Meu dia:** selecione até o limite configurado de prioridades (padrão cinco) por data e ajuste a ordem pelas setas. Outras tarefas planejadas continuam disponíveis. **Iniciar** usa o fluxo existente de apontamentos e troca transacional de tarefa. Planejamentos anteriores não são movidos automaticamente.
 5. **Aguardando:** informe de quem/o que depende e quando revisar. A tarefa aparece em Aguardando retorno; datas de revisão vencidas são sinalizadas. Mude o estado quando ela estiver disponível novamente. Concluir ou marcar Aguardando libera sua posição entre as prioridades.
 6. **Fechamento do dia:** confira tarefas planejadas ou trabalhadas ainda abertas, registre a próxima ação, consulte as lacunas da Jornada e salve notas da revisão. O link para Jornada abre a mesma data na aba A definir. Salvar a revisão não conclui tarefas, não preenche lacunas e não encerra sessões. Revisões futuras não são permitidas.
 
-**Data de planejamento e prazo de entrega são independentes.** Planejar para amanhã não altera o compromisso de entrega. As três prioridades são um limite para tarefas disponíveis, não uma obrigação diária. Concluir uma sessão também não conclui a tarefa automaticamente.
+**Data de planejamento e prazo de entrega são independentes.** Planejar para amanhã não altera o compromisso de entrega. As prioridades são um limite configurável para tarefas disponíveis, não uma obrigação diária. Concluir uma sessão também não conclui a tarefa automaticamente.
 
 ## Modelos e recorrência
 
-Em **Hoje → Modelos**, crie um modelo a partir de uma tarefa existente. Dê um nome e escolha Sob demanda, Diária, Semanal, Dias úteis, Dias específicos ou Mensal. Recorrências exigem a próxima data, correspondente aos dias escolhidos ou ao dia mensal.
+Em **Tarefas e hoje → Modelos**, crie um modelo a partir de uma tarefa existente. Dê um nome e escolha Sob demanda, Diária, Semanal, Dias úteis, Dias específicos ou Mensal. Recorrências exigem a próxima data, correspondente aos dias escolhidos ou ao dia mensal.
 
 - **Usar modelo:** cria uma tarefa pendente com os dados atuais da origem. Não copia prazo, planejamento, conclusão, histórico ou apontamentos. Planeje a nova tarefa depois.
 - **Criar tarefas previstas:** por escolha do usuário, a geração é manual. Cria uma tarefa por modelo vencido, planejada para o dia local atual, sem prioridade. Avança a próxima data para a primeira ocorrência futura, mantendo a cadência configurada. Não cria uma fila por todos os dias perdidos. Cliques repetidos no mesmo dia não repetem essa ocorrência.
@@ -44,7 +46,7 @@ flowchart LR
     C[Captura rápida] --> I[Caixa de entrada]
     I -->|Organizar com catálogo| T[Tarefa]
     T --> P[Data e próxima ação]
-    P --> H[Hoje: até três prioridades]
+    P --> H[Meu dia: prioridades configuráveis, padrão cinco]
     H --> A[Apontamentos]
     T --> W[Aguardando e data de revisão]
     A --> R[Fechamento do dia]
@@ -58,3 +60,7 @@ flowchart LR
 O instalador New 1.9.0 usa sua identidade e diretório próprios. O WPF e os instaladores Stable não são modificados. Como New e Stable compartilham o banco da fork, tarefas criadas na New continuam sendo tarefas nesse banco; somente a New oferece a organização adicional. A Stable antiga não possui o estado Aguardando entre suas opções de edição: use a New para administrar esse fluxo.
 
 Testes cobrem limite e ordem de prioridades, independência do prazo, liberação de prioridade, validação de campos, token, conversão sem perda/duplicação, rollback de conclusão com sessão ativa, geração manual sem acúmulo ou repetição, modelos, revisão persistida e criação idempotente das tabelas em base legada. Vitest cobre captura, falhas, início de tarefa, edição do planejamento, revisão e acesso pela navegação/atalho.
+
+## Atualização 1.18.0
+
+Na 1.18.0, o limite é configurável entre 1 e 100, padrão 5, substituindo a regra anterior de três. Alterar o limite preserva planos existentes; a validação também vale ao mover entre datas. Lista e planejamento estão em Tarefas e hoje. [Regras](Tarefas-e-hoje.md).

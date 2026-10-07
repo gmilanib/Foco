@@ -26,7 +26,7 @@ function setup(status:string,fail=false,linked=false){
 it.each(['Em andamento','Pausada'])('troca %s por outra tarefa sem diálogo de confirmação',async(status)=>{
  setup(status);render(<App/>);fireEvent.click(screen.getByRole('button',{name:'Apontar horas'}));
  await waitFor(()=>expect(screen.getByText(status==='Pausada'?'PAUSADA':'EM FOCO')).toBeInTheDocument());
- fireEvent.click(screen.getByRole('button',{name:'Tarefas'}));
+ fireEvent.keyDown(window,{key:'t',altKey:true});
  fireEvent.click(await screen.findByRole('button',{name:'Iniciar'}));
  await waitFor(()=>expect(api).toHaveBeenCalledWith('/api/sessions/switch','POST',expect.objectContaining({previousId:'old',next:expect.objectContaining({taskId:'next',activity:'Entrega'})})));
  expect(screen.queryByRole('heading',{name:'Encerrar apontamento'})).not.toBeInTheDocument();
@@ -34,7 +34,7 @@ it.each(['Em andamento','Pausada'])('troca %s por outra tarefa sem diálogo de c
 });
 it('exibe a falha da troca sem finalizar a sessão em uma chamada separada',async()=>{
  setup('Em andamento',true);render(<App/>);fireEvent.click(screen.getByRole('button',{name:'Apontar horas'}));
- await screen.findByText('EM FOCO');fireEvent.click(screen.getByRole('button',{name:'Tarefas'}));
+ await screen.findByText('EM FOCO');fireEvent.keyDown(window,{key:'t',altKey:true});
  fireEvent.click(await screen.findByRole('button',{name:'Iniciar'}));
  expect(await screen.findByText('Falha ao iniciar a nova tarefa')).toBeInTheDocument();
  expect(api.mock.calls.some(([path])=>path.endsWith('/finish'))).toBe(false);
@@ -42,7 +42,7 @@ it('exibe a falha da troca sem finalizar a sessão em uma chamada separada',asyn
 
 it('oferece próxima ação na troca vinculada e permite cancelar sem interromper',async()=>{
  setup('Em andamento',false,true);render(<App/>);await screen.findByText('Atual');
- fireEvent.click(screen.getByRole('button',{name:'Tarefas'}));fireEvent.click(await screen.findByRole('button',{name:'Iniciar'}));
+ fireEvent.keyDown(window,{key:'t',altKey:true});fireEvent.click(await screen.findByRole('button',{name:'Iniciar'}));
  await waitFor(()=>expect(screen.getByLabelText('Próxima ação (opcional)')).toHaveValue('Retomar relatório'));
  fireEvent.click(screen.getByText('Cancelar'));expect(api.mock.calls.some(([path])=>path.endsWith('/switch'))).toBe(false);
  fireEvent.click(screen.getByRole('button',{name:'Iniciar'}));await waitFor(()=>expect(screen.getByLabelText('Próxima ação (opcional)')).toBeEnabled());

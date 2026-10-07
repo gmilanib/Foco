@@ -6,22 +6,25 @@ import java.util.stream.Collectors;
 
 record WorkSession(String id, OffsetDateTime startAt, OffsetDateTime endAt, double focusSeconds) {}
 record WorkDay(LocalDate day, double workedSeconds, double undefinedSeconds,
-        double regularSeconds, double extraSeconds, boolean estimated) {}
+        double regularSeconds, double extraSeconds, boolean estimated, double targetSeconds, String scheduleSource) {}
 record UndefinedPeriod(LocalDate day, OffsetDateTime startAt, OffsetDateTime endAt, double seconds) {}
 record WorkHoursReport(List<WorkDay> days, List<UndefinedPeriod> undefinedPeriods) {}
 
 final class WorkHoursService {
     private static final class DayTotal {
         double tracked,undefined; boolean estimated;
-        WorkDay result(LocalDate day){double worked=tracked+undefined;double normal=Math.min(worked,WorkSchedule.DAILY_TARGET_SECONDS);return new WorkDay(day,worked,undefined,normal,Math.max(0,worked-normal),estimated);}
+        WorkDay result(LocalDate day,ScheduleDay schedule){double worked=tracked+undefined;double normal=Math.min(worked,schedule.targetSeconds());return new WorkDay(day,worked,undefined,normal,Math.max(0,worked-normal),estimated,schedule.targetSeconds(),schedule.source());}
     }
 
     WorkHoursReport build(List<WorkSession> sessions,List<WorkInterval> intervals,LocalDate from,LocalDate to){
+        return build(sessions,intervals,from,to,ScheduleDay::legacy);
+    }
+    WorkHoursReport build(List<WorkSession> sessions,List<WorkInterval> intervals,LocalDate from,LocalDate to,java.util.function.Function<LocalDate,ScheduleDay> schedule){
         Map<LocalDate,DayTotal> totals=new TreeMap<>();Map<String,List<WorkInterval>> bySession=intervals.stream().collect(Collectors.groupingBy(WorkInterval::sessionId));
         for(WorkSession session:sessions)addTracked(session,bySession.getOrDefault(session.id(),List.of()),totals,from,to);
-        List<UndefinedPeriod> gaps=addGaps(sessions,totals,from,to);
+        List<UndefinedPeriod> gaps=addGaps(sessions,totals,from,to,schedule);
         List<WorkDay> days=totals.entrySet().stream().filter(e->e.getValue().tracked+e.getValue().undefined>0)
-                .map(e->e.getValue().result(e.getKey())).toList();
+                .map(e->e.getValue().result(e.getKey(),schedule.apply(e.getKey()))).toList();
         return new WorkHoursReport(days,gaps);
     }
 
@@ -42,7 +45,7 @@ final class WorkHoursService {
         }
     }
 
-    private List<UndefinedPeriod> addGaps(List<WorkSession> sessions,Map<LocalDate,DayTotal> totals,LocalDate from,LocalDate to){
+    private List<UndefinedPeriod> addGaps(List<WorkSession> sessions,Map<LocalDate,DayTotal> totals,LocalDate from,LocalDate to,java.util.function.Function<LocalDate,ScheduleDay> schedule){
         Map<LocalDate,OffsetDateTime> covered=new HashMap<>();List<UndefinedPeriod> result=new ArrayList<>();
         for(WorkSession session:sessions.stream().sorted(Comparator.comparing(s->s.startAt().toInstant())).toList()){
             if(session.endAt()==null||!session.endAt().isAfter(session.startAt()))continue;
@@ -51,7 +54,7 @@ final class WorkHoursService {
                 Instant dayStart=day.atStartOfDay(WorkSchedule.ZONE).toInstant(),dayEnd=day.plusDays(1).atStartOfDay(WorkSchedule.ZONE).toInstant();
                 Instant segmentStart=max(dayStart,session.startAt().toInstant()),segmentEnd=min(dayEnd,session.endAt().toInstant());if(!segmentEnd.isAfter(segmentStart))continue;
                 OffsetDateTime start=segmentStart.atZone(WorkSchedule.ZONE).toOffsetDateTime(),end=segmentEnd.atZone(WorkSchedule.ZONE).toOffsetDateTime();OffsetDateTime previous=covered.get(day);
-                if(previous!=null&&start.isAfter(previous))for(WorkSpan span:WorkSchedule.undefinedSpans(previous,start)){
+                if(previous!=null&&start.isAfter(previous))for(WorkSpan span:schedule.apply(day).gaps(previous,start)){
                     if(!inRange(day,from,to))continue;double seconds=span.seconds();result.add(new UndefinedPeriod(day,span.startAt(),span.endAt(),seconds));totals.computeIfAbsent(day,k->new DayTotal()).undefined+=seconds;
                 }
                 if(previous==null||end.isAfter(previous))covered.put(day,end);

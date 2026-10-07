@@ -21,6 +21,7 @@ class PlanningApiTest {
         for(String table:new String[]{"session_work_intervals","sessions","task_templates","task_plans","task_inbox","daily_reviews","tasks","change_history"})db.update("DELETE FROM "+table);
         db.update("INSERT OR IGNORE INTO catalog_activities(name_key,name) VALUES('entrega','Entrega')");
         for(int i=1;i<=4;i++)db.update("INSERT INTO tasks(id,activity,details,due_date,created_at,updated_at) VALUES(?,'Entrega','Passo específico','2026-12-01','2026-01-01','2026-01-01')","t"+i);
+        db.update("INSERT INTO settings(key,value) VALUES('planning.priorityLimit','3') ON CONFLICT(key) DO UPDATE SET value='3'");
     }
     PlanInput priority(LocalDate day){return new PlanInput(day,true,"Reproduzir erro","",null,"Pendente");}
     @Test void limitsPrioritiesPerDayAndKeepsDeadlineSeparate(){

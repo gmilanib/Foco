@@ -1,9 +1,9 @@
 import { useEffect,useId,useRef,type ReactNode } from 'react';
 
-export function Dialog({title,children,onClose}:{title:string;children:ReactNode;onClose:()=>void}){
+export function Dialog({title,children,onClose,initialFocus}:{title:string;children:ReactNode;onClose:()=>void;initialFocus?:'input'|'textarea'}){
   const titleId=useId();
   const ref=useRef<HTMLDialogElement>(null);
-  useEffect(()=>{const previous=document.activeElement as HTMLElement|null;const dialog=ref.current;if(dialog&&!dialog.open)dialog.showModal();return()=>{if(dialog?.open)dialog.close();if(previous?.isConnected)previous.focus();};},[]);
+  useEffect(()=>{const previous=document.activeElement as HTMLElement|null;const dialog=ref.current;if(dialog&&!dialog.open)dialog.showModal();if(initialFocus)dialog?.querySelector<HTMLElement>(initialFocus)?.focus();return()=>{if(dialog?.open)dialog.close();if(previous?.isConnected)previous.focus();};},[]);
   return <dialog ref={ref} aria-labelledby={titleId} className="dialog" onKeyDown={event=>{
     if(event.key!=='Tab')return;
     const controls=Array.from(event.currentTarget.querySelectorAll<HTMLElement>('button:not(:disabled), input:not(:disabled):not([type="hidden"]), select:not(:disabled), textarea:not(:disabled), a[href], [tabindex="0"]')).filter(element=>!element.closest('[hidden]'));

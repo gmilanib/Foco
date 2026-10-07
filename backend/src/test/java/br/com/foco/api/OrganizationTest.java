@@ -22,7 +22,7 @@ class OrganizationTest {
   db.execute("DROP TRIGGER IF EXISTS reject_organization_history");
   for(String t:new String[]{"session_work_intervals","sessions","task_checklist","task_archive","project_archive","template_options","task_templates","task_plans","tasks","change_history","catalog_projects","catalog_activities"})db.update("DELETE FROM "+t);
   db.update("INSERT INTO catalog_activities VALUES('entrega','Entrega')");
-  db.update("INSERT INTO catalog_projects VALUES('área','ÁREA')");
+  db.update("INSERT INTO catalog_projects(name_key,name) VALUES('área','ÁREA')");
   for(String id:List.of("a","b"))db.update("INSERT INTO tasks(id,project,activity,due_date,created_at,updated_at) VALUES(?,'ÁREA','Entrega','2026-12-31','2026-01-01','2026-01-01')",id);
  }
  HttpResponse<String> call(String method,String path,String body)throws Exception{return call(method,path,body,true);}

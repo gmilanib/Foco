@@ -27,8 +27,8 @@ class SessionApiTest {
         var row=new tools.jackson.databind.ObjectMapper().readTree(result.body());
         var real=java.time.OffsetDateTime.parse(row.get("endAt").asText());
         var rounded=java.time.OffsetDateTime.parse(row.get("roundedEndAt").asText());
-        assertEquals(179500,Duration.between(real,rounded).toMillis());
-        assertEquals(600,row.get("focusSeconds").asDouble());
+        assertEquals(59500,Duration.between(real,rounded).toMillis());
+        assertEquals(480,row.get("focusSeconds").asDouble());
         assertEquals(400,send("POST","/api/sessions/dual/finish","{\"status\":\"Encerrada\",\"focusSeconds\":420}",true).statusCode());
         assertEquals(real.toString(),db.queryForObject("SELECT end_at FROM sessions WHERE id='dual'",String.class));
     }
@@ -37,6 +37,13 @@ class SessionApiTest {
         assertEquals(401,send("GET","/api/sessions",null,false).statusCode());
         HttpResponse<String> health=send("GET","/api/health",null,false);
         assertEquals(200,health.statusCode());assertTrue(health.body().contains("\"status\":\"ok\""));
+    }
+    @Test void legacyApiKeepsMissingPrecisionVisibleAndCsvFallsBackToRealEnd()throws Exception {
+        db.update("INSERT INTO sessions(id,activity,start_at,end_at,focus_seconds,status) VALUES('legacy-precision','A','2026-10-06T09:00:00Z','2026-10-06T09:15:00Z',300,'Encerrada')");
+        var response=send("GET","/api/sessions/legacy-precision",null,true);
+        var row=new tools.jackson.databind.ObjectMapper().readTree(response.body());
+        assertTrue(row.get("roundedEndAt")==null||row.get("roundedEndAt").isNull());assertEquals(300,row.get("focusSeconds").asDouble());
+        var csv=send("GET","/api/sessions/export.csv?endMode=rounded",null,true);assertEquals(200,csv.statusCode());assertTrue(csv.body().contains("2026-10-06T09:15Z"));
     }
 
     @Test void conflictIntervalsRequireTokenAndPreservePrecisePauses() throws Exception {
@@ -60,7 +67,7 @@ class SessionApiTest {
         assertEquals(400,send("POST","/api/sessions",body,true).statusCode());
         assertEquals(200,send("POST","/api/sessions/"+id+"/pause","{\"focusSeconds\":301}",true).statusCode());
         HttpResponse<String> finished=send("POST","/api/sessions/"+id+"/finish","{\"status\":\"Concluída\",\"focusSeconds\":301}",true);
-        assertEquals(200,finished.statusCode());assertTrue(finished.body().contains("\"focusSeconds\":600.0"));
+        assertEquals(200,finished.statusCode());assertTrue(finished.body().contains("\"focusSeconds\":360.0"));
         assertEquals(200,send("GET","/api/sessions?client=ACME&minHours=0.1",null,true).statusCode());
     }
 
