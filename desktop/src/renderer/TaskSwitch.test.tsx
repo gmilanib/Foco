@@ -32,6 +32,11 @@ it.each(['Em andamento','Pausada'])('troca %s por outra tarefa sem diálogo de c
  expect(screen.queryByRole('heading',{name:'Encerrar apontamento'})).not.toBeInTheDocument();
  expect(await screen.findByText('EM FOCO')).toBeInTheDocument();
 });
+it('inicia tarefa existente diretamente pelo seletor de Apontar horas',async()=>{
+ setup('Em andamento');render(<App/>);fireEvent.click(screen.getByRole('button',{name:'Apontar horas'}));await screen.findByText('EM FOCO');
+ fireEvent.change(screen.getByLabelText('Tarefa para apontar horas'),{target:{value:'next'}});fireEvent.click(screen.getByRole('button',{name:'Iniciar tarefa'}));
+ await waitFor(()=>expect(api).toHaveBeenCalledWith('/api/sessions/switch','POST',expect.objectContaining({next:expect.objectContaining({taskId:'next',activity:'Entrega'})})));
+});
 it('exibe a falha da troca sem finalizar a sessão em uma chamada separada',async()=>{
  setup('Em andamento',true);render(<App/>);fireEvent.click(screen.getByRole('button',{name:'Apontar horas'}));
  await screen.findByText('EM FOCO');fireEvent.keyDown(window,{key:'t',altKey:true});

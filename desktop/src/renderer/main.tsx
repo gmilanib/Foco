@@ -6,5 +6,7 @@ import './theme.css';
 import './features.css';
 import './catalogs.css';
 import './experience.css';
+import './minimal.css';
+import './specialThemes.css';
 
 createRoot(document.getElementById('root')!).render(<React.StrictMode><App/></React.StrictMode>);

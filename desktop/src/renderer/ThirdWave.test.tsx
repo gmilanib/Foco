@@ -21,7 +21,7 @@ it('expõe revisão semanal na navegação de Hoje',async()=>{
  api.mockImplementation((path:string)=>Promise.resolve(path.startsWith('/api/planning/weekly-review')?{weekStart:'2026-09-28',weekEnd:'2026-10-04',oldCaptures:[],withoutNextAction:[],unexecuted:[],overdueDependencies:[]}:path==='/api/settings'?{}:[]));
  render(<TodayPage tasks={[task]} sessions={[]} catalogs={{items:{clients:[],projects:[],activities:[]},possibleDuplicates:[]}} onChanged={vi.fn()} onStart={vi.fn()} onJourney={vi.fn()}/>);
  fireEvent.click(screen.getByRole('button',{name:'Revisão semanal'}));
- expect(await screen.findByText('Capturas antigas (0)')).toBeInTheDocument();
+ expect(await screen.findByText('Tarefas sem próxima ação (0)')).toBeInTheDocument();
 });
 it('soma estimativas disponíveis e identifica total incompleto sem incluir concluídas ou aguardando',()=>{
  const tasks=[task,{...task,id:'b'},{...task,id:'c',completed:true},{...task,id:'d',state:'Aguardando'}];

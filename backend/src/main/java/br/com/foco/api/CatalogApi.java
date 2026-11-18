@@ -3,7 +3,7 @@ package br.com.foco.api;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
-record CatalogName(String name) {}
+record CatalogName(String name,String client) {}
 record CatalogMerge(String source,String target) {}
 
 @RestController
@@ -15,8 +15,10 @@ class CatalogController {
     @GetMapping CatalogSnapshot list() { return catalogs.snapshot(); }
 
     @PostMapping("/{type}") Map<String,String> create(@PathVariable String type,@RequestBody CatalogName input) {
-        return Map.of("name",catalogs.create(CatalogType.parse(type),input.name()));
+        return Map.of("name",catalogs.createForClient(CatalogType.parse(type),input.name(),input.client()));
     }
+
+    @PutMapping("/projects/{name}/client") void link(@PathVariable String name,@RequestBody CatalogName input){catalogs.linkProject(name,input.client());}
 
     @PutMapping("/{type}/{name}") Map<String,String> rename(@PathVariable String type,@PathVariable String name,@RequestBody CatalogName input) {
         return Map.of("name",catalogs.rename(CatalogType.parse(type),name,input.name()));

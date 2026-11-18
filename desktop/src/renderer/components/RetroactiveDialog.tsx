@@ -1,3 +1,4 @@
+import { projectsForClient,canSelectForSession } from '../organization';
 import { DraftRecovery,clearDraft } from './DraftRecovery';
 import { useMemo,useState,type FormEvent,type ReactNode } from 'react';
 import { Dialog } from './Dialog';
@@ -6,7 +7,7 @@ import { Field } from './Field';
 import { CatalogSelect } from './CatalogSelect';
 import { ClientColorPreview } from './ClientMarker';
 import { duration,hourInput } from '../format';
-import { buildFillSuggestions,valuesFor,type FillSuggestion,type SuggestionField } from '../fillSuggestions';
+import { buildFillSuggestions,valuesFor,consultantForPair,changeClientProject,sameClientProject,type FillSuggestion,type SuggestionField } from '../fillSuggestions';
 import { localDateTimeIso } from '../sessionEditing';
 import { effectiveFocusMinutes,intervalMinutes,overlappingSessions } from '../retroactive';
 import type { Draft } from '../pages/FocusPage';
@@ -22,7 +23,7 @@ const suggestedInterval=()=>{const end=new Date(),start=new Date(end.getTime()-3
 const localInput=(value:string)=>{const date=new Date(value),local=new Date(date.getTime()-date.getTimezoneOffset()*60000);return local.toISOString().slice(0,23);};
 
 export function RetroactiveDialog({initial,history,tasks,catalogs,colors=[],defaultRate,showValues,preset,classification,navigation,onClose,onSave}:Props){
- const [form,setForm]=useState<Form>({...suggestedInterval(),...(preset?{startAt:localInput(preset.startAt),endAt:localInput(preset.endAt)}:{}),client:initial.client,project:initial.project,activity:initial.activity,details:initial.details,consultant:initial.consultant,cardReference:initial.cardReference,hourlyRate:initial.hourlyRate||defaultRate,taskId:'',status:'Concluída',category:'Normal',...classification});
+ const [form,setForm]=useState<Form>({...suggestedInterval(),...(preset?{startAt:localInput(preset.startAt),endAt:localInput(preset.endAt)}:{}),client:initial.client,project:initial.project,activity:initial.activity,details:initial.details,consultant:initial.consultant||consultantForPair(history,tasks,initial.client,initial.project),cardReference:initial.cardReference,hourlyRate:initial.hourlyRate||defaultRate,taskId:'',status:'Concluída',category:'Normal',...classification});
  const [manual,setManual]=useState<{hours:string;minutes:string}|null>(preset?{hours:String(Math.floor(preset.focusMinutes/60)),minutes:String(preset.focusMinutes%60)}:null);
  const [allowOverlap,setAllowOverlap]=useState(false);
  const [error,setError]=useState(''),[busy,setBusy]=useState(false);
@@ -33,14 +34,15 @@ export function RetroactiveDialog({initial,history,tasks,catalogs,colors=[],defa
  const overlaps=useMemo(()=>overlappingSessions(history,form.startAt,form.endAt),[history,form.startAt,form.endAt]);
  const setText=(key:keyof Form,value:string)=>setForm(current=>({...current,[key]:value}));
  const applySuggestion=(field:SuggestionField,value:string)=>setForm(current=>({...current,[field]:value}));
- const list=(field:SuggestionField)=><datalist id={`retro-suggestions-${field}`}>{valuesFor(suggestions,field,form[field]).map(value=><option key={value} value={value}/>)}</datalist>;
+ const list=(field:SuggestionField)=><datalist id={`retro-suggestions-${field}`}>{valuesFor(field==='consultant'?suggestions.filter(s=>sameClientProject(s,form.client,form.project)):suggestions,field,form[field]).map(value=><option key={value} value={value}/>)}</datalist>;
  const chooseTask=(id:string)=>{
-  const task=tasks.find(item=>item.id===id);
-  setForm(current=>task?{...current,taskId:id,client:current.client||task.client,project:current.project||task.project,activity:current.activity||task.activity,details:current.details||task.details,consultant:current.consultant||task.consultant,cardReference:current.cardReference||task.cardReference,hourlyRate:task.hourlyRate==null?current.hourlyRate:task.hourlyRate.toLocaleString('pt-BR',{maximumFractionDigits:2})}:{...current,taskId:''});
+  const task=tasks.find(item=>item.id===id&&canSelectForSession(item));
+  setForm(current=>task?{...current,taskId:id,client:task.client,project:task.project,activity:task.activity,details:current.details||task.details,consultant:consultantForPair(history,tasks,task.client,task.project)||task.consultant,cardReference:current.cardReference||task.cardReference,hourlyRate:task.hourlyRate==null?current.hourlyRate:task.hourlyRate.toLocaleString('pt-BR',{maximumFractionDigits:2})}:{...current,taskId:''});
  };
  const save=async(event:FormEvent)=>{
   event.preventDefault();setError('');
   try{
+   if(form.taskId&&!tasks.some(task=>task.id===form.taskId&&canSelectForSession(task)))throw new Error('A tarefa selecionada foi concluída ou arquivada. Escolha outra tarefa.');
    if(!form.activity.trim())throw new Error('Informe a atividade.');
    if(!form.startAt||!form.endAt)throw new Error('Informe início e término.');
    if(interval==null||interval<1)throw new Error('O término deve ocorrer depois do início.');
@@ -55,13 +57,13 @@ export function RetroactiveDialog({initial,history,tasks,catalogs,colors=[],defa
   {navigation?.(busy)}
   <p className="muted">Registre horas trabalhadas enquanto o Foco estava indisponível. O registro aparecerá nos relatórios e no dashboard.</p>
   <div className="form-grid form-grid--two">
-   <Field label="Tarefa (opcional)"><select value={form.taskId} onChange={e=>chooseTask(e.target.value)}><option value="">Sem tarefa vinculada</option>{tasks.map(task=><option key={task.id} value={task.id}>{[task.client,task.project,task.activity].filter(Boolean).join(' / ')}{task.completed?' (concluída)':''}</option>)}</select></Field>
-   <CatalogSelect label="Cliente" optional value={form.client} options={catalogs.items.clients} onChange={value=>setText('client',value)} preview={<ClientColorPreview client={form.client} colors={colors}/>}/>
-   <CatalogSelect label="Projeto" optional value={form.project} options={catalogs.items.projects} onChange={value=>setText('project',value)}/>
+   <Field label="Tarefa (opcional)"><select value={form.taskId} onChange={e=>chooseTask(e.target.value)}><option value="">Criar tarefa para este apontamento</option>{form.taskId&&!tasks.some(task=>task.id===form.taskId&&canSelectForSession(task))&&<option value={form.taskId} disabled>Tarefa indisponível — escolha outra</option>}{tasks.filter(canSelectForSession).map(task=><option key={task.id} value={task.id}>{[task.client,task.project,task.activity].filter(Boolean).join(' / ')}</option>)}</select></Field>
+   <CatalogSelect label="Cliente" optional value={form.client} options={catalogs.items.clients} onChange={value=>setForm(current=>changeClientProject(current,'client',value,history,tasks))} preview={<ClientColorPreview client={form.client} colors={colors}/>}/>
+   <CatalogSelect label="Projeto" optional value={form.project} options={projectsForClient(catalogs,form.client)} onChange={value=>setForm(current=>changeClientProject(current,'project',value,history,tasks))}/>
    <CatalogSelect label="Atividade *" required value={form.activity} options={catalogs.items.activities} onChange={value=>setText('activity',value)}/>
    <Field label="Categoria do apontamento"><select value={form.category} onChange={e=>setForm(current=>({...current,category:e.target.value as Form['category']}))}><option value="Normal">Normal</option><option value="Agenda">Agenda</option></select></Field>
    <Field label="Detalhamento"><textarea rows={2} maxLength={1000} value={form.details} onChange={e=>setText('details',e.target.value)}/></Field>
-   <Field label="Consultor solicitante"><input list="retro-suggestions-consultant" maxLength={200} value={form.consultant} onChange={e=>applySuggestion('consultant',e.target.value)}/>{list('consultant')}</Field>
+   <Field label="Consultor solicitante" hint="Preenchido por Cliente + Projeto; você pode ajustar."><input aria-label="Consultor solicitante" list="retro-suggestions-consultant" maxLength={200} value={form.consultant} onChange={e=>applySuggestion('consultant',e.target.value)}/>{list('consultant')}</Field>
    <Field label="Card/link"><input list="retro-suggestions-cardReference" maxLength={500} value={form.cardReference} onChange={e=>applySuggestion('cardReference',e.target.value)}/>{list('cardReference')}</Field>
    <Field label="Início *"><input type="datetime-local" step="0.001" required value={form.startAt} onChange={e=>{setText('startAt',e.target.value);setAllowOverlap(false);}}/></Field>
    <Field label="Término *"><input type="datetime-local" step="0.001" required value={form.endAt} onChange={e=>{setText('endAt',e.target.value);setAllowOverlap(false);}}/></Field>

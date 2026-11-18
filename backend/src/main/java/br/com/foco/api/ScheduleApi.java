@@ -78,11 +78,20 @@ class ScheduleRepository {
         return config();
     }
     @Transactional public ScheduleConfig saveException(ScheduleException exception) {
-        editable(exception.day()); var windows = validate(exception.windows());
+        if(exception.day()==null)throw new IllegalArgumentException("Informe a data da exceção.");
+        var windows = validate(exception.windows());
+        if(exception.day().isBefore(LocalDate.now(WorkSchedule.ZONE))&&!windows.isEmpty())throw new IllegalArgumentException("Para uma data passada, deixe os intervalos vazios para registrar uma folga.");
         db.update("INSERT INTO work_schedule_exceptions VALUES(?,?) ON CONFLICT(day) DO UPDATE SET windows_json=excluded.windows_json", exception.day().toString(), mapper.writeValueAsString(new ScheduleWindows(windows)));
         return config();
     }
-    @Transactional public ScheduleConfig remove(String table, LocalDate day) { editable(day); db.update("DELETE FROM " + table + " WHERE " + (table.equals("work_schedule_rules") ? "effective_from" : "day") + "=?", day.toString()); return config(); }
+    @Transactional public ScheduleConfig remove(String table, LocalDate day) {
+        if(!Set.of("work_schedule_rules","work_schedule_exceptions").contains(table))throw new IllegalArgumentException("Configuração inválida.");
+        if(day==null)throw new IllegalArgumentException("Informe a data.");
+        if(table.equals("work_schedule_rules"))editable(day);
+        else if(day.isBefore(LocalDate.now(WorkSchedule.ZONE))&&config().exceptions().stream().anyMatch(e->e.day().equals(day)&&!e.windows().isEmpty()))
+            throw new IllegalArgumentException("Somente folgas podem ser removidas retroativamente.");
+        db.update("DELETE FROM " + table + " WHERE " + (table.equals("work_schedule_rules") ? "effective_from" : "day") + "=?", day.toString()); return config();
+    }
 }
 
 @RestController

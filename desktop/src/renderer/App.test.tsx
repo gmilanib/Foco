@@ -24,6 +24,30 @@ beforeEach(()=>{
 });
 
 describe('início do modo cronômetro',()=>{
+ it('inicia tarefa com o consultor mais recente do mesmo cliente e projeto',async()=>{
+  const original=api.getMockImplementation()!;
+  api.mockImplementation((path:string,method='GET',body?:Record<string,unknown>)=>{
+   if(path.startsWith('/api/tasks?'))return Promise.resolve([{id:'linked',client:'ACME',project:'Portal',activity:'Entrega',details:'',consultant:'Antigo',cardReference:'',hourlyRate:null,dueDate:null,completed:false,state:'Pendente',entries:1,focusSeconds:60}]);
+   if(path==='/api/sessions'&&method==='GET')return Promise.resolve([{id:'history',taskId:'linked',client:'ACME',project:'Portal',activity:'Entrega',details:'',consultant:'Atual',cardReference:'',hourlyRate:null,startAt:'2026-10-01T09:00:00Z',endAt:'2026-10-01T10:00:00Z',plannedSeconds:0,focusSeconds:3600,status:'Encerrada',category:'Normal'}]);
+   return original(path,method,body);
+  });
+  render(<App/>);fireEvent.click(screen.getByRole('button',{name:'Apontar horas'}));
+  await screen.findByRole('option',{name:/ACME \/ Portal \/ Entrega/});
+  fireEvent.change(screen.getByLabelText('Tarefa para apontar horas'),{target:{value:'linked'}});
+  fireEvent.click(screen.getByRole('button',{name:'Iniciar foco'}));
+  await waitFor(()=>expect(api).toHaveBeenCalledWith('/api/sessions','POST',expect.objectContaining({taskId:'linked',client:'ACME',project:'Portal',consultant:'Atual'})));
+ });
+ it('segue o modo escuro do sistema e persiste a troca pelo cabeçalho',async()=>{
+  const original=window.matchMedia;
+  window.matchMedia=()=>({matches:true,addEventListener:()=>{},removeEventListener:()=>{}} as unknown as MediaQueryList);
+  try{
+   render(<App/>);
+   await screen.findByRole('heading',{name:'Tarefas e hoje'});
+   fireEvent.click(screen.getByRole('button',{name:'Ativar tema claro'}));
+   await waitFor(()=>expect(api).toHaveBeenCalledWith('/api/settings','PUT',{theme:'light'}));
+   expect(screen.getByRole('button',{name:'Ativar tema escuro'})).toBeInTheDocument();
+  }finally{cleanup();window.matchMedia=original;}
+ });
  it('identifica a navegação e leva o foco ao título sem repetir a entrada da tela ao mudar o tema',async()=>{
   const {container}=render(<App/>);
   await screen.findByRole('heading',{name:'Tarefas e hoje'});
@@ -37,12 +61,7 @@ describe('início do modo cronômetro',()=>{
   expect(screen.getByLabelText('Detalhamento')).toHaveValue('Meu rascunho');
   expect(screen.getByText(/Ao encerrar, o foco é arredondado/)).toHaveTextContent('2 minutos');
  });
- it('abre em Hoje e acessa captura rápida pelo atalho',async()=>{
-  render(<App/>);
-  expect(await screen.findByRole('heading',{name:'Tarefas e hoje'})).toBeInTheDocument();
-  fireEvent.keyDown(window,{key:'q',altKey:true});
-  expect(await screen.findByLabelText('Captura rápida')).toBeInTheDocument();
- });
+ it('preserva caixa de entrada e modelos no desktop',async()=>{render(<App/>);await screen.findByRole('heading',{name:'Tarefas e hoje'});expect(screen.getByRole('button',{name:/Caixa de entrada/})).toBeInTheDocument();expect(screen.getByRole('button',{name:'Modelos'})).toBeInTheDocument();});
  it('navega entre telas e controla o foco pelos atalhos Alt',async()=>{
   render(<App/>);fireEvent.click(screen.getByRole('button',{name:'Apontar horas'}));
   await screen.findByRole('heading',{name:'Lançamento'});
@@ -101,6 +120,7 @@ describe('cores compartilhadas entre configurações e tarefas',()=>{
   });
   const {container}=render(<App/>);fireEvent.click(screen.getByRole('button',{name:'Apontar horas'}));
   fireEvent.click(screen.getByRole('button',{name:'Configurações'}));
+  fireEvent.click(screen.getByRole('tab',{name:'Cores'}));
   fireEvent.change(await screen.findByLabelText('Cliente'),{target:{value:'ACME'}});
   fireEvent.change(screen.getByLabelText('Cor'),{target:{value:'#123456'}});
   fireEvent.click(screen.getByRole('button',{name:'Salvar cor'}));

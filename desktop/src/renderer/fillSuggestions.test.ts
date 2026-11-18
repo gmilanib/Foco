@@ -1,9 +1,33 @@
 import { describe,expect,it } from 'vitest';
-import { buildFillSuggestions,valuesFor } from './fillSuggestions';
+import { buildFillSuggestions,valuesFor,consultantForPair,changeClientProject } from './fillSuggestions';
 import type { Session,Task } from './types';
 
 const session:Session={id:'s1',taskId:null,client:'ACME',project:'Projeto Azul',activity:'Revisão',details:'Validar entrega',consultant:'Ana',cardReference:'CARD-1',startAt:'2026-09-23T10:00:00Z',endAt:null,plannedSeconds:0,focusSeconds:60,hourlyRate:59.37,status:'Concluída',category:'Normal'};
 const task:Task={id:'t1',client:'ACME',project:'Projeto Novo',activity:'Implantação',details:'',consultant:'Bruno',cardReference:'',hourlyRate:90.5,dueDate:null,completed:false,state:'Pendente',entries:0,focusSeconds:0};
+
+describe('consultor por cliente e projeto',()=>{
+ it('usa o lançamento mais recente por instante, isolando ambos os campos',()=>{
+  const rows=[session,{...session,id:'new',consultant:'Bia',startAt:'2026-09-23T08:00:00-03:00'},{...session,id:'other',client:'Outro',consultant:'Carlos',startAt:'2026-10-01T10:00:00Z'}];
+  expect(consultantForPair(rows,[task],' acme ','projeto azul')).toBe('Bia');
+  expect(consultantForPair(rows,[task],'Outro','Projeto Azul')).toBe('Carlos');
+  expect(consultantForPair(rows,[task],'ACME','')).toBe('');
+  expect(consultantForPair(rows,[task],'ACME','Desconhecido')).toBe('');
+ });
+ it('usa tarefas abertas apenas quando existe um único consultor para o par',()=>{
+  expect(consultantForPair([],[task,{...task,id:'done',consultant:'Ana',completed:true}],'ACME','Projeto Novo')).toBe('Bruno');
+  expect(consultantForPair([],[task,{...task,id:'other',consultant:'Ana'}],'ACME','Projeto Novo')).toBe('');
+  expect(consultantForPair([],[{...task,archived:true}],'ACME','Projeto Novo')).toBe('');
+ });
+ it('ignora nomes vazios e datas inválidas no histórico',()=>{
+  expect(consultantForPair([session,{...session,id:'empty',consultant:' ',startAt:'2026-10-01T10:00:00Z'},{...session,id:'invalid',consultant:'Outro',startAt:'inválido'}],[],'ACME','Projeto Azul')).toBe('Ana');
+ });
+ it('troca o consultor junto do par sem mexer nos outros campos ou sobrescrever edição no mesmo par',()=>{
+  const form={client:'ACME',project:'Projeto Azul',consultant:'Manual',details:'Preservar'};
+  expect(changeClientProject(form,'project','Projeto Azul',[session],[task])).toEqual(form);
+  expect(changeClientProject(form,'project','Projeto Novo',[session],[task])).toEqual({...form,project:'Projeto Novo',consultant:'Bruno'});
+  expect(changeClientProject(form,'client','Outro',[session],[task])).toEqual({...form,client:'Outro',project:'',consultant:''});
+ });
+});
 
 describe('autocomplete independente por campo',()=>{
  it('combina tarefas e lançamentos, sem descartar valores após 250 registros',()=>{

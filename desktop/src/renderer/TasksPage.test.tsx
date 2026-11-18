@@ -6,33 +6,52 @@ import type { Catalogs,Session,Task } from './types';
 const task:Task={id:'t1',client:'ACME',project:'Portal',activity:'Revisão',details:'Texto anterior',consultant:'Ana',cardReference:'CARD-1',hourlyRate:90,dueDate:'2026-10-10',completed:false,state:'Pendente',entries:0,focusSeconds:0};
 const secondTask:Task={...task,id:'t2',client:'Beta',project:'Mobile',activity:'Teste',details:'Detalhe adicional',consultant:'Bia',hourlyRate:null,dueDate:null,completed:true,state:'Concluída',entries:2,focusSeconds:3600};
 const history:Session={id:'s1',taskId:null,client:'ACME',project:'Aplicativo',activity:'Entrega',details:'Histórico',consultant:'Bruno',cardReference:'CARD-2',startAt:'2026-09-23T10:00:00Z',endAt:null,plannedSeconds:0,focusSeconds:60,hourlyRate:120,status:'Concluída',category:'Normal'};
-const catalogs:Catalogs={items:{clients:['ACME','Beta','Outro'],projects:['Portal','Aplicativo','Mobile'],activities:['Revisão','Teste','Entrega']},possibleDuplicates:[]};
+const catalogs:Catalogs={items:{clients:['ACME','Beta','Outro'],projects:['Portal','Aplicativo','Mobile'],activities:['Revisão','Teste','Entrega']},possibleDuplicates:[],projectClients:{Portal:['ACME'],Aplicativo:['ACME'],Mobile:['Beta']}};
 const props={items:[task],history:[history],catalogs,colors:[{client:' acme ',hex:'#123456'}],showValues:true,onSave:vi.fn().mockResolvedValue(undefined),onStart:vi.fn(),onComplete:vi.fn(),onStatusChange:vi.fn()};
 afterEach(cleanup);
 
 describe('quadro de tarefas',()=>{
+ it('mantém ações principais visíveis e fecha opções por Escape, clique fora e seleção',()=>{
+  render(<TasksPage {...props}/>);
+  expect(screen.getByRole('button',{name:'Iniciar'})).toBeVisible();
+  expect(screen.getByRole('button',{name:'Concluir'})).toBeVisible();
+  expect(screen.queryByRole('button',{name:'Editar'})).not.toBeInTheDocument();
+  const more=screen.getByRole('button',{name:'Mais opções de Revisão'});
+  fireEvent.click(more);
+  expect(more).toHaveAttribute('aria-expanded','true');
+  fireEvent.keyDown(screen.getByRole('button',{name:'Editar'}),{key:'Escape'});
+  expect(more).toHaveFocus();
+  expect(more).toHaveAttribute('aria-expanded','false');
+  fireEvent.click(more);fireEvent.pointerDown(document.body);
+  expect(more).toHaveAttribute('aria-expanded','false');
+  fireEvent.click(more);fireEvent.click(screen.getByRole('button',{name:'Editar'}));
+  expect(screen.getByRole('dialog')).toBeInTheDocument();
+  expect(screen.getByLabelText('Detalhamento')).toHaveValue(task.details);
+  expect(more).toHaveAttribute('aria-expanded','false');
+ });
  it('permite filtrar e selecionar o estado Aguardando',()=>{
   render(<TasksPage {...props} items={[{...task,state:'Aguardando'}]}/>);
-  fireEvent.click(screen.getByRole('checkbox',{name:'Aguardando'}));
+  expect(screen.getByRole('checkbox',{name:'Aguardando'})).toBeChecked();
   expect(screen.getByText('Texto anterior')).toBeInTheDocument();
   expect(screen.getByLabelText('Estado de Revisão')).toHaveValue('Aguardando');
  });
  it('marca cliente com cor cadastrada e permite escolher apenas cadastros existentes',()=>{
   const {container}=render(<TasksPage {...props}/>);
   expect(container.querySelector('.client-marker')?.getAttribute('style')).toContain('#123456');
-  expect(container.querySelector('.project-label')?.getAttribute('style')).toContain('--client-color: #123456');
+  expect(container.querySelector('.project-label')?.getAttribute('style')).toContain('--client-color: hsl(');
   fireEvent.click(screen.getByRole('button',{name:'Nova tarefa'}));
   const dialog=within(screen.getByRole('dialog'));
+  fireEvent.change(dialog.getByLabelText('Cliente'),{target:{value:'ACME'}});
   expect(dialog.getByLabelText('Projeto')).toContainHTML('<option value="Portal">Portal</option>');
   expect(dialog.getByLabelText('Detalhamento')).not.toHaveAttribute('list');
   fireEvent.change(dialog.getByLabelText('Projeto'),{target:{value:'Aplicativo'}});
-  expect(dialog.getByLabelText('Cliente')).toHaveValue('');
+  expect(dialog.getByLabelText('Cliente')).toHaveValue('ACME');
   expect(dialog.getByLabelText('Atividade *')).toHaveValue('');
-  expect(dialog.getByLabelText('Consultor solicitante')).toHaveValue('');
+  expect(dialog.getByLabelText('Consultor solicitante')).toHaveValue('Bruno');
  });
- it('mantém dados digitados ao escolher opção incompatível e não marca cliente sem cor',()=>{
+ it('mantém dados digitados e marca cliente com cor automática',()=>{
   const {container}=render(<TasksPage {...props} colors={[]}/>);
-  expect(container.querySelector('.client-marker')).toBeNull();
+  expect(container.querySelector('.client-marker')).not.toBeNull();
   fireEvent.click(screen.getByRole('button',{name:'Nova tarefa'}));
   const dialog=within(screen.getByRole('dialog'));
   fireEvent.change(dialog.getByLabelText('Cliente'),{target:{value:'Outro'}});
@@ -55,6 +74,7 @@ describe('quadro de tarefas',()=>{
  });
  it('exibe o detalhamento e combina busca, filtros adicionais e estado',()=>{
   render(<TasksPage {...props} items={[task,secondTask]}/>);
+  fireEvent.click(screen.getByRole('button',{name:'Limpar estados'}));
   expect(screen.getByText('Texto anterior')).toBeInTheDocument();
   expect(screen.getByText('Detalhe adicional')).toBeInTheDocument();
   fireEvent.change(screen.getByLabelText('Buscar em todos os campos'),{target:{value:'detalhe adicional'}});
@@ -74,6 +94,7 @@ describe('quadro de tarefas',()=>{
  it('filtra por vários estados, abre card/link e permite alterar estado manualmente',()=>{
   const active={...task,id:'active',state:'Em andamento',cardReference:'https://example.test/work'};
   render(<TasksPage {...props} items={[task,secondTask,active]}/>);
+  fireEvent.click(screen.getByRole('button',{name:'Limpar estados'}));
   fireEvent.click(screen.getByRole('checkbox',{name:'Em andamento'}));
   fireEvent.click(screen.getByRole('checkbox',{name:'Concluída'}));
   expect(screen.getByText('Teste')).toBeInTheDocument();expect(screen.getByText('Revisão')).toBeInTheDocument();
@@ -86,6 +107,7 @@ describe('quadro de tarefas',()=>{
  it('abre o histórico local da tarefa',async()=>{
   (window.foco.request as ReturnType<typeof vi.fn>).mockResolvedValueOnce([{id:'history-1',entityType:'task',entityId:task.id,changedAt:'2026-09-28T12:00:00-03:00',newValue:JSON.stringify(task)}]);
   render(<TasksPage {...props}/>);
+  fireEvent.click(screen.getByRole('button',{name:'Mais opções de Revisão'}));
   fireEvent.click(screen.getByRole('button',{name:'Histórico'}));
   expect(await screen.findByRole('heading',{name:'Histórico · Revisão'})).toBeInTheDocument();
   expect(await screen.findByText(/Registro criado/)).toBeInTheDocument();
@@ -100,7 +122,8 @@ describe('quadro de tarefas',()=>{
  it('ordena por prazo com valores ausentes no fim e inverte a direção escolhida',()=>{
   const earlier={...secondTask,id:'t3',activity:'Ajuste',dueDate:'2026-10-01',state:'Pendente',completed:false};
   render(<TasksPage {...props} items={[task,secondTask,earlier]}/>);
-  const activities=()=>screen.getAllByRole('row').slice(1).map(row=>(row as HTMLTableRowElement).cells[1].textContent);
+  fireEvent.click(screen.getByRole('button',{name:'Limpar estados'}));
+  const activities=()=>screen.getAllByRole('article').map(card=>within(card).getByRole('heading').textContent);
   expect(activities()).toEqual(['Ajuste','Revisão','Teste']);
   fireEvent.change(screen.getByLabelText('Direção'),{target:{value:'desc'}});
   expect(activities()).toEqual(['Revisão','Ajuste','Teste']);

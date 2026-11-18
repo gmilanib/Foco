@@ -30,7 +30,7 @@ class LocalBackup {
     private final DatabaseMaintenance maintenance;
     LocalBackup(JdbcTemplate db,String directory){this(db,directory,new DatabaseMaintenance());}
     @org.springframework.beans.factory.annotation.Autowired
-    LocalBackup(JdbcTemplate db,@Value("${FOCO_DATA_DIR:${user.home}/AppData/Local/FocoJava}")String directory,DatabaseMaintenance maintenance){this.db=db;this.data=Paths.get(directory).toAbsolutePath().normalize();this.maintenance=maintenance;}
+    LocalBackup(JdbcTemplate db,@Value("#{dataPaths.directory}")String directory,DatabaseMaintenance maintenance){this.db=db;this.data=Paths.get(directory).toAbsolutePath().normalize();this.maintenance=maintenance;}
     @EventListener(ApplicationReadyEvent.class) void onOpen(){runDaily();}
     @Scheduled(fixedDelay=60000) void runDaily(){var lock=maintenance.read();lock.lock();try{String folder=setting("backup.destination");if(!folder.isBlank())try{create(folder,false);}catch(RuntimeException ignored){/* Panel surfaces errors on the next explicit attempt. */}}finally{lock.unlock();}}
     BackupResult create(String folder,boolean manual){

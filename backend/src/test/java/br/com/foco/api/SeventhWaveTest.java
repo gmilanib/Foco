@@ -64,6 +64,26 @@ class SeventhWaveTest {
   schedule.remove("work_schedule_exceptions",day);assertEquals(7200,hours.report(day,day).days().get(0).targetSeconds());
   assertEquals(401,call("GET","/api/work-schedule",null,false).statusCode());
  }
+ @Test void retroactiveDayOffRemovesDeductionsAndCanBeUndone()throws Exception {
+  LocalDate past=LocalDate.now(WorkSchedule.ZONE).minusWeeks(1).with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+  var input=new OvertimeInput(past,past,"rounded","real","","","","","",null,30);
+  assertEquals(-27000,OvertimeCalculator.calculate(input,List.of(),List.of(),schedule.resolver()).totalSeconds());
+  assertEquals(401,call("PUT","/api/work-schedule/exceptions",new ScheduleException(past,List.of()),false).statusCode());
+  assertEquals(200,call("PUT","/api/work-schedule/exceptions",new ScheduleException(past,List.of()),true).statusCode());
+  assertEquals(0,OvertimeCalculator.calculate(input,List.of(),List.of(),schedule.resolver()).totalSeconds());
+  db.update("INSERT INTO sessions(id,activity,start_at,end_at,focus_seconds,status) VALUES('day-off','Work',?,?,3600,'Encerrada')",stamp(past,9),stamp(past,10));
+  var report=hours.report(past,past);assertEquals(0,report.days().get(0).targetSeconds());assertEquals(3600,report.days().get(0).extraSeconds());
+  assertEquals(200,call("DELETE","/api/work-schedule/exceptions/"+past,null,true).statusCode());
+  assertEquals(28800,schedule.resolver().apply(past).targetSeconds());
+  assertEquals(3600,db.queryForObject("SELECT focus_seconds FROM sessions WHERE id='day-off'",Double.class));
+ }
+ @Test void pastWorkingExceptionsStayProtected()throws Exception {
+  LocalDate past=LocalDate.now(WorkSchedule.ZONE).minusDays(1);var windows=List.of(new ClockWindow("09:00","12:00"));
+  assertEquals(400,call("PUT","/api/work-schedule/exceptions",new ScheduleException(past,windows),true).statusCode());
+  db.update("INSERT INTO work_schedule_exceptions VALUES(?,?)",past.toString(),mapper.writeValueAsString(new ScheduleWindows(windows)));
+  assertEquals(400,call("DELETE","/api/work-schedule/exceptions/"+past,null,true).statusCode());
+  assertEquals(10800,schedule.resolver().apply(past).targetSeconds());
+ }
  @Test void rejectsPastOverlappingUnorderedAndInvalidSchedulesWithoutPartialWrite()throws Exception {
   var today=LocalDate.now();
   assertEquals(400,call("PUT","/api/work-schedule/rules",new ScheduleRule(today.minusDays(1),week()),true).statusCode());

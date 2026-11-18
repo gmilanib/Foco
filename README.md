@@ -13,7 +13,7 @@
   <img alt="Licença" src="https://img.shields.io/badge/licen%C3%A7a-a%20definir-lightgrey">
 </p>
 
-> **Versão Stable: 1.18.0.** Baixe o instalador na [release do GitHub](https://github.com/gmilanib/Foco/releases/tag/v1.18.0-stable). O Foco Java é uma aplicação desktop independente do Foco V35. Consulte o [roadmap](Roadmap.md) para as próximas melhorias.
+> **Versão local Stable: 1.19.0**, instalada e validada em 06/11/2026. Instalador em `release/Stable/Foco-Stable-Setup-1.19.0.exe`. Incorpora as [melhorias do Web](Doc/Atualizacao-Web.md). A última publicação documentada no GitHub continua sendo a [1.18.0](https://github.com/gmilanib/Foco/releases/tag/v1.18.0-stable); a 1.19.0 não foi publicada externamente. Consulte o [roadmap](Roadmap.md).
 
 ## O que você pode fazer
 

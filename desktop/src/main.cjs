@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Tray, Menu, ipcMain, nativeImage, dialog, shell, screen, globalShortcut, Notification } = require('electron');
+const { app, BrowserWindow, Tray, Menu, ipcMain, nativeImage, dialog, shell, screen, globalShortcut, Notification, clipboard } = require('electron');
 const { createLocalWorkflow, dayOf } = require('./local-workflow.cjs');
 const { spawn } = require('node:child_process');
 const { createServer } = require('node:net');
@@ -6,19 +6,22 @@ const { randomBytes } = require('node:crypto');
 const fs = require('node:fs');
 const path = require('node:path');
 
+const platform = require('./platform.cjs');
 app.setName('foco-java');
+if(process.platform==='linux')app.commandLine.appendSwitch('enable-features','GlobalShortcutsPortal');
 if (!app.requestSingleInstanceLock()) app.quit();
 else {
   let mainWindow, overlayWindow, tray, backend, port=Number(process.env.FOCO_PORT||8765), elapsed=0, running=false, activity='';
   const token=randomBytes(32).toString('hex');
-  const dataDirectory=process.env.FOCO_DATA_DIR||path.join(app.getPath('appData'),'foco-java','data');
+  const dataDirectory=platform.dataDirectory({platform:process.platform,env:process.env,home:app.getPath('home'),appData:app.getPath('appData')});
   const logDirectory=path.join(app.getPath('userData'),'logs');
   const logFile=path.join(logDirectory,'errors.log');
   function logError(error,context){try{fs.mkdirSync(logDirectory,{recursive:true});fs.appendFileSync(logFile,JSON.stringify({at:new Date().toISOString(),context,error:String(error?.stack||error)})+'\n','utf8');}catch(logFailure){console.error('Could not write local error log',logFailure);}}
   const packaged=app.isPackaged;
   const preload=path.join(__dirname,'preload.cjs');
   const renderer=path.join(__dirname,'renderer');
-  const icon=path.join(process.resourcesPath,'Foco.ico');
+  const icon=path.join(packaged?process.resourcesPath:path.resolve(__dirname,'../build'),process.platform==='win32'?'Foco.ico':'Foco.png');
+  const concealMain=()=>{if(mainWindow)platform.concealWindow(mainWindow,process.platform,tray);};
   const devUrl='http://127.0.0.1:5173';
   const url=path.join(renderer,'index.html');
   const overlayUrl=path.join(renderer,'overlay.html');
@@ -56,7 +59,7 @@ else {
   function createMain(){
     mainWindow=new BrowserWindow({width:1320,height:900,minWidth:800,minHeight:620,show:false,icon,webPreferences:{preload,contextIsolation:true,nodeIntegration:false,sandbox:true}});
     (packaged?mainWindow.loadFile(url):mainWindow.loadURL(devUrl)).catch(error=>dialog.showErrorBox('Interface não carregada',String(error)));mainWindow.once('ready-to-show',()=>mainWindow.show());
-    mainWindow.on('close',event=>{if(!app.isQuitting){event.preventDefault();mainWindow.hide();}});
+    mainWindow.on('close',event=>{if(!app.isQuitting){event.preventDefault();concealMain();}});
     mainWindow.webContents.setWindowOpenHandler(({url:target})=>{if(target.startsWith('https://'))shell.openExternal(target);return{action:'deny'};});
   }
   let moveSaveTimer;
@@ -99,14 +102,16 @@ else {
   ipcMain.handle('foco:import-folder',async()=>{const picked=await dialog.showOpenDialog({title:'Pasta de dados V35',properties:['openDirectory']});if(picked.canceled)return null;if(!fs.existsSync(path.join(picked.filePaths[0],'sessions.xml')))throw new Error('A pasta não contém sessions.xml.');return picked.filePaths[0];});
   ipcMain.handle('foco:choose-folder',async()=>{const picked=await dialog.showOpenDialog({title:'Pasta dos backups',properties:['openDirectory','createDirectory']});return picked.canceled?null:picked.filePaths[0];});
   ipcMain.handle('foco:choose-backup',async()=>{const picked=await dialog.showOpenDialog({title:'Conferir backup do Foco',properties:['openFile'],filters:[{name:'Backup ZIP do Foco',extensions:['zip']}]});return picked.canceled?null:picked.filePaths[0];});
+  ipcMain.handle('foco:save-overtime',(_event,body)=>require('./overtime-export.cjs').saveOvertime({fetch,dialog,writeFile:fs.writeFileSync,port,token},body));
+  require('./activity-export.cjs').registerActivityExport({ipcMain,clipboard,dialog,writeFile:fs.writeFileSync});
   ipcMain.handle('foco:save-csv',async(_event,{fileName,content})=>{if(typeof content!=='string'||content.length>25*1024*1024)throw new Error('Arquivo CSV inválido ou maior que 25 MB.');const picked=await dialog.showSaveDialog({title:'Exportar relatório de horas',defaultPath:fileName,filters:[{name:'Arquivo CSV',extensions:['csv']}]});if(picked.canceled||!picked.filePath)return null;fs.writeFileSync(picked.filePath,content,'utf8');return picked.filePath;});
   ipcMain.handle('foco:save-pdf',async(_event,{fileName})=>{if(typeof fileName!=='string'||fileName.length>120)throw new Error('Nome de arquivo PDF invÃ¡lido.');const picked=await dialog.showSaveDialog({title:'Exportar Dashboard em PDF',defaultPath:fileName,filters:[{name:'Arquivo PDF',extensions:['pdf']}]});if(picked.canceled||!picked.filePath)return null;const pdf=await mainWindow.webContents.printToPDF({printBackground:true,landscape:true,pageSize:'A4',margins:{top:0.45,bottom:0.45,left:0.45,right:0.45}});fs.writeFileSync(picked.filePath,pdf);return picked.filePath;});
   ipcMain.on('foco:overlay:show',createOverlay);ipcMain.on('foco:overlay:close',()=>overlayWindow?.hide());
-  ipcMain.on('foco:window:hide',()=>mainWindow?.hide());
+  ipcMain.on('foco:window:hide',concealMain);
   ipcMain.handle('foco:timer:get',()=>({elapsed,running,activity}));
   ipcMain.on('foco:timer:update',(_event,state)=>{elapsed=state.elapsed;running=state.running;activity=state.activity;overlayWindow?.webContents.send('foco:timer',{elapsed,running,activity});});
   app.on('second-instance',()=>{mainWindow?.show();mainWindow?.focus();});
-  app.whenReady().then(async()=>{try{await startBackend();createMain();createTray();const response=await fetch(`http://127.0.0.1:${port}/api/settings`,{headers:{'X-Foco-Token':token}});if(!response.ok)throw new Error('Preferências locais indisponíveis.');startWorkflow(await response.json());}catch(error){dialog.showErrorBox('Foco não iniciado',String(error));app.quit();}});
-  app.on('before-quit',()=>{app.isQuitting=true;clearInterval(workflowTimer);workflow?.dispose();backend?.kill();});
+  app.whenReady().then(async()=>{try{await startBackend();createMain();if(process.platform==='linux')Menu.setApplicationMenu(Menu.buildFromTemplate([{label:'Foco',submenu:[{label:'Sair do Foco',click:()=>app.quit()}]},{role:'editMenu'},{role:'viewMenu'}]));try{createTray();}catch(error){logError(error,'tray');}const response=await fetch(`http://127.0.0.1:${port}/api/settings`,{headers:{'X-Foco-Token':token}});if(!response.ok)throw new Error('Preferências locais indisponíveis.');startWorkflow(await response.json());}catch(error){dialog.showErrorBox('Foco não iniciado',String(error));app.quit();}});
+  app.on('before-quit',()=>{app.isQuitting=true;clearInterval(workflowTimer);workflow?.dispose();tray?.destroy();backend?.kill();});
   app.on('window-all-closed',()=>{if(app.isQuitting)app.quit();});
 }

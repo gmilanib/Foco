@@ -1,0 +1,23 @@
+.task-board{min-width:0;padding:16px;border:1px solid var(--line);border-radius:14px;background:var(--subtle)}
+.task-board__header{margin-bottom:16px}
+.task-board__header h2{font-size:14px;font-weight:600;margin:0}
+.task-board__header span{color:var(--muted);font-weight:400}
+.task-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:16px;align-items:stretch}
+.task-grid .task-card{min-width:0;margin:0;border:1px solid var(--line);border-radius:14px;padding:16px;background:var(--surface);display:flex;flex-direction:column;gap:12px;overflow-wrap:anywhere;box-shadow:0 2px 6px #00000008}
+.task-grid .task-card:hover,.task-grid .task-card:focus-within{border-color:color-mix(in srgb,var(--accent) 45%,var(--line));box-shadow:0 5px 20px color-mix(in srgb,var(--accent) 7%,transparent)}
+.task-grid .task-card:focus-within{position:relative;z-index:1}
+.task-grid .task-card.kanban-task--done{border-color:color-mix(in srgb,#16836B 35%,var(--line))}
+.task-card__header{display:flex;gap:12px;align-items:flex-start;justify-content:space-between}
+.task-card h3{font-size:14px;line-height:1.4;margin:0;min-width:0}
+.task-card__context{display:flex;flex-wrap:wrap;gap:6px 12px;color:var(--muted);font-size:12px}
+.task-card p.task-card__details{margin:0;white-space:pre-wrap;font-size:12px;line-height:1.5;max-height:7.5em;overflow:auto}
+.task-card__meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0;padding:12px;border-radius:8px;background:var(--subtle);font-size:12px}
+.task-card__meta dt{color:var(--muted);font-size:11px;margin-bottom:2px}
+.task-card__meta dd{margin:0}
+.task-card__footer{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;padding-top:4px}
+.task-actions{position:relative;flex-shrink:0}
+.task-actions__panel{position:absolute;right:0;top:calc(100% + 4px);z-index:20;width:220px;max-width:75vw;padding:6px;border:1px solid var(--line);border-radius:10px;background:var(--surface);box-shadow:0 8px 24px #0003;display:grid;gap:2px}
+.task-actions__panel .button{justify-content:flex-start;text-align:left;white-space:normal;width:100%}
+.task-card .task-state{max-width:100%;min-width:0;width:auto;align-self:flex-start}
+@media(max-width:600px){.task-board{padding:12px}.task-grid{gap:12px}}
+@media print{.task-card__footer,.task-actions{display:none}.task-card{break-inside:avoid}.task-card__details{max-height:none;overflow:visible}}

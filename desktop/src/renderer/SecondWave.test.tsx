@@ -1,5 +1,6 @@
 import { cleanup,fireEvent,render,screen,waitFor } from '@testing-library/react';
 import { afterEach,beforeEach,expect,it,vi } from 'vitest';
+import { HoursPreference } from './HoursPreference';
 import { ReportPage } from './pages/ReportPage';
 import { TasksPage } from './pages/TasksPage';
 import { DashboardPage } from './pages/DashboardPage';
@@ -28,30 +29,26 @@ it('preserva pausas, legados e lacunas e identifica as duas bases no CSV',()=>{
  expect(session.focusSeconds).toBe(600);
 });
 
-it('aplica horas ao relatório e CSV sem mudar o registro passado à edição',async()=>{
+it('aplica a preferência de horas ao relatório e CSV sem mudar o registro editado',async()=>{
  const exported=vi.fn(),edited=vi.fn(),refresh=vi.fn().mockResolvedValue(true);
- render(<ReportPage items={[session]} colors={[]} showValues onRefresh={refresh} onEdit={edited} onDelete={noop} onBatch={noop} onExport={exported}/>);
+ const page=<ReportPage items={[session]} colors={[]} showValues onRefresh={refresh} onEdit={edited} onDelete={noop} onBatch={noop} onExport={exported}/>;
+ const view=render(<HoursPreference.Provider value="real">{page}</HoursPreference.Provider>);
  await waitFor(()=>expect(screen.getByRole('button',{name:'Exportar CSV'})).toBeEnabled());
- fireEvent.change(screen.getByLabelText('Horas exibidas'),{target:{value:'real'}});
- expect(screen.getByRole('button',{name:'Exportar CSV'})).toBeDisabled();
- fireEvent.click(screen.getByRole('button',{name:'Atualizar'}));
- await waitFor(()=>expect(screen.getByRole('button',{name:'Exportar CSV'})).toBeEnabled());
+ expect(screen.queryByLabelText('Horas exibidas')).not.toBeInTheDocument();
  expect(screen.getAllByText('0h 07min').length).toBeGreaterThan(0);
  fireEvent.click(screen.getByRole('button',{name:'Exportar CSV'}));expect(exported).toHaveBeenCalledWith([session],'real','real');
- fireEvent.click(screen.getByLabelText('Selecionar Teste'));fireEvent.click(screen.getByRole('button',{name:'Editar selecionada'}));
- expect(edited).toHaveBeenCalledWith(session);
- refresh.mockResolvedValue(false);fireEvent.change(screen.getByLabelText('Horas exibidas'),{target:{value:'rounded'}});fireEvent.click(screen.getByRole('button',{name:'Atualizar'}));
- await waitFor(()=>expect(refresh).toHaveBeenCalledTimes(3));expect(screen.getByRole('button',{name:/Exportar CSV/})).toBeDisabled();
+ fireEvent.click(screen.getByLabelText('Selecionar Teste'));fireEvent.click(screen.getByRole('button',{name:'Editar selecionada'}));expect(edited).toHaveBeenCalledWith(session);
+ refresh.mockResolvedValue(false);view.rerender(<HoursPreference.Provider value="rounded">{page}</HoursPreference.Provider>);
+ await waitFor(()=>expect(refresh).toHaveBeenCalledTimes(2));expect(screen.getByRole('button',{name:/Exportar CSV/})).toBeDisabled();
  expect(screen.getAllByText('0h 07min').length).toBeGreaterThan(0);
 });
 
-it('lembra base e ordenação de tarefas ao reabrir',()=>{
+it('usa a preferência global de horas e lembra a ordenação de tarefas',()=>{
  const props={items:[task],history:[session],catalogs,colors:[],showValues:false,onSave:async()=>{},onStart:noop,onComplete:noop,onStatusChange:noop};
- const view=render(<TasksPage {...props}/>);
- fireEvent.change(screen.getByLabelText('Horas exibidas'),{target:{value:'real'}});
- expect(screen.getByText('0h 07min')).toBeInTheDocument();
+ const view=render(<HoursPreference.Provider value="real"><TasksPage {...props}/></HoursPreference.Provider>);
+ expect(screen.getByText('0h 07min')).toBeInTheDocument();expect(screen.queryByLabelText('Horas exibidas')).not.toBeInTheDocument();
  fireEvent.change(screen.getByLabelText('Ordenar por'),{target:{value:'activity'}});view.unmount();render(<TasksPage {...props}/>);
- expect(screen.getByLabelText('Horas exibidas')).toHaveValue('real');expect(screen.getByLabelText('Ordenar por')).toHaveValue('activity');
+ expect(screen.getByText('0h 10min')).toBeInTheDocument();expect(screen.getByLabelText('Ordenar por')).toHaveValue('activity');
 });
 
 it('lembra o agrupamento do dashboard, mas abre datas atuais',async()=>{

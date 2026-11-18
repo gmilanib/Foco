@@ -1,0 +1,24 @@
+/* Local CSS artwork; decoration never covers controls or changes client colors. */
+.theme-swatch--christmas{background:radial-gradient(circle at 80% 20%,#E9BD57 0 4px,transparent 5px),linear-gradient(135deg,#124B37,#2C7555);border:1px solid #C4A15E}
+.theme-swatch--christmas i{background:#FFF5DF}.theme-swatch--christmas i:first-child{background:linear-gradient(#D34B59,#8F1E31)}
+.theme-swatch--aero{background:radial-gradient(ellipse at 80% 0%,#FFFFFFDD,transparent 60%),linear-gradient(155deg,#52C9F1 45%,#8ECF60);border:1px solid #70AFCA}
+.theme-swatch--aero i{background:linear-gradient(#FFFFFFEE,#FFFFFF77);box-shadow:inset 0 1px #FFFFFF,0 2px 3px #13608433}.theme-swatch--aero i:first-child{background:linear-gradient(#8DEBFF,#069DC9 50%,#047394 51%,#27B3CF)}
+
+html[data-palette=christmas]{--secondary:#B99245;--festive-green:#1D674C;--festive-gold:#C9A24C}
+html[data-palette=christmas] .app-shell{background:radial-gradient(circle at 95% 30px,#D4AF5A35 0 5px,transparent 6px),radial-gradient(circle at 90% 68px,#B52F4225 0 8px,transparent 9px),radial-gradient(ellipse at 100% 0%,#54866525,transparent 55%),var(--canvas)}
+html[data-palette=christmas] .sidebar{background:radial-gradient(circle at 24px 16px,#EBD394 0 2px,transparent 3px),radial-gradient(circle at 90% 24px,#EBD394 0 2px,transparent 3px),linear-gradient(160deg,color-mix(in srgb,var(--festive-green) 12%,var(--surface)),var(--surface) 70%);border-right-color:var(--festive-gold)}
+html[data-palette=christmas] .brand__mark{background:linear-gradient(145deg,#397F58,#154F38);color:#FFF6DD;box-shadow:inset 0 1px #E8CF89,0 4px 12px #123C3528}
+html[data-palette=christmas] .card{border-top:2px solid var(--festive-gold);box-shadow:0 5px 20px #153F2510}
+html[data-palette=christmas] .nav-item.is-active{background:linear-gradient(100deg,color-mix(in srgb,var(--festive-green) 16%,var(--surface)),var(--surface));box-shadow:inset 3px 0 var(--festive-gold)}
+html[data-palette=christmas] .button--primary{background:linear-gradient(165deg,color-mix(in srgb,var(--accent) 85%,white),var(--accent) 52%,color-mix(in srgb,var(--accent) 85%,black));color:var(--accent-text);box-shadow:inset 0 1px #FFFFFF50,0 3px 0 color-mix(in srgb,var(--accent) 65%,black)}
+
+html[data-palette=aero]{--secondary:#70BE4A;--aero-glow:#26BDEB;--aero-leaf:#79BE4B}
+html[data-palette=aero] .app-shell{background:radial-gradient(ellipse at 85% 0%,#FFFFFF80,transparent 34%),radial-gradient(ellipse at 98% 92%,#81C94D45,transparent 50%),linear-gradient(155deg,color-mix(in srgb,var(--aero-glow) 30%,var(--canvas)),var(--canvas) 55%);background-attachment:fixed}
+html[data-palette=aero][data-appearance=dark] .app-shell{background:radial-gradient(ellipse at 85% 0%,#26BDEB30,transparent 40%),radial-gradient(ellipse at 98% 92%,#81C94D20,transparent 50%),var(--canvas)}
+html[data-palette=aero] .sidebar{background:linear-gradient(155deg,color-mix(in srgb,var(--surface) 85%,transparent),color-mix(in srgb,var(--subtle) 95%,transparent));backdrop-filter:blur(16px);border-right:1px solid color-mix(in srgb,var(--line) 65%,white);box-shadow:3px 0 18px #00527518}
+html[data-palette=aero] .card{background:linear-gradient(165deg,color-mix(in srgb,var(--surface) 95%,white),var(--surface) 90px);border:1px solid var(--line);border-radius:18px;box-shadow:inset 0 1px #FFFFFF80,0 8px 24px #004C6A18}
+html[data-palette=aero] .brand__mark{border-radius:50%;background:radial-gradient(ellipse at 50% 0%,#FFFFFFB0,transparent 58%),linear-gradient(#22BEDE,#087BA7 52%,#065F8B 53%,#36A2C3);border:1px solid #257B99;color:white;box-shadow:inset 0 1px 2px white,0 4px 12px #006C8B44}
+html[data-palette=aero] .button:not(.button--quiet):not(.button--primary):not(.button--danger){background:linear-gradient(color-mix(in srgb,var(--surface) 94%,white),var(--subtle));box-shadow:inset 0 1px #FFFFFF80,0 2px 3px #004C6A18}
+html[data-palette=aero] .button--primary{background:linear-gradient(color-mix(in srgb,var(--accent) 70%,white),var(--accent) 48%,color-mix(in srgb,var(--accent) 80%,black) 49%,var(--accent));color:var(--accent-text);box-shadow:inset 0 1px #FFFFFFA0,0 3px 6px #004C6A33;border-radius:10px}
+html[data-palette=aero] .nav-item.is-active{background:linear-gradient(color-mix(in srgb,var(--accent) 10%,var(--surface)),color-mix(in srgb,var(--accent) 24%,var(--surface)) 49%,color-mix(in srgb,var(--accent) 30%,var(--surface)) 50%,color-mix(in srgb,var(--accent) 14%,var(--surface)));box-shadow:inset 0 1px #FFFFFF80,inset 0 0 0 1px var(--line),0 2px 5px #00527518}
+@media print{html[data-palette] .app-shell,html[data-palette] .card{background:white;box-shadow:none}html[data-palette] .sidebar{backdrop-filter:none}}

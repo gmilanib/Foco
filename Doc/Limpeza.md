@@ -1,5 +1,13 @@
 # Limpeza de arquivos locais — 02/10/2026
 
+## Lista de atividades — New 1.21.0 — 17/11/2026
+
+Após os testes, o build e a conferência do pacote, foram removidos 220 arquivos, com 1.356.167.780 bytes (1,26 GiB). A limpeza incluiu as pastas `win-unpacked` de New e Stable, os arquivos `builder-debug.yml`, os instaladores e blockmaps New 1.18.0/1.19.0 e Stable 1.18.0, o JAR intermediário `.original` e o perfil isolado da conferência visual desta entrega.
+
+Foram preservados New 1.20.0, que corresponde à instalação atual, New 1.21.0, gerada nesta entrega, e Stable 1.19.0, também instalada. Os hashes dos três instaladores ficaram iguais antes e depois da limpeza. Os manifestos `SHA256SUMS.txt` foram atualizados para os pacotes preservados.
+
+Os caminhos foram conferidos dentro do projeto, sem redirecionamentos e sem arquivos rastreados pelo Git. Dados, backups, código, dependências, arquivos compilados atuais e evidências foram preservados. Manifesto: `.atualizacao_status/activity-list-cleanup.json`. Nenhuma instalação foi executada.
+
 ## Complemento — New e Stable 1.18.0, 07/10/2026
 
 Após verificar as duas instalações, removidos 56 alvos, 424 arquivos e 1364646632 bytes (1301 MiB): distribuições win-unpacked, pacotes substituídos New 1.17.0 e Stable 1.14.0/1.6.0, intermediários Maven/TypeScript, bases/perfis isolados de teste e scripts pontuais obsoletos. Caminhos absolutos dentro do workspace, rastreamento Git e pontos de redirecionamento verificados antes de cada remoção.
@@ -59,3 +67,7 @@ As referências a pacotes e registros antigos em documentos históricos descreve
 Antes de remover, todos os alvos foram conferidos como não rastreados pelo Git e dentro do workspace; caminhos com pontos de redirecionamento foram rejeitados. Foram comparados os hashes de 147 arquivos de código/recursos/scripts e dos seis backups antes/depois, sem alterações. Os hashes dos instaladores New 1.14.0 e Stable 1.10.0 correspondem aos registrados nas entregas. Todos os alvos selecionados ficaram ausentes, e `npm ls --depth=0` confirmou as dependências instaladas.
 
 O manifesto local `release/Stable/latest.yml` foi alinhado à Stable 1.10.0; antes ainda apontava para 1.7.0. Os manifestos SHA-256 de New e Stable foram regenerados para os arquivos preservados. Não houve publicação externa nem alteração funcional; não foi necessário reconstruir o aplicativo.
+
+## Corre??o de temas e horas ? 11/11/2026
+
+Ap?s o build aprovado, a pasta tempor?ria `release/New/win-unpacked` foi removida. O caminho foi conferido dentro do projeto, sem redirecionamentos. Instaladores, dados e backups foram preservados.

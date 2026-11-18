@@ -2,6 +2,7 @@
 
 | Documento | Conteúdo |
 |---|---|
+| [Lista de atividades](Lista-de-atividades.md) | Lista com período ajustável, cópia e exportação TXT/CSV em sete campos |
 | [Interface e arredondamento](Interface-e-arredondamento.md) | Visual expressivo, animações acessíveis, blocos de 2 minutos e conversão segura do histórico |
 | [Manual](Manual.md) | Instalação, navegação, apontamentos, tarefas, relatórios, importação, backup e solução de problemas |
 | [Entidades](Entidades.md) | Entidades persistidas, relacionamentos, regras e estados |

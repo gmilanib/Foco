@@ -55,7 +55,7 @@ it('filtra arquivadas e confirma restauração preservando a necessidade de rest
  expect(screen.queryByText('Arquivada')).not.toBeInTheDocument();
  fireEvent.change(screen.getByLabelText('Arquivamento'),{target:{value:'archived'}});
  expect(screen.getByText('Arquivada')).toBeInTheDocument();expect(screen.getByRole('button',{name:'Iniciar'})).toBeDisabled();
- fireEvent.click(screen.getByRole('button',{name:'Restaurar tarefa'}));expect(api).not.toHaveBeenCalled();
+ fireEvent.click(screen.getByRole('button',{name:'Mais opções de Arquivada'}));fireEvent.click(screen.getByRole('button',{name:'Restaurar tarefa'}));expect(api).not.toHaveBeenCalled();
  expect(screen.getByText(/projeto também precisa ser restaurado/)).toBeInTheDocument();
  fireEvent.click(screen.getByRole('button',{name:'Confirmar restauração'}));
  await waitFor(()=>expect(api).toHaveBeenCalledWith('/api/tasks/b/archive','PUT',{archived:false}));
@@ -63,7 +63,7 @@ it('filtra arquivadas e confirma restauração preservando a necessidade de rest
 });
 it('arquivamento de tarefa exige confirmação e exibe falha sem perder a lista',async()=>{
  api.mockRejectedValue(new Error('Encerre o apontamento ativo'));
- tasksView([task]);fireEvent.click(screen.getByRole('button',{name:'Arquivar tarefa'}));expect(api).not.toHaveBeenCalled();
+ tasksView([task]);fireEvent.click(screen.getByRole('button',{name:'Mais opções de Entrega'}));fireEvent.click(screen.getByRole('button',{name:'Arquivar tarefa'}));expect(api).not.toHaveBeenCalled();
  fireEvent.click(screen.getByRole('button',{name:'Confirmar arquivamento'}));
  expect(await screen.findByRole('alert')).toHaveTextContent('Encerre o apontamento ativo');expect(screen.getAllByText('Entrega').length).toBeGreaterThan(0);expect(changed).not.toHaveBeenCalled();
 });

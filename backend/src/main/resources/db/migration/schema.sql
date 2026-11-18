@@ -18,6 +18,11 @@ CREATE TABLE IF NOT EXISTS client_colors (client_key TEXT PRIMARY KEY, client_na
 CREATE TABLE IF NOT EXISTS catalog_clients (name_key TEXT PRIMARY KEY, name TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS catalog_projects (name_key TEXT PRIMARY KEY, name TEXT NOT NULL, color_seed INTEGER);
 CREATE TABLE IF NOT EXISTS catalog_activities (name_key TEXT PRIMARY KEY, name TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS project_clients (
+  project_key TEXT NOT NULL REFERENCES catalog_projects(name_key) ON UPDATE CASCADE ON DELETE CASCADE,
+  client_key TEXT NOT NULL REFERENCES catalog_clients(name_key) ON UPDATE CASCADE ON DELETE CASCADE,
+  PRIMARY KEY(project_key,client_key)
+);
 CREATE TABLE IF NOT EXISTS change_history (
   id TEXT PRIMARY KEY, entity_type TEXT NOT NULL, entity_id TEXT NOT NULL,
   changed_at TEXT NOT NULL, old_value TEXT, new_value TEXT

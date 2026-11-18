@@ -15,6 +15,17 @@ describe('edição de apontamento',()=>{
   Object.defineProperty(HTMLDialogElement.prototype,'close',{configurable:true,value:function(){this.removeAttribute('open');}});
  });
  afterEach(cleanup);
+ it('preserva consultor histórico ao abrir e recalcula ao trocar cliente e projeto',()=>{
+  render(<SessionDialog session={session} history={[{...session,id:'other',client:'Outro cliente',consultant:'Bruno'}]} catalogs={{...catalogs,projectClients:{P1:['ACME','Outro cliente']}}} showValues={false} onClose={()=>{}} onSave={async()=>{}}/>);
+  expect(screen.getByLabelText('Consultor')).toHaveValue('Ana');
+  fireEvent.change(screen.getByLabelText('Cliente'),{target:{value:'Outro cliente'}});
+  expect(screen.getByLabelText('Consultor')).toHaveValue('');
+  fireEvent.change(screen.getByLabelText('Projeto'),{target:{value:'P1'}});
+  expect(screen.getByLabelText('Consultor')).toHaveValue('Bruno');
+  fireEvent.change(screen.getByLabelText('Consultor'),{target:{value:'Manual'}});
+  fireEvent.change(screen.getByLabelText('Detalhamento'),{target:{value:'Revisão'}});
+  expect(screen.getByLabelText('Consultor')).toHaveValue('Manual');
+ });
  afterAll(()=>{
   if(showModal)Object.defineProperty(HTMLDialogElement.prototype,'showModal',showModal);else Reflect.deleteProperty(HTMLDialogElement.prototype,'showModal');
   if(closeDialog)Object.defineProperty(HTMLDialogElement.prototype,'close',closeDialog);else Reflect.deleteProperty(HTMLDialogElement.prototype,'close');

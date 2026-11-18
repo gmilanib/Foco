@@ -1,5 +1,39 @@
 # Instalação local do Foco New e Stable
 
+## New 1.21.0 — lista de atividades — pacote gerado em 17/11/2026
+
+Instalador local: `release/New/Foco-New-Setup-1.21.0.exe`. Inclui a lista com período ajustável, cópia e exportação TXT/CSV. `npm test` passou com 158 testes Java e 268 Vitest. `npm run build` foi concluído. Os 14 arquivos desktop no ASAR, o JAR e o hash do manifesto foram conferidos.
+
+SHA-256 do instalador: `27dbdc637f96e98f502d4575827ee938f42f172eda6624871e6fcd691dbf3ed3`.
+
+O pacote não foi instalado nem publicado. As versões instaladas conferidas nesta entrega são New 1.20.0 e Stable 1.19.0. As regras de uso estão em [Lista de atividades](Lista-de-atividades.md).
+
+## New 1.19.0 — trajetória por cliente — instalada em 10/11/2026
+
+Atualização local instalada a pedido do usuário, com saída 0 e SHA-256 do instalador conferido. Os 12 arquivos de `desktop/dist` foram comparados byte a byte com o ASAR instalado; JAR instalado idêntico ao build. Backend respondeu HTTP 200 em saúde e HTTP 401 para tarefas sem token.
+
+Antes da instalação, a sessão ativa foi pausada pela interface em 823 segundos (13min43s). Backup SQLite íntegro criado em `.atualizacao_status/antes-trajectory-1.19.0-*.db`; as 21 tabelas e os 455 apontamentos foram conferidos após a instalação, preservados. A mesma sessão foi retomada pela interface após a validação, confirmada como `Em andamento` no banco e `EM FOCO` na tela, com tempo avançando. O período de instalação permaneceu como pausa.
+
+Evidências em `.atualizacao_status/trajectory-install-data.json`, `trajectory-installed.json`, `trajectory-installed-files.json` e `trajectory-resumed.json`. Nenhuma publicação externa; backups preservados. O intermediário de empacotamento já havia sido removido na entrega do build.
+
+## New 1.19.0 — timeline por cliente/projeto — instalada em 06/11/2026
+
+Por solicitação do usuário, a Stable aberta foi encerrada e a New 1.19.0 com as visões Geral, Por cliente e Por projeto foi instalada em `%LOCALAPPDATA%\Programs\Foco New` e aberta. Instalador com SHA-256 conferido, saída 0, executável 1.19.0.0. Os 12 arquivos de `desktop/dist` dentro do ASAR instalado e o JAR foram comparados byte a byte com os arquivos validados da compilação. Janela respondendo, saúde HTTP 200, acesso sem token HTTP 401 e escuta somente em loopback.
+
+Backup SQLite anterior íntegro em `.atualizacao_status/antes-timeline-new-1.19.0.db`. Após abrir a New, o conteúdo das 21 tabelas foi comparado integralmente com o backup: 143 tarefas, 436 apontamentos e demais dados preservados; integridade `ok`. Não havia cronômetro ativo antes da instalação. Stable permanece instalada; ambos os canais usam o mesmo banco local.
+
+Evidências: `.atualizacao_status/timeline-install*.json`, `timeline-installed-*.log`. A tentativa de remover os instaladores New 1.18.0 substituídos foi bloqueada pela política de execução; permanecem no diretório. New/Stable 1.19.0, bancos e backups preservados. Nenhuma publicação externa.
+
+## Stable 1.19.0 — instalada — 06/11/2026
+
+Instaladores New e Stable 1.19.0 gerados localmente; canal Stable instalado em `%LOCALAPPDATA%\Programs\Foco`, saída 0, executável 1.19.0.0. ASAR e JAR instalados conferidos por SHA-256 contra o pacote, janela respondendo, saúde HTTP 200 e acesso sem token recusado com 401. Nenhuma publicação externa.
+
+Validação: 154 testes Java, 224 testes Vitest, builds New/Stable, 28 capturas da interface simulada e teste do JAR empacotado em banco isolado, incluindo exportação XLSX válida. Ajustes de largura em Apontar horas e nas paletas de aparência verificados.
+
+O banco recebido na raiz (`foco.db`) foi validado em cópia isolada e copiado via API de backup SQLite para `%APPDATA%\foco-java\data\foco.db`, com o aplicativo fechado. Banco recebido íntegro: 138 tarefas, 431 apontamentos e 21 tabelas; todas as contagens preservadas na cópia. Após reabrir, tarefas e apontamentos foram comparados integralmente com a origem e permaneceram idênticos. Interface aberta e lista de tarefas conferida. O arquivo original recebido permanece na raiz, ignorado pelo Git.
+
+Backups anteriores preservados: `.atualizacao_status/antes-stable-1.19.0.db` e `antes-importacao-1.19.db`, ambos íntegros. O banco anterior continha 30 tarefas e 286 apontamentos. Evidências: `1.19-installed.json`, `1.19-backup.json`, `1.19-import.json`, `1.19-smoke/result.json`, `1.19-incoming-smoke/result.json` e logs `1.19-*`, todos em `.atualizacao_status/`.
+
 ## New e Stable 1.18.0 — instaladas — 07/10/2026
 
 New e Stable 1.18.0 instaladas nas pastas existentes, com saída 0 e executáveis 1.18.0.0. ASAR/JAR de cada instalação iguais ao pacote por SHA-256. Ambas abertas e verificadas em sequência, com janela respondendo e backend HTTP 200/401. Stable deixada aberta ao final. Antes das instalações, backup SQLite verificado; as 20 tabelas e todos os 274 apontamentos preservados. Apenas o campo opcional `catalog_projects.color_seed` foi adicionado; projetos antigos continuam nulos. Preferências funcionais e histórico mantidos.

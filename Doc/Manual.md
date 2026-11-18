@@ -164,6 +164,10 @@ No Dashboard, use Planejado, estimado e realizado e pressione Comparar horas. Os
 
 Use Checklist em Tarefas ou Hoje para registrar passos sem separar apontamentos. Em Tarefas e Cadastros → Projetos, filtre arquivados e confirme arquivar/restaurar; dados e relatórios são preservados. Em Tarefas e hoje → Modelos, edite ou pause modelos e configure dias úteis, dias específicos ou frequência mensal. A geração continua manual, sem acumular ocorrências atrasadas. Veja os fluxos e limites em [Quinta onda](Quinta-onda.md).
 
-## Atualização 1.18.0
+## Lista de atividades — New 1.21.0
+
+Em **Relatórios → Lista de atividades**, confira as atividades do dia. Para outro período, altere as datas e selecione **Atualizar lista**. Confira a prévia e use **Copiar lista**, **Exportar TXT** ou **Exportar CSV simples**. A ordem é: hora início, duração, hora fim, cliente, projeto, detalhamento e consultor solicitante. [Regras e exemplos](Lista-de-atividades.md).
+
+## Tarefas e hoje — 1.18.0
 
 Desde a 1.18.0, use **Tarefas e hoje** para a lista e o planejamento. Alt+T abre Todas as tarefas e Alt+H abre Meu dia. Em Configurações → Prioridades do dia, escolha entre 1 e 100 (padrão 5). Selecione vários estados com as caixas de seleção, sem Shift. Detalhes em [Tarefas e hoje](Tarefas-e-hoje.md).

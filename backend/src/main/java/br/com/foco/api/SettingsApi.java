@@ -14,6 +14,8 @@ class SettingsController {
     @GetMapping Map<String,String> all(){return db.query("SELECT key,value FROM settings",r->{Map<String,String> m=new TreeMap<>();while(r.next())m.put(r.getString(1),r.getString(2));return m;});}
     @PutMapping @Transactional Map<String,String> save(@RequestBody Map<String,String> values){
         WorkflowPreferences.validate(values);
+        if(values.containsKey("theme.preset")&&!Set.of("classic","forest","sand","violet","slate","christmas","aero").contains(values.get("theme.preset")))throw new IllegalArgumentException("Tema predefinido inválido.");
+        if(values.containsKey("display.hoursMode")&&!Set.of("real","rounded").contains(values.get("display.hoursMode")))throw new IllegalArgumentException("Base de horas inválida.");
         if(values.containsKey("planning.priorityLimit")){
             try{int limit=Integer.parseInt(values.get("planning.priorityLimit"));if(limit<1||limit>100)throw new NumberFormatException();}
             catch(RuntimeException e){throw new IllegalArgumentException("Informe um limite inteiro entre 1 e 100 prioridades.");}
@@ -30,12 +32,12 @@ class SettingsController {
             db.update("INSERT INTO settings(key,value) VALUES(?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value",key,value);
         });return all();
     }
-    @GetMapping("/colors") List<Map<String,String>> colors(){return db.query("SELECT client_name,hex FROM client_colors ORDER BY client_name",(r,n)->Map.of("client",r.getString(1),"hex",r.getString(2)));}
+    @GetMapping("/colors") List<Map<String,String>> colors(){catalogs.ensureColors();return db.query("SELECT client_name,hex FROM client_colors ORDER BY client_name",(r,n)->Map.of("client",r.getString(1),"hex",r.getString(2)));}
     @PutMapping("/colors") Map<String,String> color(@RequestBody ColorInput input){
         if(input.client()==null||input.client().isBlank()||input.client().length()>200||input.hex()==null||!input.hex().matches("#[0-9a-fA-F]{6}"))throw new IllegalArgumentException("Informe cliente e cor no formato #RRGGBB.");
         String name=catalogs.canonical(CatalogType.CLIENT,input.client(),true),key=CatalogService.key(name);
         db.update("INSERT INTO client_colors(client_key,client_name,hex) VALUES(?,?,?) ON CONFLICT(client_key) DO UPDATE SET client_name=excluded.client_name,hex=excluded.hex",key,name,input.hex().toUpperCase(Locale.ROOT));return Map.of("client",name,"hex",input.hex().toUpperCase(Locale.ROOT));
     }
-    @DeleteMapping("/colors/{client}") void removeColor(@PathVariable String client){db.update("DELETE FROM client_colors WHERE client_key=?",client.trim().toLowerCase(Locale.ROOT));}
+    @DeleteMapping("/colors/{client}") void removeColor(@PathVariable String client){catalogs.resetClientColor(client);}
 }
 record ColorInput(String client,String hex) {}

@@ -1,3 +1,5 @@
+import { changeClientProject } from '../fillSuggestions';
+import { projectsForClient } from '../organization';
 import { DraftRecovery,clearDraft } from './DraftRecovery';
 import { useMemo,useState } from 'react';
 import { Dialog } from './Dialog';
@@ -40,8 +42,8 @@ export function SessionDialog({session,history=[],catalogs,colors=[],showValues,
  };
  return <Dialog title="Editar apontamento" onClose={onClose}><form className="dialog-form" onSubmit={save}><DraftRecovery id={`session.${session.id}`} value={form} onRecover={setForm}/>
   <div className="form-grid form-grid--two">
-   <CatalogSelect label="Cliente" optional value={form.client} options={catalogs.items.clients} onChange={value=>update('client',value)} preview={<ClientColorPreview client={form.client} colors={colors}/>}/>
-   <CatalogSelect label="Projeto" optional value={form.project} options={catalogs.items.projects} onChange={value=>update('project',value)}/>
+   <CatalogSelect label="Cliente" optional value={form.client} options={catalogs.items.clients} onChange={value=>setForm(current=>changeClientProject(current,'client',value,history,[]))} preview={<ClientColorPreview client={form.client} colors={colors}/>}/>
+   <CatalogSelect label="Projeto" optional value={form.project} options={[...new Set([...projectsForClient(catalogs,form.client),...(session.client===form.client&&session.project?[session.project]:[])])]} onChange={value=>setForm(current=>changeClientProject(current,'project',value,history,[]))}/>
    <CatalogSelect label="Atividade" required value={form.activity} options={catalogs.items.activities} onChange={value=>update('activity',value)}/>
    <Field label="Categoria do apontamento"><select value={form.category} onChange={e=>setForm(current=>({...current,category:e.target.value as Session['category']}))}><option value="Normal">Normal</option><option value="Agenda">Agenda</option></select></Field>
    <Field label="Consultor"><input maxLength={200} value={form.consultant} onChange={e=>update('consultant',e.target.value)}/></Field>

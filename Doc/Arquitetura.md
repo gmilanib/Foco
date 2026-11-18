@@ -167,6 +167,10 @@ O empacotamento New incorpora um gancho NSIS que libera o Electron e o backend J
 
 `OrganizationService` trata arquivamento e restauração transacionais, protege apontamentos ativos e libera prioridades. `ChecklistController` valida propriedade dos passos e grava histórico na mesma transação. `TaskTemplatesController` mantém os identificadores ao editar; `RecurrenceSchedule` calcula dias úteis/específicos e calendário mensal com preservação do dia nominal. `ChecklistDialog` e `TaskTemplatesPanel` usam somente o preload; `organization.ts` separa disponibilidade de trabalho e consultas históricas. As quatro tabelas aditivas estão descritas em [Quinta onda](Quinta-onda.md). O instalador New conserva o gancho de liberação do backend da 1.13.1.
 
-## Atualização 1.18.0
+## Lista de atividades — New 1.21.0
+
+`ActivityListDialog` lê sessões pelo preload. `activityList.ts` filtra pela data local e monta sete campos para prévia, cópia, TXT e CSV. Os canais `foco:copy-text` e `foco:save-text` usam as APIs locais do Electron. O CSV usa o canal existente. Sem novo endpoint ou alteração na autenticação. [Fluxo e contratos](Lista-de-atividades.md).
+
+## Tarefas e hoje — 1.18.0
 
 A 1.18.0 reúne lista e planejamento no renderer, sem novo canal de rede. `CatalogSnapshot.projectColorSeeds` fornece sementes persistidas para marcadores e gráficos; `PlanningController` aplica o limite de `planning.priorityLimit`. Migração opcional e idempotente de `catalog_projects.color_seed`. [Diagrama e fluxo](Tarefas-e-hoje.md).

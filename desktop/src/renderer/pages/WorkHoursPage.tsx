@@ -17,7 +17,7 @@ export function WorkHoursPage({sessions=[],onEdit,report,onRefresh,onExport,onBo
  useEffect(()=>{onRefresh(range);},[]);
  return <div className="page-stack">
   <div className="page-title"><div><h1>Jornada</h1><p>Horas trabalhadas, períodos A definir e extra-time por dia.</p></div><CalendarDays size={24} aria-hidden="true"/></div>
-  <Card title="Período da jornada">
+  <Card title="Período da jornada" collapsible>
    <div className="form-grid form-grid--four">
     <Field label="Data inicial"><input type="date" value={range.from} onChange={e=>setRange(value=>({...value,from:e.target.value}))}/></Field>
     <Field label="Data final"><input type="date" value={range.to} onChange={e=>setRange(value=>({...value,to:e.target.value}))}/></Field>

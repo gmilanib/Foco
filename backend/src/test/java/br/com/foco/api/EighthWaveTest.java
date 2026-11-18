@@ -49,8 +49,9 @@ class EighthWaveTest {
   assertFalse(catalogs.snapshot().projectColorSeeds().containsKey("Renomeado"));
   catalogs.delete(CatalogType.PROJECT,"Destino");assertTrue(catalogs.snapshot().projectColorSeeds().isEmpty());
  }
- @Test void legacyProjectsKeepTheirAppearance(){
+ @Test void legacyProjectsReceiveAndKeepAnAutomaticColor(){
   db.update("INSERT INTO catalog_projects(name_key,name) VALUES('legado','Legado')");
-  catalogs.initialize();assertFalse(catalogs.snapshot().projectColorSeeds().containsKey("Legado"));
+  catalogs.initialize();int seed=catalogs.snapshot().projectColorSeeds().get("Legado");assertTrue(seed>0);
+  catalogs.initialize();assertEquals(seed,catalogs.snapshot().projectColorSeeds().get("Legado"));
  }
 }

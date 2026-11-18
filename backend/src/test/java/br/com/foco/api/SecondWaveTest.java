@@ -41,15 +41,15 @@ class SecondWaveTest {
         assertEquals(400,call("GET","/api/sessions?hoursMode=wrong",null,true).statusCode());
         assertEquals(400,call("GET","/api/sessions/export.csv?hoursMode=wrong",null,true).statusCode());
     }
-    @Test void linksCompletedTaskUnlinksAndRecordsBothTaskTotalsWithoutChangingSessionData()throws Exception{
+    @Test void linksCompletedTaskAndRejectsUnlinkWithoutChangingSessionData()throws Exception{
         var before=get("/api/sessions/s");assertEquals(200,link("b"));
         var after=get("/api/sessions/s");
         for(String key:new String[]{"startAt","endAt","roundedEndAt","focusSeconds","hourlyRate","activity","status"})assertEquals(before.get(key),after.get(key));
         assertEquals(0,get("/api/tasks/a").get("entries").asInt());assertEquals(1,get("/api/tasks/b").get("entries").asInt());
         assertEquals(3,db.queryForObject("SELECT count(*) FROM change_history",Integer.class));
         assertEquals(200,link("b"));assertEquals(3,db.queryForObject("SELECT count(*) FROM change_history",Integer.class));
-        assertEquals(200,link(null));assertNull(db.queryForObject("SELECT task_id FROM sessions WHERE id='s'",String.class));
-        assertEquals(0,get("/api/tasks/b").get("entries").asInt());
+        assertEquals(400,link(null));assertEquals("b",db.queryForObject("SELECT task_id FROM sessions WHERE id='s'",String.class));
+        assertEquals(1,get("/api/tasks/b").get("entries").asInt());
     }
     @Test void rejectsUnknownTasksActiveSessionsAndUnauthenticatedWrites()throws Exception{
         assertEquals(400,link("missing"));assertEquals("a",get("/api/sessions/s").get("taskId").asString());

@@ -185,6 +185,10 @@ erDiagram
     TASK_TEMPLATE ||--o| TEMPLATE_OPTIONS : calendario
 ```
 
-## Atualização 1.18.0
+## Lista de atividades — New 1.21.0
+
+A lista lê os apontamentos existentes. `ActivityRange` e `ActivityLine` são objetos temporários do renderer. Não há nova tabela ou migração. A cópia e a exportação não alteram os registros. [Campos e regras](Lista-de-atividades.md).
+
+## Tarefas e hoje — 1.18.0
 
 A 1.18.0 acrescenta `catalog_projects.color_seed INTEGER` opcional, sorteado para projetos novos e preservado no rename; legados ficam nulos. `settings.planning.priorityLimit` guarda um inteiro de 1 a 100, padrão 5. Não há nova entidade de tarefa: lista e planejamento continuam usando os mesmos IDs. [Fluxos e regras](Tarefas-e-hoje.md).

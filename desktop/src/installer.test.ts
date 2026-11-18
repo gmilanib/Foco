@@ -3,7 +3,7 @@ import { resolve } from 'node:path';
 import { readFileSync } from 'node:fs';
 import { expect, it } from 'vitest';
 
-it.each(['New', 'Stable'])('encerra somente Electron e Java da instalação %s, inclusive Java com caminho entre aspas', (channel) => {
+it.skipIf(process.platform !== 'win32').each(['New', 'Stable'])('encerra somente Electron e Java da instalação %s, inclusive Java com caminho entre aspas', (channel) => {
   const script = resolve('desktop/build/close-installed.ps1').replaceAll("'", "''");
   const command = `
     . '${script}' -FunctionsOnly

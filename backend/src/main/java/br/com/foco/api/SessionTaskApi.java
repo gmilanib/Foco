@@ -24,6 +24,7 @@ class SessionTaskController {
         if(Set.of("Em andamento","Pausada").contains(before.status()))
             throw new IllegalArgumentException("Encerre o apontamento antes de alterar o vínculo.");
         String target=input.taskId()==null||input.taskId().isBlank()?null:input.taskId().trim();
+        if(target==null)throw new IllegalArgumentException("Todo apontamento deve permanecer vinculado a uma tarefa.");
         if(target!=null&&db.queryForObject("SELECT count(*) FROM tasks WHERE id=?",Integer.class,target)==0)
             throw new IllegalArgumentException("Tarefa não encontrada.");
         if(Objects.equals(before.taskId(),target))return before;

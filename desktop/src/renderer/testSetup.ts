@@ -1,5 +1,6 @@
 import '@testing-library/jest-dom/vitest';
 import { beforeEach,vi } from 'vitest';
+Object.defineProperty(window,'matchMedia',{configurable:true,writable:true,value:(query:string)=>({matches:false,media:query,addEventListener:()=>{},removeEventListener:()=>{}})});
 if(typeof HTMLDialogElement.prototype.showModal!=='function'){
  Object.defineProperty(HTMLDialogElement.prototype,'showModal',{configurable:true,value:function(){this.setAttribute('open','');}});
  Object.defineProperty(HTMLDialogElement.prototype,'close',{configurable:true,value:function(){this.removeAttribute('open');}});

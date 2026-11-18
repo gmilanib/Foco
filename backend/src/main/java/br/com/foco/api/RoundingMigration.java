@@ -12,7 +12,7 @@ class RoundingMigration {
     private final LocalBackup backup;
     private final DatabaseMaintenance maintenance;
     private final Path data;
-    RoundingMigration(DataSource source,LocalBackup backup,DatabaseMaintenance maintenance,@Value("${FOCO_DATA_DIR:${user.home}/AppData/Local/FocoJava}") String directory) {
+    RoundingMigration(DataSource source,LocalBackup backup,DatabaseMaintenance maintenance,@Value("#{dataPaths.directory}") String directory) {
         this.source=source;this.backup=backup;this.maintenance=maintenance;this.data=Path.of(directory).toAbsolutePath().normalize();
     }
     void run() {

@@ -24,6 +24,7 @@ record SessionRow(String id, String taskId, String client, String project, Strin
 @RestController
 @RequestMapping("/api/sessions")
 class SessionController {
+    @org.springframework.beans.factory.annotation.Autowired private SessionTasks sessionTasks;
     private final JdbcTemplate db;
     private final WorkIntervalRepository workIntervals;
     private final CatalogService catalogs;
@@ -41,17 +42,18 @@ class SessionController {
         db.update("DELETE FROM session_work_intervals WHERE session_id=?",id);
         db.update("DELETE FROM sessions WHERE id=?",id);
     }
-    @PostMapping SessionRow create(@Valid @RequestBody SessionInput input) {
+    @PostMapping @org.springframework.transaction.annotation.Transactional SessionRow create(@Valid @RequestBody SessionInput input) {
         String client=catalogs.canonical(CatalogType.CLIENT,input.client(),false);
-        String project=catalogs.canonical(CatalogType.PROJECT,input.project(),false);
+        String project=catalogs.projectForClient(input.project(),client);
         String activity=catalogs.canonical(CatalogType.ACTIVITY,input.activity(),true);
         organization.requireProject(project);
         if(input.taskId()!=null){organization.requireAvailable(input.taskId());Integer completed=db.queryForObject("SELECT completed FROM tasks WHERE id=?",Integer.class,input.taskId());if(completed==null||completed==1)throw new IllegalArgumentException("Tarefa ausente ou concluída.");}
         if ("Em andamento".equals(input.status()) && db.queryForObject("SELECT count(*) FROM sessions WHERE status IN ('Em andamento','Pausada')", Integer.class)>0)
             throw new IllegalArgumentException("Encerre ou pause a sessão ativa antes de iniciar outra.");
+        String linkedTask=sessionTasks.ensure(input.taskId(),client,project,activity,clean(input.details()),clean(input.consultant()),clean(input.cardReference()),input.hourlyRate());
         String id=UUID.randomUUID().toString();
         db.update("INSERT INTO sessions(id,task_id,client,project,activity,details,consultant,card_reference,start_at,end_at,planned_seconds,focus_seconds,hourly_rate,status,category) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-                id,input.taskId(),client,project,activity,clean(input.details()),clean(input.consultant()),clean(input.cardReference()),input.startAt().toString(),input.endAt()==null?null:input.endAt().toString(),input.plannedSeconds(),0,input.hourlyRate()==null?null:input.hourlyRate().toPlainString(),input.status(),category(input.category()));
+                id,linkedTask,client,project,activity,clean(input.details()),clean(input.consultant()),clean(input.cardReference()),input.startAt().toString(),input.endAt()==null?null:input.endAt().toString(),input.plannedSeconds(),0,input.hourlyRate()==null?null:input.hourlyRate().toPlainString(),input.status(),category(input.category()));
         db.update("UPDATE sessions SET rounded_end_at=end_at WHERE id=?",id);
         if("Em andamento".equals(input.status()))workIntervals.open(id,input.startAt(),"Precisa");
         SessionRow created=get(id);history.record("session",id,null,created);return created;
@@ -68,7 +70,7 @@ class SessionController {
         SessionRow existing=get(id);
         if(!Objects.equals(existing.taskId(),input.taskId()))throw new IllegalArgumentException("Use a ação Vincular tarefa para alterar o vínculo.");
         String client=catalogs.canonical(CatalogType.CLIENT,input.client(),false);
-        String project=catalogs.canonical(CatalogType.PROJECT,input.project(),false);
+        String project=existing.client().equals(client)&&existing.project().equals(clean(input.project()))?existing.project():catalogs.projectForClient(input.project(),client);
         String activity=catalogs.canonical(CatalogType.ACTIVITY,input.activity(),true);
         if(input.endAt()!=null&&!input.endAt().isAfter(input.startAt()))throw new IllegalArgumentException("O término deve ocorrer depois do início.");
         boolean timeChanged=!input.startAt().toInstant().equals(existing.startAt().toInstant())||!Objects.equals(input.endAt()==null?null:input.endAt().toInstant(),existing.endAt()==null?null:existing.endAt().toInstant());
@@ -90,7 +92,10 @@ class SessionController {
         OffsetDateTime now=OffsetDateTime.now();
         double roundedFocus=FocusRounding.round(finish.focusSeconds());
         OffsetDateTime roundedEnd=now.plusNanos(Math.round((roundedFocus-finish.focusSeconds())*1_000_000_000));
-        db.update("UPDATE sessions SET status=?,end_at=?,rounded_end_at=?,focus_seconds=?,rounding_version=2 WHERE id=?",finish.status(),now.toString(),roundedEnd.toString(),roundedFocus,id);workIntervals.close(id,now);SessionRow updated=get(id);history.record("session",id,before,updated);return updated;
+        db.update("UPDATE sessions SET status=?,end_at=?,rounded_end_at=?,focus_seconds=?,rounding_version=2 WHERE id=?",finish.status(),now.toString(),roundedEnd.toString(),roundedFocus,id);
+        workIntervals.close(id,now);
+        if("Concluída".equals(finish.status()))sessionTasks.complete(before.taskId());
+        SessionRow updated=get(id);history.record("session",id,before,updated);return updated;
     }
     @GetMapping(value="/export.csv", produces="text/csv;charset=UTF-8") String csv(@RequestParam(defaultValue="") String query,@RequestParam(defaultValue="false") boolean showValues,@RequestParam(defaultValue="real") String endMode,@RequestParam(defaultValue="rounded") String hoursMode) {
         if(!Set.of("real","rounded").contains(endMode))throw new IllegalArgumentException("Tipo de término inválido.");
@@ -120,7 +125,15 @@ class SessionController {
         numericFilter(sql,args,seconds,filters.get("minHours"),true,3600);numericFilter(sql,args,seconds,filters.get("maxHours"),false,3600);
         numericFilter(sql,args,"("+seconds+"*CAST(COALESCE(hourly_rate,'0') AS REAL)/3600)",filters.get("minValue"),true,1);numericFilter(sql,args,"("+seconds+"*CAST(COALESCE(hourly_rate,'0') AS REAL)/3600)",filters.get("maxValue"),false,1);
         String sort=switch(filters.getOrDefault("sort","recent")){case "oldest"->"start_at ASC";case "focus"->seconds+" DESC";case "client"->"client COLLATE NOCASE, project COLLATE NOCASE, start_at DESC";default->"start_at DESC";};
-        sql.append(" ORDER BY ").append(sort);return db.query(sql.toString(),(r,n)->row(r),args.toArray());
+        sql.append(" ORDER BY ").append(sort);
+        List<SessionRow> rows=db.query(sql.toString(),(r,n)->row(r),args.toArray());
+        String requestedSort=filters.getOrDefault("sort","recent");
+        if(!Set.of("focus","client").contains(requestedSort)){
+            Comparator<SessionRow> chronological=Comparator.comparing(s->s.startAt().toInstant());
+            if(!"oldest".equals(requestedSort))chronological=chronological.reversed();
+            rows.sort(chronological.thenComparing(SessionRow::id));
+        }
+        return rows;
     }
     private static void numericFilter(StringBuilder sql,List<Object> args,String column,String raw,boolean minimum,double divisor){
         if(raw==null||raw.isBlank())return;try{double value=Double.parseDouble(raw);if(!Double.isFinite(value)||value<0)throw new NumberFormatException();sql.append(" AND ").append(column).append(minimum?">=":"<=").append("?");args.add(value*divisor);}catch(NumberFormatException e){throw new IllegalArgumentException("Filtro numérico inválido.");}

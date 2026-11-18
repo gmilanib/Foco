@@ -17,3 +17,20 @@
 
 .local-diagnostics, .local-diagnostics dd { overflow-wrap: anywhere; }
 .local-diagnostics dd { margin: 0 0 12px; }
+.day-kanban{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-items:start}
+.kanban-column>.card{background:var(--subtle);min-height:340px;padding:14px}
+.kanban-column--priority>.card{border-top:3px solid var(--accent)}
+.kanban-column--done>.card{border-top:3px solid #16836B}
+.kanban-task{background:var(--surface);padding:14px;margin:0 0 12px;border-radius:10px}
+.kanban-task:last-child{margin-bottom:0}
+.kanban-task h3{font-size:14px;line-height:1.4}
+.kanban-task p{font-size:12px;line-height:1.5}
+.kanban-task .button{padding:6px 8px;min-height:30px;font-size:11px}
+.kanban-task .planning-rank{width:22px;height:22px;font-size:11px}
+.kanban-task--done{border-color:color-mix(in srgb,#16836B 35%,var(--line))}
+.kanban-more>summary{cursor:pointer;color:var(--muted);font-size:11px;padding:7px}
+.kanban-more[open]{width:100%}
+.kanban-more[open]>.actions{padding:8px;background:var(--subtle);border-radius:8px}
+.kanban-more>summary:focus-visible{outline:2px solid var(--accent);border-radius:5px}
+@media(max-width:1000px){.day-kanban{grid-template-columns:1fr}.kanban-column>.card{min-height:140px}}
+@media print{.day-kanban{grid-template-columns:repeat(3,minmax(0,1fr))}.kanban-more,.kanban-task>.actions{display:none}}

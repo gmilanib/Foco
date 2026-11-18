@@ -1,4 +1,57 @@
 # Roadmap da fork Foco Java
+
+## Lista de atividades — New 1.21.0 — 17/11/2026
+
+- [x] Adicionar lista por período em Relatórios, com o dia atual como padrão e sete campos na ordem solicitada.
+- [x] Incluir prévia, cópia, TXT e CSV, com datas locais e duração real/arredondada.
+- [x] Cobrir regras, erros, concorrência e canais Electron com Vitest; documentar [fluxo e entidades](Doc/Lista-de-atividades.md).
+- [x] Validar `npm test` (158 Java e 268 Vitest), `npm run build`, interface clara/escura e teclado em janela compacta. Conferir os 14 arquivos desktop no pacote, o JAR e o manifesto do instalador New 1.21.0.
+- [x] Remover 220 arquivos antigos/temporários (1.356.167.780 bytes). Preservar dados, backups, New 1.20.0 instalada, New 1.21.0 gerada e Stable 1.19.0. Instalação e publicação não executadas.
+
+## Corre??o de temas e escala di?ria ? 11/11/2026
+
+- [x] Aceitar Natal e Frutiger Aero no servidor local e testar persist?ncia.
+- [x] Marcar cada hora cheia na linha do tempo di?ria, com limites reais e cobertura Vitest.
+- [x] Atualizar documenta??o funcional e t?cnica em `Doc/`.
+- [x] Validar 155 testes Java e 237 Vitest; gerar instalador New 1.20.0 e remover `release/New/win-unpacked`. Instala??o n?o executada nesta corre??o.
+## New 1.20.0 — temas especiais — 11/11/2026
+
+- [x] Criar Natal e Frutiger Aero, com prévias, modos claro/escuro/sistema e persistência local.
+- [x] Ampliar cobertura e documentar [temas, fluxo e entidades](Doc/Temas-especiais.md).
+- [ ] Validar testes, build e aparência; instalar New 1.20.0 com backup e conferência dos dados.
+
+## Timeline restrito à faixa trabalhada — 11/11/2026
+
+- [x] Exibir da primeira à última atividade de cada dia, omitindo dias vazios e intervalos entre jornadas na semana/mês.
+- [x] Preservar pausas e identificar lacunas internas como Sem registro nas três visões; documentar fluxo e escala em [Timeline](Doc/Timeline-por-cliente-e-projeto.md).
+- [x] Validar 154 testes Java, 231 Vitest, build local e conferência visual.
+- [ ] Limpar intermediários; remoção bloqueada pela política de execução em 11/11/2026.
+
+## Trajetória diária por cliente — 10/11/2026
+
+- [x] Transformar Por cliente em uma única linha cronológica, com nomes e cores dos clientes, preservando pausas, lacunas, seleção e sobreposições.
+- [x] Cobrir sequência A → B → A, cores por cliente e manutenção das demais visões no Vitest; atualizar [fluxo e entidades](Doc/Timeline-por-cliente-e-projeto.md).
+- [x] Validar `npm test` (154 Java e 227 Vitest), `npm run build` e limpar o intermediário de empacotamento desta alteração.
+- [x] Instalar a atualização local, pausando e retomando a mesma sessão; conferir arquivos instalados, backup e preservação das 21 tabelas/455 apontamentos.
+
+## Linha do tempo por cliente e projeto — 06/11/2026
+
+- [x] Acrescentar visões Geral, Por cliente e Por projeto, mantendo escala, seleção e totais.
+- [x] Separar projetos homônimos por cliente e preservar pausas, estimativas e sobreposições.
+- [x] Ampliar cobertura Vitest e documentar fluxo e entidades em [Timeline por cliente e projeto](Doc/Timeline-por-cliente-e-projeto.md).
+- [x] Validar 154 testes Java, 226 Vitest, build e 12 capturas Electron; limpar intermediários da entrega local.
+- [x] Instalar e abrir New 1.19.0 atualizada; conferir arquivos, janela, backend e preservação integral das 21 tabelas (143 tarefas e 436 apontamentos).
+
+## New e Stable 1.19.0 — atualização do Web — 06/11/2026
+
+- [x] Incorporar os recursos do Web documentados em [Atualização Web](Doc/Atualizacao-Web.md).
+- [x] Validar 154 testes Java e 224 Vitest, gerar instaladores New/Stable e conferir layout em janelas grandes/compactas.
+- [x] Instalar Stable 1.19.0 e verificar versão, hashes, janela e backend autenticado.
+- [x] Importar o banco recebido do outro computador, preservando as 138 tarefas e os 431 apontamentos, original e backups.
+- [x] Conferir exportação XLSX e preservação histórica com JAR empacotado em cópias isoladas.
+
+Entrega local, sem publicação externa. Evidências em [Instalação](Doc/Instalacao.md).
+
 ## New e Stable 1.18.0 — Tarefas e hoje
 
 Solicitada em 07/10/2026. Base New 1.17.0 e promoção/publicação Stable confirmadas; padrão de cinco prioridades escolhido pelo usuário. [Escopo e regras](Doc/Tarefas-e-hoje.md).

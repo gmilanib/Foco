@@ -30,6 +30,16 @@ describe('seventh wave',()=>{
   expect(window.foco.request).toHaveBeenCalledWith('/api/work-schedule/rules','PUT',{effectiveFrom:day,week:[[{start:'08:00',end:'12:00'}],...Array.from({length:4},()=>[{start:'09:00',end:'12:00'},{start:'13:00',end:'18:00'}]),[],[]]});
   fireEvent.click(screen.getByRole('button',{name:'Salvar exceção'}));await screen.findByText('Exceção salva.');expect(window.foco.request).toHaveBeenCalledWith('/api/work-schedule/exceptions','PUT',{day,windows:[]});
  });
+ it('saves and removes a retroactive day off without allowing past weekly rules',async()=>{
+  const past='2020-09-21';
+  vi.mocked(window.foco.request).mockResolvedValueOnce({rules:[],exceptions:[]}).mockResolvedValueOnce({rules:[],exceptions:[{day:past,windows:[]}]}).mockResolvedValueOnce({rules:[],exceptions:[]});
+  render(<ScheduleSettings/>);await waitFor(()=>expect(screen.getByRole('button',{name:'Salvar exceção'})).toBeEnabled());
+  expect(screen.getByLabelText('Data da exceção')).not.toHaveAttribute('min');expect(screen.getByLabelText('Nova jornada válida desde')).toHaveAttribute('min',day);
+  fireEvent.change(screen.getByLabelText('Data da exceção'),{target:{value:past}});fireEvent.click(screen.getByRole('button',{name:'Salvar exceção'}));await screen.findByText(`${past}: folga`);
+  expect(window.foco.request).toHaveBeenCalledWith('/api/work-schedule/exceptions','PUT',{day:past,windows:[]});
+  fireEvent.click(screen.getByRole('button',{name:'Remover exceção'}));fireEvent.click(await screen.findByRole('button',{name:'Confirmar remoção'}));await screen.findByText('Configuração removida.');
+  expect(window.foco.request).toHaveBeenCalledWith(`/api/work-schedule/exceptions/${past}`,'DELETE',undefined);
+ });
  it('settings failure retains inputs and never reports success',async()=>{
   vi.mocked(window.foco.request).mockResolvedValueOnce({rules:[],exceptions:[]}).mockRejectedValueOnce(new Error('Sobreposição rejeitada'));render(<ScheduleSettings/>);await waitFor(()=>expect(screen.getByRole('button',{name:'Salvar jornada semanal'})).toBeEnabled());fireEvent.change(screen.getByLabelText('Intervalos de Segunda-feira'),{target:{value:'09:00-12:00, 11:00-13:00'}});fireEvent.click(screen.getByRole('button',{name:'Salvar jornada semanal'}));await screen.findByText('Sobreposição rejeitada');expect(screen.getByLabelText('Intervalos de Segunda-feira')).toHaveValue('09:00-12:00, 11:00-13:00');expect(screen.queryByText(/Jornada semanal salva/)).toBeNull();
  });

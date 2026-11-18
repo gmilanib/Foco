@@ -37,7 +37,7 @@ class LocalRestore {
     private final LocalBackup backup;
     private final DatabaseMaintenance maintenance;
     private final Path data;
-    LocalRestore(JdbcTemplate db,DataSource dataSource,LocalBackup backup,DatabaseMaintenance maintenance,@Value("${FOCO_DATA_DIR:${user.home}/AppData/Local/FocoJava}") String directory) {
+    LocalRestore(JdbcTemplate db,DataSource dataSource,LocalBackup backup,DatabaseMaintenance maintenance,@Value("#{dataPaths.directory}") String directory) {
         this.db=db;this.dataSource=dataSource;this.backup=backup;this.maintenance=maintenance;this.data=Path.of(directory).toAbsolutePath().normalize();
     }
     private static String quoted(String name) { return "\""+name.replace("\"","\"\"")+"\""; }

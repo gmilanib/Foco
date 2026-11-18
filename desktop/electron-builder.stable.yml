@@ -11,6 +11,8 @@ extraResources:
     to: backend/foco-backend.jar
   - from: desktop/build/Foco.ico
     to: Foco.ico
+  - from: desktop/build/Foco.png
+    to: Foco.png
 win:
   target: nsis
   icon: desktop/build/Foco.ico
@@ -19,3 +21,33 @@ nsis:
   oneClick: false
   perMachine: false
   allowToChangeInstallationDirectory: true
+
+linux:
+  target:
+    - target: AppImage
+      arch: [x64]
+    - target: rpm
+      arch: [x64]
+  executableName: foco-stable
+  icon: desktop/build/Foco.png
+  category: Office
+  artifactName: Foco-Stable-${version}-${arch}.${ext}
+  desktop:
+    entry:
+      StartupWMClass: foco-java
+rpm:
+  packageName: foco-stable
+  maintainer: Foco Java
+  fpm:
+    - --rpm-rpmbuild-define=_build_id_links none
+  depends:
+    - java-17-openjdk
+    - gtk3
+    - nss
+    - libXScrnSaver
+    - alsa-lib
+    - libXtst
+    - xdg-utils
+    - at-spi2-core
+    - libuuid
+    - libsecret

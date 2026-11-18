@@ -25,6 +25,6 @@ describe('cadastros centrais',()=>{
   render(<CatalogsPage catalogs={catalogs} onChanged={async()=>{}}/>);
   fireEvent.change(screen.getByLabelText('Nome do cadastro'),{target:{value:' Novo cliente '}});
   fireEvent.click(screen.getByRole('button',{name:'Cadastrar'}));
-  await waitFor(()=>expect(request).toHaveBeenCalledWith('/api/catalogs/clients','POST',{name:' Novo cliente '}));
+  await waitFor(()=>expect(request).toHaveBeenCalledWith('/api/catalogs/clients','POST',{name:' Novo cliente ',client:''}));
  });
 });

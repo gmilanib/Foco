@@ -23,7 +23,7 @@ enum CatalogType {
 }
 
 record CatalogDuplicate(String type, String first, String second, double similarity) {}
-record CatalogSnapshot(Map<String,List<String>> items, List<CatalogDuplicate> possibleDuplicates,List<String> archivedProjects,Map<String,Integer> projectColorSeeds) {}
+record CatalogSnapshot(Map<String,List<String>> items, List<CatalogDuplicate> possibleDuplicates,List<String> archivedProjects,Map<String,Integer> projectColorSeeds,Map<String,List<String>> projectClients) {}
 
 @Service
 class CatalogService {
@@ -46,6 +46,29 @@ class CatalogService {
             if(type==CatalogType.CLIENT) values.addAll(db.queryForList("SELECT client_name FROM client_colors",String.class));
             for(String value:values) reconcileValue(type,value);
         }
+        db.update("INSERT OR IGNORE INTO project_clients(project_key,client_key) SELECT p.name_key,c.name_key FROM (SELECT client,project FROM tasks UNION SELECT client,project FROM sessions) h JOIN catalog_clients c ON c.name=h.client JOIN catalog_projects p ON p.name=h.project");
+        ensureColors();
+    }
+
+    @Transactional
+    void ensureColors(){
+        for(var row:db.queryForList("SELECT name_key,name FROM catalog_clients WHERE name_key NOT IN (SELECT client_key FROM client_colors)"))
+            db.update("INSERT OR IGNORE INTO client_colors(client_key,client_name,hex) VALUES(?,?,?)",row.get("name_key"),row.get("name"),randomClientColor());
+        for(String key:db.queryForList("SELECT name_key FROM catalog_projects WHERE color_seed IS NULL",String.class))
+            db.update("UPDATE catalog_projects SET color_seed=? WHERE name_key=? AND color_seed IS NULL",java.util.concurrent.ThreadLocalRandom.current().nextInt(1,Integer.MAX_VALUE),key);
+    }
+
+    @Transactional
+    void resetClientColor(String raw){
+        String name=canonical(CatalogType.CLIENT,raw,true);
+        String previous=db.query("SELECT hex FROM client_colors WHERE client_key=?",r->r.next()?r.getString(1):null,key(name));
+        String hex;do{hex=randomClientColor();}while(hex.equals(previous));
+        db.update("INSERT INTO client_colors(client_key,client_name,hex) VALUES(?,?,?) ON CONFLICT(client_key) DO UPDATE SET hex=excluded.hex,client_name=excluded.client_name",key(name),name,hex);
+    }
+
+    private static String randomClientColor(){
+        String[] palette={"#2563EB","#7C3AED","#DB2777","#DC2626","#C2410C","#A16207","#15803D","#0D9488","#0891B2","#4F46E5","#9333EA","#BE185D"};
+        return palette[java.util.concurrent.ThreadLocalRandom.current().nextInt(palette.length)];
     }
 
     private void reconcileValue(CatalogType type,String raw) {
@@ -60,12 +83,15 @@ class CatalogService {
         if(type==CatalogType.CLIENT) canonicalizeColor(raw,canonical==null?value:canonical);
     }
 
-    @Transactional(readOnly=true)
+    @Transactional
     CatalogSnapshot snapshot() {
+        ensureColors();
         Map<String,List<String>> items=new LinkedHashMap<>();
         for(CatalogType type:CatalogType.values())items.put(type.route,list(type));
         Map<String,Integer> seeds=db.query("SELECT name,color_seed FROM catalog_projects WHERE color_seed IS NOT NULL",r->{Map<String,Integer> m=new LinkedHashMap<>();while(r.next())m.put(r.getString(1),r.getInt(2));return m;});
-        return new CatalogSnapshot(items,suggestions(items),db.queryForList("SELECT p.name FROM catalog_projects p JOIN project_archive a ON a.name_key=p.name_key ORDER BY p.name",String.class),seeds);
+        Map<String,List<String>> links=new LinkedHashMap<>();
+        db.query("SELECT p.name,c.name FROM project_clients pc JOIN catalog_projects p ON p.name_key=pc.project_key JOIN catalog_clients c ON c.name_key=pc.client_key ORDER BY c.name",(org.springframework.jdbc.core.RowCallbackHandler)r->links.computeIfAbsent(r.getString(1),k->new ArrayList<>()).add(r.getString(2)));
+        return new CatalogSnapshot(items,suggestions(items),db.queryForList("SELECT p.name FROM catalog_projects p JOIN project_archive a ON a.name_key=p.name_key ORDER BY p.name",String.class),seeds,links);
     }
 
     @Transactional(readOnly=true)
@@ -79,7 +105,31 @@ class CatalogService {
         if(find(type,key)!=null)throw new IllegalArgumentException(type.label+" jÃ¡ cadastrado.");
         db.update("INSERT INTO "+type.table+"(name_key,name) VALUES(?,?)",key,name);
         if(type==CatalogType.PROJECT)db.update("UPDATE catalog_projects SET color_seed=? WHERE name_key=?",java.util.concurrent.ThreadLocalRandom.current().nextInt(1,Integer.MAX_VALUE),key);
+        if(type==CatalogType.CLIENT)resetClientColor(name);
         return name;
+    }
+
+    @Transactional
+    String createForClient(CatalogType type,String name,String client){
+        if(type!=CatalogType.PROJECT)return create(type,name);
+        String owner=canonical(CatalogType.CLIENT,client,true);
+        String project=create(type,name);
+        linkProject(project,owner);
+        return project;
+    }
+
+    @Transactional
+    void linkProject(String project,String client){
+        String p=canonical(CatalogType.PROJECT,project,true),c=canonical(CatalogType.CLIENT,client,true);
+        db.update("INSERT OR IGNORE INTO project_clients(project_key,client_key) VALUES(?,?)",key(p),key(c));
+    }
+
+    String projectForClient(String raw,String client){
+        String project=canonical(CatalogType.PROJECT,raw,false);
+        if(project.isBlank())return project;
+        if(client.isBlank() || db.queryForObject("SELECT count(*) FROM project_clients WHERE project_key=? AND client_key=?",Integer.class,key(project),key(client))==0)
+            throw new IllegalArgumentException("Selecione um projeto vinculado ao cliente. Configure o vínculo em Cadastros.");
+        return project;
     }
 
     @Transactional
@@ -113,6 +163,8 @@ class CatalogService {
             }
             db.update("INSERT OR IGNORE INTO project_archive(name_key,archived_at) SELECT ?,archived_at FROM project_archive WHERE name_key=?",key(target),key(source));
         }
+        if(type==CatalogType.PROJECT)db.update("INSERT OR IGNORE INTO project_clients(project_key,client_key) SELECT ?,client_key FROM project_clients WHERE project_key=?",key(target),key(source));
+        if(type==CatalogType.CLIENT)db.update("INSERT OR IGNORE INTO project_clients(project_key,client_key) SELECT project_key,? FROM project_clients WHERE client_key=?",key(target),key(source));
         updateHistorical(type,source,target);
         if(type==CatalogType.CLIENT)mergeColor(source,target);
         db.update("DELETE FROM "+type.table+" WHERE name_key=?",key(source));
@@ -123,6 +175,7 @@ class CatalogService {
     void delete(CatalogType type,String raw) {
         String name=existing(type,raw);
         int used=db.queryForObject("SELECT (SELECT count(*) FROM sessions WHERE "+type.column+"=?)+(SELECT count(*) FROM tasks WHERE "+type.column+"=?)",Integer.class,name,name);
+        if(type==CatalogType.CLIENT)used+=db.queryForObject("SELECT count(*) FROM project_clients WHERE client_key=?",Integer.class,key(name));
         if(used>0)throw new IllegalArgumentException("Este cadastro jÃ¡ tem histÃ³rico. Renomeie ou unifique para preservÃ¡-lo.");
         if(type==CatalogType.CLIENT)db.update("DELETE FROM client_colors WHERE client_key=?",key(name));
         db.update("DELETE FROM "+type.table+" WHERE name_key=?",key(name));

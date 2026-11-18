@@ -20,14 +20,16 @@ it('reúne lista e planejamento e abre planejamento direto da tarefa',async()=>{
  expect(within(nav).queryByRole('button',{name:'Hoje'})).toBeNull();
  expect(within(nav).queryByRole('button',{name:'Tarefas'})).toBeNull();
  fireEvent.click(screen.getByRole('button',{name:'Todas as tarefas'}));
+ fireEvent.click(await screen.findByRole('button',{name:'Mais opções de Entrega'}));
  fireEvent.click(await screen.findByRole('button',{name:'Planejar'}));
  expect(await screen.findByRole('dialog')).toHaveTextContent('Entrega');
  fireEvent.click(screen.getByRole('button',{name:'Cancelar'}));
  fireEvent.keyDown(window,{key:'h',altKey:true});
- expect(await screen.findByRole('heading',{name:'Prioridades (1/7)'})).toBeInTheDocument();
+ expect(await screen.findByRole('heading',{name:'Priorizadas (1/7)'})).toBeInTheDocument();
 });
 it('salva limite personalizado e mostra falha de gravação',async()=>{
  render(<App/>);fireEvent.click(screen.getByRole('button',{name:'Configurações'}));
+ fireEvent.click(screen.getByRole('tab',{name:'Preferências'}));
  const input=await screen.findByLabelText('Atividades prioritárias por dia');
  await waitFor(()=>expect(input).toHaveValue(7));
  fireEvent.change(input,{target:{value:'12'}});
@@ -39,13 +41,13 @@ it('salva limite personalizado e mostra falha de gravação',async()=>{
  await waitFor(()=>expect(screen.queryByText('Limite de prioridades salvo.')).toBeNull());
  expect(screen.getAllByText('Falha ao salvar').length).toBeGreaterThan(0);
 });
-it('mantém semente entre renderizações e usa variação da cor do cliente',()=>{
+it('mantém a cor própria do projeto entre renderizações',()=>{
  const seeds={Novo:217};const props={client:'ACME',project:'Novo',colors:[{client:'ACME',hex:'#123456'}]};
  const {container,rerender}=render(<ProjectColorSeeds.Provider value={seeds}><ProjectMarker {...props}/></ProjectColorSeeds.Provider>);
  const style=container.querySelector('.project-label')?.getAttribute('style');
- expect(style).toContain('#123456');expect(style).toContain('62%');
+ expect(style).toContain('hsl(217 65% 48%)');expect(style).toContain('100%');
  rerender(<ProjectColorSeeds.Provider value={seeds}><ProjectMarker {...props}/></ProjectColorSeeds.Provider>);
  expect(container.querySelector('.project-label')?.getAttribute('style')).toBe(style);
  expect(projectColor('', 'Novo',[],seeds)).toContain('hsl(217 65% 48%)');
- expect(projectColor('ACME','Novo',props.colors,seeds)).toContain('#123456 62%');
+ expect(projectColor('ACME','Novo',props.colors,seeds)).toBe(projectColor('', 'Novo',[],seeds));
 });

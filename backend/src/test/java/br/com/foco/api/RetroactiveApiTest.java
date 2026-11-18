@@ -18,7 +18,7 @@ class RetroactiveApiTest {
     private final HttpClient client=HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(3)).build();
     private static final String BODY="{\"client\":\"ACME\",\"project\":\"P1\",\"activity\":\"Revisão\",\"details\":\"Trabalho offline\",\"consultant\":\"Ana\",\"cardReference\":\"CARD-1\",\"startAt\":\"2026-09-22T09:00:00-03:00\",\"endAt\":\"2026-09-22T11:00:00-03:00\",\"focusMinutes\":75,\"hourlyRate\":120,\"status\":\"Concluída\"}";
 
-    @BeforeEach void clean(){db.update("DELETE FROM sessions");db.update("DELETE FROM tasks");for(String name:new String[]{"ACME"})db.update("INSERT OR IGNORE INTO catalog_clients(name_key,name) VALUES(?,?)",name.toLowerCase(),name);for(String name:new String[]{"P1"})db.update("INSERT OR IGNORE INTO catalog_projects(name_key,name) VALUES(?,?)",name.toLowerCase(),name);for(String name:new String[]{"Revisão"})db.update("INSERT OR IGNORE INTO catalog_activities(name_key,name) VALUES(?,?)",name.toLowerCase(),name);}
+    @BeforeEach void clean(){db.update("DELETE FROM sessions");db.update("DELETE FROM tasks");for(String name:new String[]{"ACME"})db.update("INSERT OR IGNORE INTO catalog_clients(name_key,name) VALUES(?,?)",name.toLowerCase(),name);for(String name:new String[]{"P1"})db.update("INSERT OR IGNORE INTO catalog_projects(name_key,name) VALUES(?,?)",name.toLowerCase(),name);for(String name:new String[]{"Revisão"})db.update("INSERT OR IGNORE INTO catalog_activities(name_key,name) VALUES(?,?)",name.toLowerCase(),name);db.update("INSERT OR IGNORE INTO project_clients(project_key,client_key) SELECT p.name_key,c.name_key FROM catalog_projects p CROSS JOIN catalog_clients c");}
 
     @Test void createsFinishedEntryWithEffectiveFocusAndAllowsOverlap() throws Exception {
         assertEquals(401,send("POST","/api/sessions/retroactive",BODY,false).statusCode());
@@ -27,6 +27,7 @@ class RetroactiveApiTest {
         assertTrue(first.body().contains("\"focusSeconds\":4500.0"));
         assertTrue(first.body().contains("\"status\":\"Concluída\""));
         String metadataEdit=BODY.replace("Trabalho offline","Descrição corrigida").replace("\"focusMinutes\":75","\"plannedSeconds\":0");
+        metadataEdit=metadataEdit.replace("{","{\"taskId\":\""+db.queryForObject("SELECT task_id FROM sessions WHERE id=?",String.class,id(first.body()))+"\",");
         HttpResponse<String> edited=send("PUT","/api/sessions/"+id(first.body()),metadataEdit,true);
         assertEquals(200,edited.statusCode(),edited.body());
         assertTrue(edited.body().contains("\"focusSeconds\":4500.0"));
